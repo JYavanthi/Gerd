@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="login-section">
+        <img src="..\assets\Screenshot_2025-04-11_145752-removebg-preview.png" alt="Logo" class="logo">
+        <h1>Login to Your Account</h1>
+
+        <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+            <input type="email"  name="email" placeholder="Mobile" [(ngModel)]="mobileNo" required
+                style="margin-right: 230px;">
+            <div class="password-wrapper">
+                <input [type]="showPassword ? 'text' : 'password'"  name="password"
+                    placeholder="Password" [(ngModel)]="password" required>
+                <span (click)="togglePassword()" class="eye">👁️</span>
+            </div>
+            <button type="submit" class="login-btn">Sign In</button>
+        </form>
+    </div>
+    <div class="signup-section">
+        <h2>New Here?</h2>
+        <p>Ease to use Patient Information!</p>
+        <button class="signup-btn" (click)="navigateToSignUp()">Sign Up</button>
+    </div>
+</div>

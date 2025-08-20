@@ -1,0 +1,82 @@
+/* html, body {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0;
+  padding: 0;
+  background: white;
+  font-family: Arial, sans-serif;
+  font-size: 12pt;
+}
+
+.stage-list-container {
+  width: 70% !important;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 20mm;
+  background: white;
+  box-sizing: border-box;
+}
+
+.page-break {
+  page-break-before: always;
+  break-before: page;
+}
+
+
+
+.stage-list-container > div {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.stage-list-container app-chief-complaint,
+.stage-list-container app-comorbidities,
+.stage-list-container app-history,
+.stage-list-container app-personal-history,
+.stage-list-container app-sleep,
+.stage-list-container app-gadget,
+.stage-list-container app-history-endoscopy,
+.stage-list-container app-assessment,
+.stage-list-container app-diagnosis,
+.stage-list-container app-managament {
+  display: block;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 auto;
+  padding: 0;
+}
+
+h2, h3 {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.stage-list-container * {
+  page-break-inside: avoid;
+  break-inside: avoid;
+} */
+
+
+.baseline-stage{
+  margin-left: 150px;
+}
+
+.followup1-stage{
+    margin-left: 150px;
+}
+.followup2-stage{
+    margin-left: 150px;
+}
+
+h1{
+  background-color: white;
+  text-align: center;
+  font-weight: bold;
+  padding: 15px;
+  font-size: 30px;
+}
+.therefriest{
+  
+}

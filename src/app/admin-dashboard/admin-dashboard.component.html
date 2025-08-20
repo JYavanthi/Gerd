@@ -1,0 +1,115 @@
+<div class="admin-dashboard-container">
+  <aside class="sidebar">
+    <button class="nav-btn">Dashboard</button>
+         <button class="nav-btn" (click)="goDoctorlist()">View Doctors</button>
+     <button class="nav-btn" (click)="goTocontactUs()">Contact Us</button>
+    <button class="nav-btn" >Reports</button>
+
+   <div class="report-group">
+    <button class="nav-btn report-btn" (click)="goReport()">
+        Gender Distribution <i class="fa-solid fa-chevron-right"></i>
+    </button>
+    <button class="nav-btn report-btn" (click)="goToCoMorbiditiesReport()">
+        Co-morbidities <i class="fa-solid fa-chevron-right"></i>
+    </button>
+    <button class="nav-btn report-btn treatment" (click)="goTotreatmentReport()">
+        Treatment Distribution <i class="fa-solid fa-chevron-right"></i>
+    </button>
+</div>
+
+   
+    <button class="logoutbtn" (click)="login()">Logout</button>
+</aside>
+
+
+    <main class="main-content">
+        <div class="filter-bar">
+            <label for="">Start Date <input type="date" placeholder="Start Date" /></label>
+            <label for="">End Date <input type="date" placeholder="End Date" /></label>
+          
+      <button class="btn">Filter Report</button>
+
+            <button class="btn">Download</button>
+            <button class="btn">Reset Filter</button>
+            <button class="btn">Go Back</button>
+          
+        </div>
+
+        <div class="dashboard-header">ADMIN DASHBOARD</div>
+
+        <div class="dashboard-cards">
+            <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
+                <div class="card orange">Total No. of Doctors</div>
+                <div class="value green" style="background-color: #326978">
+                    {{ dashboardStats.doctors }}
+                    <i class="fas fa-download excel-icon fa-lg " (click)="downloadDoctorsExcel()" aria-hidden="true"
+                        style="color: rgb(220, 165, 76);"></i>
+                </div>
+            </div>
+
+            <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
+                <div class="card orange">Total No. of Patients</div>
+                <div class="value green" style="background-color: #326978">
+                    {{ dashboardStats.patients }}
+                    <i class="fas fa-download excel-icon fa-lg" (click)="downloadPatientsReportExcel()"
+                        aria-hidden="true" style="color: rgb(220, 165, 76);"></i>
+                </div>
+            </div>
+
+            <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
+                <div class="card orange">Completed Cases</div>
+                <div class="value green" style="background-color: #326978">
+                    {{ completedList?.length ?? '0' }}
+                    <i class="fas fa-download excel-icon fa-lg" style="color: rgb(220, 165, 76);"
+                        (click)="downloadCompletedList()"></i>
+                </div>
+            </div>
+
+            
+            <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
+                <div class="card orange">Incomplete Cases</div>
+                <div class="value green" style="background-color: #326978">
+                    {{this.inCompletedList?.length ?? '0'}}
+                    <i class="fas fa-download excel-icon fa-lg" style="color: rgb(220, 165, 76);"
+                        (click)="downloadInCompletedList()"></i>
+                </div>
+            </div>
+
+            <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
+                <div class="card orange">Gender</div>
+                <div class="value green small" style="background-color: #326978">
+                    M: {{dashboardStats.gender.male}}<br />
+                    F: {{dashboardStats.gender.female }}
+                    <i class="fas fa-download excel-icon fa-lg" (click)="downloadGenderExcel()"
+                        style="color: rgb(220, 165, 76);"></i>
+                </div>
+            </div>
+
+            <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
+                <div class="card orange">Completed Baseline visit Cases</div>
+                <div class="value green" style="background-color: #326978">{{ baslineReportList?.length ?? '0'}}
+                    <i class="fas fa-download excel-icon fa-lg" (click)="downLoadBaseLine()"
+                        style="color: rgb(220, 165, 76);"></i>
+                </div>
+            </div>
+
+            <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
+                <div class="card orange">Completed Follow 1 visit Cases</div>
+                <div class="value green" style="background-color: #326978">
+                    {{ followUp1List?.length ?? '0' }}
+                    <i class="fas fa-download excel-icon fa-lg" (click)="downFollowUp1ReportExcel()"
+                        style="color: rgb(220, 165, 76);"></i>
+                </div>
+            </div>
+
+            <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
+                <div class="card orange"> Completed Follow 2 visit Cases</div>
+                <div class="value green" style="background-color: #326978">
+                    {{ completedFollowUp2List?.length ?? '0'}}
+                    <i class="fas fa-download excel-icon fa-lg" (click)="downFollowUp2ReportExcel()"
+                        style="color: rgb(220, 165, 76);"></i>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

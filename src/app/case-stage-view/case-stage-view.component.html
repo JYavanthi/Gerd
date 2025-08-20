@@ -1,0 +1,29 @@
+<div *ngIf="baselineData && Object.keys(baselineData).length">
+  <app-chief-complaint [data]="baselineData" [isPrintMode]="true"></app-chief-complaint>
+  <app-comorbidities [data]="baselineComorbidities" [isPrintMode]="true"></app-comorbidities>
+  <app-history [isPrintMode]="true" [data]="baselineHistory" ></app-history>
+  <app-personal-history [isPrintMode]="true"></app-personal-history>
+  <app-sleep [isPrintMode]="true" [data]="baselineSleep" ></app-sleep>
+  <app-gadget [isPrintMode]="true"></app-gadget>
+  <app-history-endoscopy [isPrintMode]="true"></app-history-endoscopy>
+  <app-assessment [isPrintMode]="true"></app-assessment>
+  <app-diagnosis [isPrintMode]="true"></app-diagnosis>
+  <app-managament [isPrintMode]="true"></app-managament>
+</div>
+
+
+<div *ngIf="followUp1Data">
+  <h2>Follow Up 1</h2>
+  <app-chief-complaint [data]="followUp1Data" [isPrintMode]="true"></app-chief-complaint>
+  <app-comorbidities [data]="baselineComorbidities"  [isPrintMode]="true"></app-comorbidities>
+  <app-assessment [isPrintMode]="true" ></app-assessment>
+  <app-managament [isPrintMode]="true"></app-managament>
+</div>
+
+<div *ngIf="followUp2Data">
+  <h2>Follow Up 2</h2>
+  <app-chief-complaint [data]="followUp2Data" [isPrintMode]="true"></app-chief-complaint>
+  <app-comorbidities [data]="followUp2Comorbidities" [isPrintMode]="true"></app-comorbidities>
+  <app-assessment [isPrintMode]="true"></app-assessment>
+  <app-managament [isPrintMode]="true"></app-managament>
+</div>

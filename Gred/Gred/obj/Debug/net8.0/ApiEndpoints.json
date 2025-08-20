@@ -1,0 +1,1584 @@
+[
+  {
+    "ContainingType": "Gred.Controllers.AssessmentController",
+    "Method": "GetAssessment",
+    "RelativePath": "api/Assessment/GetAssessment",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.AssessmentController",
+    "Method": "GetAssessmentById",
+    "RelativePath": "api/Assessment/GetAssessmentById/{id}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.AssessmentController",
+    "Method": "SaveAssessment",
+    "RelativePath": "api/Assessment/SaveAssessment",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "assessment",
+        "Type": "Gred.Data.Entities.EAssessment",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "login",
+        "Type": "Gred.Data.Entities.ELogin",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.BaselineReportController",
+    "Method": "DownloadBaselineReport",
+    "RelativePath": "api/BaselineReport/DownloadBaselineReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.BaselineReportController",
+    "Method": "GetBaselineCount",
+    "RelativePath": "api/BaselineReport/GetBaselineReportData",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.CheifComplaintController",
+    "Method": "GetCheifComplaint",
+    "RelativePath": "api/CheifComplaint/GetCheifComplaint",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.CheifComplaintController",
+    "Method": "GetCheifComplaintById",
+    "RelativePath": "api/CheifComplaint/GetCheifComplaintById/{patientId}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.CheifComplaintController",
+    "Method": "SaveCheifComplaint",
+    "RelativePath": "api/CheifComplaint/SaveCheifComplaint",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eCheif",
+        "Type": "Gred.Data.Entities.ECheifComplaint",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "CityController",
+    "Method": "GetCities",
+    "RelativePath": "api/City/GetCitiesById",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "stateId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.ComorbiditiesController",
+    "Method": "GetComorbditiesById",
+    "RelativePath": "api/Comorbidities/GetComorbditiesById/{patientId}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.ComorbiditiesController",
+    "Method": "GetComorbidities",
+    "RelativePath": "api/Comorbidities/GetComorbidities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.ComorbiditiesController",
+    "Method": "SaveComorbidities",
+    "RelativePath": "api/Comorbidities/SaveComorbidities",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eComorbidities",
+        "Type": "Gred.Data.Entities.EComorbidities",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.ComorbitiesRptController",
+    "Method": "GetAll",
+    "RelativePath": "api/ComorbitiesRpt/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.CompletedReportController",
+    "Method": "DownloadCompletedReport",
+    "RelativePath": "api/CompletedReport/DownloadCompletedReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.CompletedReportController",
+    "Method": "GetCompletedReportCount",
+    "RelativePath": "api/CompletedReport/GetCompletedReportData",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CountryController",
+    "Method": "GetCountries",
+    "RelativePath": "api/Country/GetCountries",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.CurrentMedicationController",
+    "Method": "GetCurrentMedication",
+    "RelativePath": "api/CurrentMedication/GetCurrentMedication",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.CurrentMedicationController",
+    "Method": "GetCurrentMedicationById",
+    "RelativePath": "api/CurrentMedication/GetCurrentMedicationById/{patientId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.CurrentMedicationController",
+    "Method": "SaveCurrentMedication",
+    "RelativePath": "api/CurrentMedication/SaveCurrentMedication",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eCurrentMedication",
+        "Type": "Gred.Data.Entities.ECurrentMedication",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.DiagnosisController",
+    "Method": "GetDiagnosisById",
+    "RelativePath": "api/Diagnosis/GetDiagnosisById/{patientId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.DiagnosisController",
+    "Method": "GetDiagnosis",
+    "RelativePath": "api/Diagnosis/GetDoctor",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.DiagnosisController",
+    "Method": "SaveDoctorReg",
+    "RelativePath": "api/Diagnosis/SaveDiagnosis",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eDiagnosis",
+        "Type": "Gred.Data.Entities.EDiagnosis",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.DoctorLogController",
+    "Method": "GetDoctorlogsdata",
+    "RelativePath": "api/DoctorLog/GetDoctorLogs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.DoctorLogController",
+    "Method": "SaveDoctorLogs",
+    "RelativePath": "api/DoctorLog/PostDoctorLogs",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eDoctorLog",
+        "Type": "Gred.Data.Entities.EDoctorLog",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.DoctorRegController",
+    "Method": "GetDoctorvalue",
+    "RelativePath": "api/DoctorReg/GetDoctor",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.DoctorRegController",
+    "Method": "SaveDoctorReg",
+    "RelativePath": "api/DoctorReg/SaveDoctorReg",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reg",
+        "Type": "Gred.Data.Entities.EDoctorReg",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.EmailController",
+    "Method": "SendEmail",
+    "RelativePath": "api/Email",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "caseModel",
+        "Type": "Case",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.FamiyHistoryController",
+    "Method": "GetFamilyHistory",
+    "RelativePath": "api/FamiyHistory/GetFamilyHistory",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.FamiyHistoryController",
+    "Method": "GetFamilyHistoryById",
+    "RelativePath": "api/FamiyHistory/GetFamilyHistoryById/{id}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.FamiyHistoryController",
+    "Method": "AddFamilyHistory",
+    "RelativePath": "api/FamiyHistory/SaveFamilyHistory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eFamilyHistory",
+        "Type": "Gred.Data.Entities.EFamilyHistory",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.FollowUp1ReportController",
+    "Method": "DownloadFollowUp1Report",
+    "RelativePath": "api/FollowUp1Report/DownloadFollowUp1Report",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.FollowUp2ReportController",
+    "Method": "DownloadFollowUp1Report",
+    "RelativePath": "api/FollowUp2Report/DownloadFollowUp1Report",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.GadgetController",
+    "Method": "GetGadget",
+    "RelativePath": "api/Gadget/GetGadget",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.GadgetController",
+    "Method": "GetGadgetById",
+    "RelativePath": "api/Gadget/GetGadgetById/{PatientId}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "PatientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.GadgetController",
+    "Method": "SaveGadget",
+    "RelativePath": "api/Gadget/SaveGadget",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "gadget",
+        "Type": "Gred.Data.Entities.EGadget",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.GenderRPTController",
+    "Method": "GetAll",
+    "RelativePath": "api/GenderRPT/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.GerdHistoryController",
+    "Method": "AddGerdHistory",
+    "RelativePath": "api/GerdHistory/AddGerdHistory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "gerdHistory",
+        "Type": "Gred.Data.Entities.EGerdHistory",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.GerdHistoryController",
+    "Method": "GetGerdHistory",
+    "RelativePath": "api/GerdHistory/GetGerdHistory",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.GerdHistoryController",
+    "Method": "GetGerdHistoryById",
+    "RelativePath": "api/GerdHistory/GetGerdHistoryById/{patientId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.HistoryController",
+    "Method": "GetHistory",
+    "RelativePath": "api/History/GetHistory",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.HistoryController",
+    "Method": "GetHistoryById",
+    "RelativePath": "api/History/GetHistoryById/{id}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.HistoryController",
+    "Method": "SaveHistory",
+    "RelativePath": "api/History/SaveHistory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "history",
+        "Type": "Gred.Data.Entities.EHistory",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.HistoryEndsocopyController",
+    "Method": "GetCheifComplaint",
+    "RelativePath": "api/HistoryEndsocopy/GetHistoryEndsocopy",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.HistoryEndsocopyController",
+    "Method": "SaveHistoryEndsocopy",
+    "RelativePath": "api/HistoryEndsocopy/SaveHistoryEndsocopy",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ehistoryendsocopy",
+        "Type": "Gred.Data.Entities.EHistoryEndsocopy",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.InCompletedReportController",
+    "Method": "DownloadInCompletedReport",
+    "RelativePath": "api/InCompletedReport/DownloadInCompletedReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.InCompletedReportController",
+    "Method": "GetCompletedReportCount",
+    "RelativePath": "api/InCompletedReport/GetInCompletedReportData",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.ManagementController",
+    "Method": "SubmitStage",
+    "RelativePath": "api/Management/CompleteCase",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "stageUpdateInstance",
+        "Type": "Gred.Data.Entities.EStageUpdate",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.ManagementController",
+    "Method": "GetCurrentStage",
+    "RelativePath": "api/Management/GetCurrentStage/{patientId}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.ManagementController",
+    "Method": "GetManagement",
+    "RelativePath": "api/Management/GetManagement",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.ManagementController",
+    "Method": "GetManagementById",
+    "RelativePath": "api/Management/GetManagementById/{id}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.ManagementController",
+    "Method": "SaveManagement",
+    "RelativePath": "api/Management/SaveManagement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eManagement",
+        "Type": "Gred.Data.Entities.EManagement",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.MedicalExaminationController",
+    "Method": "GetMedicalExamination",
+    "RelativePath": "api/MedicalExamination/GetMedicalExamination",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.MedicalExaminationController",
+    "Method": "GetMedicalExaminationById",
+    "RelativePath": "api/MedicalExamination/GetMedicalExaminationById/{patientId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.MedicalExaminationController",
+    "Method": "SaveMedicalExamination",
+    "RelativePath": "api/MedicalExamination/SaveMedicalExamination",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "medicalexamination",
+        "Type": "Gred.Data.Entities.EMedicalExamination",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.MedicationController",
+    "Method": "GetMedicationByPatientId",
+    "RelativePath": "api/Medication/GetMedicationByPatientId/{patientId}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.MedicationController",
+    "Method": "SaveMedication",
+    "RelativePath": "api/Medication/SaveMedication",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "medication",
+        "Type": "Gred.Data.Entities.EMedication",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.PatientHistoryController",
+    "Method": "GetPatientHistory",
+    "RelativePath": "api/PatientHistory/GetPatientHistory",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.PatientHistoryController",
+    "Method": "GetPaitentHistoryById",
+    "RelativePath": "api/PatientHistory/GetPatientHistoryById/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.PatientHistoryController",
+    "Method": "SavePatientHistory",
+    "RelativePath": "api/PatientHistory/SavePatientHistory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patient",
+        "Type": "Gred.Data.Entities.EPatientHistory",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.PatientRegController",
+    "Method": "GetPatientDetails",
+    "RelativePath": "api/PatientReg/GetPatient",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.PatientRegController",
+    "Method": "GetPatientById",
+    "RelativePath": "api/PatientReg/GetPatient/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.PatientRegController",
+    "Method": "SavePatientReg",
+    "RelativePath": "api/PatientReg/SavePatient",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ePatient",
+        "Type": "Gred.Data.Entities.EPatientReg",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.PersonalHistoryController",
+    "Method": "GetPersonalHistory",
+    "RelativePath": "api/PersonalHistory/GetPersonalHistory",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.PersonalHistoryController",
+    "Method": "GetPersonalHistoryById",
+    "RelativePath": "api/PersonalHistory/GetPersonalHistoryById/{id}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.PersonalHistoryController",
+    "Method": "SavePersonalHistory",
+    "RelativePath": "api/PersonalHistory/SavePersonalHistory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personalhistory",
+        "Type": "Gred.Data.Entities.EPersonalHistory",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "gred.Controllers.PtnTrackController",
+    "Method": "GetPageRouterByPatientId",
+    "RelativePath": "api/PtnTrack/GetPageRouterByPatientId/{patientId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.ReportController",
+    "Method": "DownloadFullReport",
+    "RelativePath": "api/Report/DownloadFullReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.SleepController",
+    "Method": "GetSleep",
+    "RelativePath": "api/Sleep/GetSleep",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.SleepController",
+    "Method": "GetSleepByPatientId",
+    "RelativePath": "api/Sleep/GetSleepByPatientId/{patientId}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.SleepController",
+    "Method": "SaveSleep",
+    "RelativePath": "api/Sleep/SaveSleep",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "sleep",
+        "Type": "Gred.Data.Entities.ESleep",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Gred.Data.Entities.Common.CommonRsult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "sanchar6tBackEnd.Controllers.StateController",
+    "Method": "GetState",
+    "RelativePath": "api/State/GetState",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.VwMedicationRptController",
+    "Method": "GetAll",
+    "RelativePath": "api/VwMedicationRpt/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.WeatherForecastController",
+    "Method": "Get",
+    "RelativePath": "WeatherForecast",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Gred.WeatherForecast, Gred, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetWeatherForecast"
+  }
+]

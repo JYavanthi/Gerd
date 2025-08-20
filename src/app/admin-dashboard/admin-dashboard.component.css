@@ -1,0 +1,258 @@
+.admin-dashboard-container {
+    display: flex;
+    /* height: 98vh; */
+    font-family: Arial, sans-serif;
+    width: 98%;
+    padding: 20px;
+}
+
+.sidebar {
+    width: 200px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.nav-btn {
+    padding: 0.8rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    outline: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Group box for reports */
+.report-group {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-top: solid 1px lightgray;
+}
+
+/* Divider between buttons */
+.report-group .nav-btn {
+    margin: 0;
+    font-size: 13px;
+}
+
+.report-group .nav-btn:last-child {
+    border-bottom: none;
+    /* Remove divider for last one */
+}
+
+/* Hover effect for each button */
+.report-group .nav-btn:hover {
+    background-color: #f0f0f0;
+    /* Light hover */
+    color: #007bff;
+    /* Theme color text */
+}
+
+/* Treatment Distribution font size */
+.treatment {
+    font-size: 13px;
+}
+
+.report-btn i {
+    font-size: 12px;
+    color: #007bff;
+}
+
+/* Divider before report section */
+.report-section {
+    border-top: 1px solid #ccc;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+/* Style for report buttons */
+.report-btn {
+    padding-left: 0.6rem;
+    font-style: italic;
+}
+
+.report-btn.treatment {
+    font-size: 13px;
+}
+
+.logo {
+    background-color: #444;
+    color: white;
+    padding: 1rem;
+    border-radius: 50%;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.nav-btn {
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.8rem;
+    cursor: pointer;
+    color: white;
+    text-align: start;
+}
+
+
+
+.main-content {
+    flex: 1;
+    padding: 1rem;
+    background: #fff;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #f2f2f2;
+    padding: 17px;
+    /* align-items: center; */
+    justify-content: center;
+    gap: 32px;
+
+    input {
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+    }
+
+    label {
+        font-size: 10px;
+    }
+}
+
+.filter-bar input {
+    padding: 0.5rem;
+}
+
+.logoutbtn {
+    background-color: white;
+    color: black;
+    text-align: center;
+    font-size: 17px;
+    width: 140px;
+    height: 40px;
+    margin-top: 15px;
+}
+
+.btn {
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    height: 32px;
+    margin-top: 14px;
+    text-align: center;
+}
+
+.btn {
+    background-color: #37738a;
+    font-size: 15px;
+}
+
+.btn:hover {
+    color: #38768f;
+    background-color: white;
+    border: solid 1px black;
+}
+
+/* .btn-download {
+    background-color: #5271ff;
+}
+
+.btn-reset {
+    background-color: #6c757d;
+}
+
+.btn-back {
+    background-color: #343a40;
+} */
+
+.dashboard-header {
+    /* background-color: #f2f2f2; */
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+select {
+    width: 120px;
+    height: 39px;
+    margin-top: 10px;
+    background-color: #38768f;
+    color: white;
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+}
+
+.card-row {
+    display: flex;
+    align-items: center;
+    background-color: #fdfdfd;
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+
+.card {
+    flex: 1;
+    background-color: #ff6b00;
+    color: white;
+    padding: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+}
+
+.value {
+    background-color: #71c107;
+    color: white;
+    padding: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.value.small {
+    font-size: 0.9rem;
+    line-height: 1.2rem;
+}
+
+.value {
+    position: relative;
+    background-color: #71c107;
+    color: white;
+    padding: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.excel-icon {
+    width: 24px;
+    height: 24px;
+    margin-left: 10px;
+    cursor: pointer;
+}

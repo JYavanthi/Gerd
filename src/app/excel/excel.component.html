@@ -1,0 +1,62 @@
+<div class="d-flex flex-column" style="background-color: #027082; min-height: 100vh;">
+    <!-- Navbar -->
+    <div style="margin-top: 20px;">
+        <nav class="navbar navbar-expand-lg navbar-light shadow-sm px-4 py-2" style="position: absolute; top: 20px; left: 0; right: 0; background-color: white; 
+              margin-left: 40px; margin-right: 40px;">
+            <a class="navbar-brand d-flex align-items-center me-3" href="#">
+                <img src="assets/logo.png" alt="Logo" style="max-height: 40px; width: auto;" class="me-2" />
+                <span class="fw-bold" style="color: #027082;">GERD Registry</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse justify-content-between show" id="navbarNav">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0" style="font-weight: 500;">
+                    <li class="nav-item"><a class="nav-link" routerLink="/about" style="color: #263633;">About
+                            Registry</a></li>
+                    <li class="nav-item"><a class="nav-link" routerLink="/guidelines"
+                            style="color: #263633;">Guidelines</a></li>
+                    <li class="nav-item"><a class="nav-link" routerLink="/newsandevents" style="color: #263633;">News
+                            and
+                            Events</a></li>
+                    <li class="nav-item"><a class="nav-link" routerLink="/blog" style="color: #263633;">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" routerLink="/contact" style="color: #263633;">Contact
+                            Us</a></li>
+                </ul>
+                <div class="d-flex">
+                    <button class="btn me-2"
+                        style="background-color: white; color: #027082; border: 1px solid #027082; font-weight: 600;"
+                        routerLink="/login">Login</button>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Content Section -->
+    <div class="d-flex flex-grow-1">
+        <!-- Sidebar -->
+        <!-- <app-sidebar>
+        </app-sidebar> -->
+
+        <!-- Registration Form -->
+        <div class="flex-grow-1 d-flex align-items-start justify-content-start "
+            style="margin-top: 2rem; margin-bottom: 2rem; padding:5px;">
+            <div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+                <h2 class="mb-4" style="color: black; font-weight: 600; margin-left: 0.25rem;">
+                    Saving button INFORMATION
+                </h2>
+                <!-- <button (click)="myExcelClick()">My Excel Click</button> -->
+                <button class="margin-bottom:4rem;" (click)="exportToExcel()">Download Demographic
+                    Data</button><br /><br />
+                <button (click)="exportChiefComplaintToExcel()">Download Chief Complaint to Excel</button><br /><br />
+                <button (click)="exportcomorbiditiesToExcel()">Download Comorbidities to Excel</button><br /><br />
+                <button (click)="personalHistoryDownloadExcel()">Download Personal History to Excel</button>
+            </div>
+
+            <!-- <div class="excel-container">
+        <h2>Excel Operations</h2>
+        <button (click)="myExcelClick()">My Excel Click</button>
+        <p>excel works!</p> 
+    </div> -->
+        </div>

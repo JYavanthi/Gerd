@@ -1,0 +1,36 @@
+.content-wrapper {
+    margin-top: 100px;
+}
+
+.message {
+    .fa-message {
+        position: fixed;
+        background-color: #214195;
+        right: 10px;
+        bottom: 10px;
+        color: white;
+        padding: 20px;
+        font-size: 25px;
+        border-radius: 50%;
+        z-index: 1000;
+    }
+}
+
+form {
+    z-index: 1000;
+    position: absolute;
+    top: 100px;
+    right: 20px;
+
+    div:first-of-type {
+        background-color: white;
+    color: #36657e;
+    padding: 10px;
+    height: 50px;
+    width: 390px;
+        span {
+            font-size: 30px;
+            padding: 10px;
+        }
+    }
+}

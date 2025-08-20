@@ -1,0 +1,68 @@
+<div class="dashboard-container">
+  <div class="sidebar">
+    <button class="menu-btn" (click)=" goDashboard()">Dashboard</button>
+   <!-- <button class="menu-btn">View Doctors</button> -->
+    <!-- <button class="menu-btn">View Submitted Cases</button> -->
+      <button class="menu-btn" (click)="goDoctorlist()">View Doctors</button>
+      <button class="menu-btn" (click)="goTocontactUs()">Contact Us</button>
+    <button class="menu-btn reports-btn">REPORTS</button>
+    <div class="report-group">
+    <button class="nav-btn report-btn" (click)="goToGnederreport()">
+        Gender Distribution <i class="fa-solid fa-chevron-right"></i>
+    </button>
+    <button class="nav-btn report-btn" >
+        Co-morbidities <i class="fa-solid fa-chevron-right"></i>
+    </button>
+    <button class="nav-btn report-btn treatment" (click)="goTotreatmentReport()">
+        Treatment Distribution <i class="fa-solid fa-chevron-right"></i>
+    </button>
+</div>
+   
+    <button class="logoutbtn" (click)="login()">Log Out</button>
+  </div>
+    <div class="mainDiv">
+        <div class="filter-bar">
+            <label for="">Start Date <input type="date" placeholder="Start Date" />
+            </label>
+            <label for="">End Date
+                <input type="date" placeholder="End Date" />
+
+            </label>
+            <button class="btn">Filter Report</button>
+            <button class="btn">Download</button>
+            <button class="btn">Reset Filter</button>
+            <button class="btn" (click)="goback()">Go Back</button>
+            <button class="btn" (click)="goToNext()"> Next</button>
+
+        </div>
+        <div class="content">
+
+            <div class="chart-section">
+                <!-- <h3>Co-morbities</h3> -->
+                <canvas baseChart [data]="coMorbiditiesChartData" [options]="coMorbiditiesChartOptions" [type]="'pie'">
+                </canvas>
+
+            </div>
+            <div class="filters">
+                <button class="filter-btn" (click)="filterAllIndia()">
+                    All India
+                </button>
+
+                <select (change)="onZoneChange($event)" class="filter-btn">
+                    <option value="">All Zones</option>
+                    <option *ngFor="let z of zones" [value]="z">{{ z }}</option>
+                </select>
+
+                <select (change)="onStateChange($event)" class="filter-btn">
+                    <option value="">All States</option>
+                    <option *ngFor="let s of states" [value]="s.id">{{ s.name }}</option>
+                </select>
+
+                <select (change)="onCityChange($event)" class="filter-btn">
+                    <option value="">All Cities</option>
+                    <option *ngFor="let c of cities" [value]="c.id">{{ c.name }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

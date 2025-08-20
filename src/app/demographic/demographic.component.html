@@ -1,0 +1,175 @@
+<div class="d-flex flex-column" style="background-color: #027082; min-height: 100vh;">
+  <div style="margin-top: 20px;">
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm px-4 py-2" style="position: absolute; top: 20px; left: 0; right: 0; background-color: white; 
+              margin-left: 40px; margin-right: 40px;">
+      <a class="navbar-brand d-flex align-items-center me-3" href="#">
+        <img src="assets/logo.png" alt="Logo" style="max-height: 40px; width: auto;" class="me-2" />
+        <span class="fw-bold" style="color: #027082;">GERD Registry</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar-collapse justify-content-between show" id="navbarNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0" style="font-weight: 500;">
+          <li class="nav-item"><a class="nav-link" routerLink="/about" style="color: #263633;">About Registry</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/guidelines" style="color: #263633;">Guidelines</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/newsandevents" style="color: #263633;">News and
+              Events</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/blog" style="color: #263633;">Blog</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/contact" style="color: #263633;">Contact Us</a></li>
+        </ul>
+        <div class="d-flex">
+          <button class="btn me-2"
+            style="background-color: white; color: #027082; border: 1px solid #027082; font-weight: 600;"
+            routerLink="/login">Login</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="d-flex flex-grow-1">
+    <app-sidebar>
+    </app-sidebar>
+    <div class="flex-grow-1 d-flex align-items-start justify-content-start"
+      style="margin-top: 2rem; margin-bottom: 2rem;">
+      <div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+        <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
+          PATIENT INFORMATION
+        </h2>
+        <form [formGroup]="demographicForm" (ngSubmit)="Submit()">
+          <div class="form-row mb-3">
+            <div class="form-group col-md-4">
+              <input formControlName="patientName" class="form-input" placeholder=" " maxlength="3" />
+              <label class="form-label">Patient Initials</label>
+              <div *ngIf="demographicForm.get('patientName')?.touched && demographicForm.get('patientName')?.invalid"
+                class="text-danger small">
+                Patient Initials is required and must be at most 3 characters.
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <input formControlName="date" type="date" class="form-input" placeholder=" " [max]="today" />
+              <label class="form-label">Date of Birth</label>
+              <div *ngIf="demographicForm.get('date')?.touched && demographicForm.get('date')?.invalid"
+                class="text-danger small">Date is required.</div>
+            </div>
+             <div class="form-group col-md-4">
+              <input formControlName="age" class="form-input" placeholder=" " />
+              <label class="form-label">Age in Years</label>
+              <div *ngIf="demographicForm.get('age')?.touched && demographicForm.get('age')?.invalid"
+                class="text-danger small">Valid Age is required.</div>
+            </div>
+          </div>
+          <div class="form-row mb-3">          
+            <div class="form-group col-md-4">
+              <select formControlName="gender" class="form-select">
+                <option value="" disabled hidden selected></option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+              <label class="form-label">Gender</label>
+              <div *ngIf="demographicForm.get('gender')?.touched && demographicForm.get('gender')?.invalid"
+                class="text-danger small">Gender is required.</div>
+            </div>
+            <div class="form-group col-md-4">
+              <select formControlName="education" class="form-select">
+                <option value="" disabled hidden selected></option>
+                <option value="Above">10th Std & Above</option>
+                <option value="Below">Below 10th</option>
+              </select>
+              <label class="form-label">Education</label>
+              <div *ngIf="demographicForm.get('education')?.touched && demographicForm.get('education')?.invalid"
+                class="text-danger small">Education is required.</div>
+            </div>
+                        <div class="form-group col-md-4">
+              <select formControlName="occupation" class="form-select">
+                <option value="" disabled hidden selected></option>
+                <option value="Sedentary">Sedentary</option>
+                <option value="nonSedentary">Non-Sedentary</option>
+              </select>
+              <label class="form-label">Occupation</label>
+              <div *ngIf="demographicForm.get('occupation')?.touched && demographicForm.get('occupation')?.invalid"
+                class="text-danger small">Occupation is required.</div>
+            </div>
+
+          </div>
+
+          <div class="form-row mb-3">
+            <div class="form-group col-md-4">
+              <select formControlName="state" class="form-select" (change)="getCities($event)">
+                <option value="" disabled>Select State</option>
+                <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
+              </select>
+
+              <label class="form-label">State</label>
+              <div *ngIf="demographicForm.get('state')?.touched && demographicForm.get('state')?.invalid"
+                class="text-danger small">
+                State is required.
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <select formControlName="city" class="form-select">
+                <option value="" disabled>Select City</option>
+                <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+              </select>
+              <label class="form-label">City</label>
+              <div *ngIf="demographicForm.get('city')?.touched && demographicForm.get('city')?.invalid"
+                class="text-danger small">City is required.</div>
+            </div>
+                        <div class="form-group col-md-4">
+              <select formControlName="placeType" class="form-select">
+                <option value="" disabled hidden selected></option>
+                <option value="urban">Urban</option>
+                <option value="subUrban">Sub Urban</option>
+                <option value="rural">Rural</option>
+              </select>
+              <label class="form-label">Place Type</label>
+              <div *ngIf="demographicForm.get('placeType')?.touched && demographicForm.get('placeType')?.invalid"
+                class="text-danger small">Place Type is required.</div>
+            </div>
+          </div>
+          <div class="form-row mb-3">
+            <div class="form-group col-md-4">
+              <select formControlName="socioeconomic" class="form-select">
+                <option value="" disabled hidden selected></option>
+                <option value="abovePoverty">Above Poverty Line</option>
+                <option value="belowPoverty">Below Poverty Line</option>
+              </select>
+              <label class="form-label">Socioeconomic</label>
+              <div
+                *ngIf="demographicForm.get('socioeconomic')?.touched && demographicForm.get('socioeconomic')?.invalid"
+                class="text-danger small">Socioeconomic status is required.</div>
+            </div>
+            <div class="form-group col-md-4">
+              <select formControlName="annualFamilyIncome" class="form-select">
+                <option value="" disabled hidden selected></option>
+                <option value="Less">Less than 1 Lakh</option>
+                <option value="Lakhs">1-5 Lakhs</option>
+                <option value="Greater">Greater Than 5 Lakhs</option>
+              </select>
+              <label class="form-label">Annual Family Income</label>
+              <div
+                *ngIf="demographicForm.get('annualFamilyIncome')?.touched && demographicForm.get('annualFamilyIncome')?.invalid"
+                class="text-danger small">Annual income is required.</div>
+            </div>
+          </div>
+          <div class="form-row mb-3">
+           
+          </div>
+          <div class="row">
+            <div class="row">
+              <div class="col-12">
+                <button type="button" class="btn px-4 register-btn" (click)="Submit()">
+                  Save
+                </button>
+                <button class="btn btn-dark custom-next-btn" [disabled]="!isSaved" (click)="onnext()">
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

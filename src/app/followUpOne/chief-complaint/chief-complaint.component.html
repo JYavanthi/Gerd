@@ -1,0 +1,162 @@
+<!-- <div class="d-flex flex-column" style="background-color: #027082; min-height: 100vh;">
+<div class="d-flex flex-grow-1">
+<app-sidebar></app-sidebar>
+<div class="flex-grow-1 d-flex align-items-start justify-content-start" style="margin-top: 2rem; margin-bottom: 2rem;">
+<div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+<h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
+                    CHIEF COMPLAINT
+                    <div (click)="onNext()" *ngIf="isFollowUp"><i class="fa-solid fa-arrow-right right-icon"></i></div>
+</h2>
+
+<div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+  <div [ngClass]="getStatusClass(1)" class="arrow">
+    Baseline
+    <i *ngIf="tabId === 1"></i>
+  </div>
+  <div [ngClass]="getStatusClass(2)" class="arrow">
+    Follow-up 1
+    <i *ngIf="tabId === 2"></i>
+  </div>
+  <div [ngClass]="getStatusClass(3)" class="arrow">
+    Follow-up 2
+    <i *ngIf="tabId === 3"></i>
+  </div>
+</div>
+<form [formGroup]="chiefComplaintForm">
+  <table class="complaints-table">
+    <thead>
+      <tr>
+        <th>Complaint Type</th>
+        <th>Duration (No of years)</th>
+        <th>Frequency (per week)</th>
+        <th colspan="2">Postural</th>
+        <th colspan="2">Nocturnal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Heartburn</td>
+        <td><input formControlName="heartburnDuration" type="number" /></td>
+        <td><input formControlName="heartburnFrequency" type="number" /></td>
+        <td>
+          <label>
+            <input formControlName="postural_heartburn" name="postural_heartburn" type="radio" value="Yes" /> Yes
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="postural_heartburn" name="postural_heartburn" type="radio" value="No" /> No
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="nocturnal_heartburn" name="nocturnal_heartburn" type="radio" value="Yes" /> Yes
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="nocturnal_heartburn" name="nocturnal_heartburn" type="radio" value="No" /> No
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td>Regurgitation</td>
+        <td><input formControlName="regurgitationDuration" type="number" /></td>
+        <td><input formControlName="regurgitationFrequency" type="number" /></td>
+        <td>
+          <label>
+            <input formControlName="postural_regurgitation" name="postural_regurgitation" type="radio" value="Yes" /> Yes
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="postural_regurgitation" name="postural_regurgitation" type="radio" value="No" /> No
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="nocturnal_regurgitation" name="nocturnal_regurgitation" type="radio" value="Yes" /> Yes
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="nocturnal_regurgitation" name="nocturnal_regurgitation" type="radio" value="No" /> No
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td>Retrosternal Pain</td>
+        <td><input formControlName="painDuration" type="number" /></td>
+        <td><input formControlName="painFrequency" type="number" /></td>
+        <td>
+          <label>
+            <input formControlName="postural_pain" name="postural_pain" type="radio" value="Yes" /> Yes
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="postural_pain" name="postural_pain" type="radio" value="No" /> No
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="nocturnal_pain" name="nocturnal_pain" type="radio" value="Yes" /> Yes
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="nocturnal_pain" name="nocturnal_pain" type="radio" value="No" /> No
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td>Acid Taste in mouth</td>
+        <td><input formControlName="acidTasteDuration" type="number" /></td>
+        <td><input formControlName="acidTasteFrequency" type="number" /></td>
+        <td>
+          <label>
+            <input formControlName="postural_AT" name="postural_AT" type="radio" value="Yes" /> Yes
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="postural_AT" name="postural_AT" type="radio" value="No" /> No
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="nocturnal_AT" name="nocturnal_AT" type="radio" value="Yes" /> Yes
+          </label>
+        </td>
+        <td>
+          <label>
+            <input formControlName="nocturnal_AT" name="nocturnal_AT" type="radio" value="No" /> No
+          </label>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="col-12">
+    <button (click)="Submit()" *ngIf="isFollowUp" class="btn px-4 register-btn" type="button">
+      Save
+    </button>
+    <button (click)="onNext()" *ngIf="isFollowUp" class="btn btn-dark custom-next-btn" [disabled]="!chiefComplaintForm.valid">
+              Next
+            </button>
+            <button (click)="OnNext()" *ngIf="!isFollowUp" class="btn btn-dark custom-next-btn" [disabled]="!chiefComplaintForm.valid">
+              Next
+            </button>
+    <button (click)="goback()" *ngIf="!isFollowUp" class="btn px-4 register-btn" type="button">
+      Back
+    </button>
+    <button (click)="back()" *ngIf="isFollowUp" class="btn px-4 register-btn" type="button">
+      Back
+    </button>
+  </div>
+</form>
+
+</div>
+</div>
+</div>
+</div> -->

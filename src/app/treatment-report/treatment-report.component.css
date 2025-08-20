@@ -1,0 +1,234 @@
+.dashboard-container {
+    display: flex;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    gap: 15px;
+}
+
+/* .sidebar {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: start;
+} */
+.sidebar {
+    width: 200px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+}
+
+.nav-btn {
+    padding: 0.8rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    outline: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Group box for reports */
+.report-group {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+    border-top: solid 1px lightgray;
+}
+
+/* Divider between buttons */
+.report-group .nav-btn {
+    margin: 0;
+    font-size: 13px;
+    color: white;
+    width: 165px;
+}
+
+.report-group .nav-btn:last-child {
+    border-bottom: none; /* Remove divider for last one */
+}
+
+/* Hover effect for each button */
+.report-group .nav-btn:hover {
+    background-color: #f0f0f0; /* Light hover */
+    color: #007bff; 
+          /* Theme color text */
+}
+
+/* Treatment Distribution font size */
+.treatment {
+    font-size: 13px;
+}
+
+
+.report-btn i {
+    font-size: 12px;
+    color: #007bff;
+}
+
+/* Divider before report section */
+.report-section {
+    border-top: 1px solid #ccc;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+/* Style for report buttons */
+.report-btn {
+    padding-left: 0.6rem;
+    font-style: italic;
+}
+.report-btn.treatment {
+    font-size: 13px;
+}
+.menu-btn {
+    color: white;
+    padding: 10px;
+    border: none;
+    font-size: 15px;
+
+}
+
+
+.logoutbtn{
+    background-color: white;
+    color: black;
+    text-align: center;
+    font-size: 17px;
+    width: 140px;
+    height: 40px;
+}
+
+.reports-btn {
+    color: white;
+}
+
+.content {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+
+}
+
+.chart-section {
+    width: 400px;
+}
+
+.filters {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-btn {
+    background-color: #efb3b3;
+    padding: 8px;
+    border: none;
+    /* text-align: left; */
+    font-weight: bold;
+    position: relative;
+    width: 200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* .filter-btn::after {
+  content: "🔍";
+  position: absolute;
+  right: 10px;
+} */
+
+.treatment-section {
+    margin-left: 220px;
+    margin-top: 30px;
+    width: 600px;
+}
+
+/* .next {
+    position: absolute;
+    bottom: -50px;
+    right: 45px;
+    background-color: #37738a;
+    padding: 5px;
+    color: white;
+    width: 80px;
+
+
+
+}
+
+.next:hover {
+    background-color: white;
+    color: #37738a;
+    border: 1px solid black;
+} */
+
+.filter-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #f2f2f2;
+    padding: 17px;
+    /* align-items: center; */
+    justify-content: center;
+    gap: 32px;
+    margin-top: 20px;
+    margin-left: 25px;
+    width: 95%;
+
+    input {
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+    }
+
+    label {
+        font-size: 10px;
+    }
+}
+
+.filter-bar input {
+    padding: 0.5rem;
+}
+
+.mainDiv {
+    background-color: white;
+    width: 84%;
+}
+
+.btn {
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    height: 32px;
+    margin-top: 14px;
+    text-align: center;
+}
+
+.btn {
+    background-color: #37738a;
+    font-size: 14px;
+}
+
+.btn:hover {
+    color: #37738a;
+    background-color: white;
+    border: solid 1px black;
+}

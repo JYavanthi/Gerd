@@ -1,0 +1,357 @@
+<!-- <div class="d-flex flex-column" style="background-color: #027082; min-height: 100vh;">
+        <div class="d-flex flex-grow-1">
+                <app-sidebar></app-sidebar>
+
+                <div class="flex-grow-1 d-flex align-items-start justify-content-start"
+                        style="margin-top: 2rem; margin-bottom: 2rem;">
+                        <div class="form-container p-4 shadow bg-white"
+                                style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+
+                                <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
+                                        COMORBIDITIES
+                                        <div *ngIf="isFollowUp" (click)="onNext()"><i
+                                                        class="fa-solid fa-arrow-right"></i></div>
+
+                                </h2>
+      <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+  <div [ngClass]="getStatusClass(1)" class="arrow">
+    Baseline
+    <i *ngIf="tabId === 1"></i>
+  </div>
+  <div [ngClass]="getStatusClass(2)" class="arrow">
+    Follow-up 1
+    <i *ngIf="tabId === 2"></i>
+  </div>
+  <div [ngClass]="getStatusClass(3)" class="arrow">
+    Follow-up 2
+    <i *ngIf="tabId === 3"></i>
+  </div>
+</div>
+
+                                <table class="comorbidity-table">
+                                        <thead>
+                                                <tr>
+                                                        <th>COMORBIDITIES</th>
+                                                        <th>Present</th>
+                                                        <th>If Yes, Remarks</th>
+                                                </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>Hypertension</td>
+                                                        <td>
+                                                                <label><input type="radio" name="hypertension"
+                                                                        
+                                                                                [value]="true"
+                                                                                (change)="updateComorbidityStatus('hypertension', true)"
+                                                                                [checked]="comorbidities['hypertension'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="hypertension"
+                                                                        
+                                                                                [value]="false"
+                                                                                (change)="updateComorbidityStatus('hypertension', false)"
+                                                                                [checked]="comorbidities['hypertension'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                
+                                                                        [(ngModel)]="comorbidities['hypertension'].remarks" 
+                                                                        [disabled]=" comorbidities['hypertension'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Diabetes</td>
+                                                        <td>
+                                                                <label><input type="radio" name="diabetes"
+                                                                        
+                                                                                [value]="true"
+                                                                                (change)="updateComorbidityStatus('diabetes', true)"
+                                                                                [checked]="comorbidities['diabetes'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="diabetes"
+                                                                        
+                                                                                [value]="false"
+                                                                                (change)="updateComorbidityStatus('diabetes', false)"
+                                                                                [checked]="comorbidities['diabetes'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                
+                                                                        [(ngModel)]="comorbidities['diabetes'].remarks" 
+                                                                        [disabled]=" comorbidities['diabetes'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Dyslipidemia</td>
+                                                        <td>
+                                                                <label><input type="radio" name="dyslipidemia"
+                                                                        
+                                                                                [value]="true"
+                                                                                (change)="updateComorbidityStatus('dyslipidemia', true)"
+                                                                                [checked]="comorbidities['dyslipidemia'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="dyslipidemia"
+                                                                        
+                                                                                [value]="false"
+                                                                                (change)="updateComorbidityStatus('dyslipidemia', false)"
+                                                                                [checked]="comorbidities['dyslipidemia'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                
+                                                                        [(ngModel)]="comorbidities['dyslipidemia'].remarks" 
+                                                                        [disabled]=" comorbidities['dyslipidemia'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Chronic liver disease</td>
+                                                        <td>
+                                                                <label><input type="radio" name="liver"  [value]="true"
+                                                                                (change)="updateComorbidityStatus('liver', true)"
+                                                                                [checked]="comorbidities['liver'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio"  name="liver" [value]="false"
+                                                                                (change)="updateComorbidityStatus('liver', false)"
+                                                                                [checked]="comorbidities['liver'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['liver'].remarks"
+                                                                        [disabled]=" comorbidities['liver'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Neurological Disorder</td>
+                                                        <td>
+                                                                <label><input type="radio" name="neuro" [value]="true" 
+                                                                                (change)="updateComorbidityStatus('neuro', true)"
+                                                                                [checked]="comorbidities['neuro'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="neuro" [value]="false" 
+                                                                                (change)="updateComorbidityStatus('neuro', false)"
+                                                                                [checked]="comorbidities['neuro'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['neuro'].remarks"
+                                                                        [disabled]=" comorbidities['neuro'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Cardiovascular disorders</td>
+                                                        <td>
+                                                                <label><input type="radio" name="cardio" [value]="true" 
+                                                                                (change)="updateComorbidityStatus('cardio', true)"
+                                                                                [checked]="comorbidities['cardio'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="cardio" [value]="false" 
+                                                                                (change)="updateComorbidityStatus('cardio', false)"
+                                                                                [checked]="comorbidities['cardio'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['cardio'].remarks" 
+                                                                        [disabled]=" comorbidities['cardio'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Hypothyroidism</td>
+                                                        <td>
+                                                                <label><input type="radio" name="hypo" [value]="true" 
+                                                                                (change)="updateComorbidityStatus('hypo', true)"
+                                                                                [checked]="comorbidities['hypo'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="hypo" [value]="false" 
+                                                                                (change)="updateComorbidityStatus('hypo', false)"
+                                                                                [checked]="comorbidities['hypo'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['hypo'].remarks" 
+                                                                        [disabled]=" comorbidities['hypo'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Hyperthyroidism</td>
+                                                        <td>
+                                                                <label><input type="radio" name="hyper" [value]="true" 
+                                                                                (change)="updateComorbidityStatus('hyper', true)"
+                                                                                [checked]="comorbidities['hyper'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="hyper" [value]="false" 
+                                                                                (change)="updateComorbidityStatus('hyper', false)"
+                                                                                [checked]="comorbidities['hyper'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['hyper'].remarks" 
+                                                                        [disabled]=" comorbidities['hyper'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Behavioural disorders</td>
+                                                        <td>
+                                                                <label><input type="radio" name="behavioural"
+                                                                                [value]="true" 
+                                                                                (change)="updateComorbidityStatus('behavioural', true)"
+                                                                                [checked]="comorbidities['behavioural'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="behavioural" 
+                                                                                [value]="false"
+                                                                                (change)="updateComorbidityStatus('behavioural', false)"
+                                                                                [checked]="comorbidities['behavioural'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['behavioural'].remarks" 
+                                                                        [disabled]=" comorbidities['behavioural'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Chronic kidney disease</td>
+                                                        <td>
+                                                                <label><input type="radio" name="kidney" [value]="true" 
+                                                                                (change)="updateComorbidityStatus('kidney', true)"
+                                                                                [checked]="comorbidities['kidney'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="kidney" [value]="false" 
+                                                                                (change)="updateComorbidityStatus('kidney', false)"
+                                                                                [checked]="comorbidities['kidney'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['kidney'].remarks"
+                                                                        [disabled]=" comorbidities['kidney'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Asthma</td>
+                                                        <td>
+                                                                <label><input type="radio" name="asthma" [value]="true" 
+                                                                                (change)="updateComorbidityStatus('asthma', true)"
+                                                                                [checked]="comorbidities['asthma'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="asthma" [value]="false" 
+                                                                                (change)="updateComorbidityStatus('asthma', false)"
+                                                                                [checked]="comorbidities['asthma'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['asthma'].remarks" 
+                                                                        [disabled]=" comorbidities['asthma'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Osteoarthritis</td>
+                                                        <td>
+                                                                <label><input type="radio" name="osteo" [value]="true" 
+                                                                                (change)="updateComorbidityStatus('osteo', true)"
+                                                                                [checked]="comorbidities['osteo'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="osteo" [value]="false" 
+                                                                                (change)="updateComorbidityStatus('osteo', false)"
+                                                                                [checked]="comorbidities['osteo'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['osteo'].remarks" 
+                                                                        [disabled]=" comorbidities['osteo'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Rheumatoid arthritis</td>
+                                                        <td>
+                                                                <label><input type="radio" name="rheumatoid"
+                                                                                [value]="true" 
+                                                                                (change)="updateComorbidityStatus('rheumatoid', true)"
+                                                                                [checked]="comorbidities['rheumatoid'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="rheumatoid"
+                                                                                [value]="false" 
+                                                                                (change)="updateComorbidityStatus('rheumatoid', false)"
+                                                                                [checked]="comorbidities['rheumatoid'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['rheumatoid'].remarks"
+                                                                        [disabled]=" comorbidities['rheumatoid'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Systemic Sclerosis</td>
+                                                        <td>
+                                                                <label><input type="radio" name="sclerosis"
+                                                                                [value]="true" 
+                                                                                (change)="updateComorbidityStatus('sclerosis', true)"
+                                                                                [checked]="comorbidities['sclerosis'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="sclerosis"
+                                                                                [value]="false" 
+                                                                                (change)="updateComorbidityStatus('sclerosis', false)"
+                                                                                [checked]="comorbidities['sclerosis'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['sclerosis'].remarks"
+                                                                        [disabled]=" comorbidities['sclerosis'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Cancer</td>
+                                                        <td>
+                                                                <label><input type="radio" name="cancer" [value]="true" 
+                                                                                (change)="updateComorbidityStatus('cancer', true)"
+                                                                                [checked]="comorbidities['cancer'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="cancer" [value]="false" 
+                                                                                (change)="updateComorbidityStatus('cancer', false)"
+                                                                                [checked]="comorbidities['cancer'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['cancer'].remarks" 
+                                                                        [disabled]=" comorbidities['cancer'].present === false" />
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Others (Specify)</td>
+                                                        <td>
+                                                                <label><input type="radio" name="others" [value]="true" 
+                                                                                (change)="updateComorbidityStatus('others', true)"
+                                                                                [checked]="comorbidities['others'].present === true" />
+                                                                        Yes</label>
+                                                                <label><input type="radio" name="others" [value]="false" 
+                                                                                (change)="updateComorbidityStatus('others', false)"
+                                                                                [checked]="comorbidities['others'].present === false" />
+                                                                        No</label>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                        [(ngModel)]="comorbidities['others'].remarks" 
+                                                                        [disabled]=" comorbidities['others'].present === false" />
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                </table>
+                                <div class="row mt-4">
+                                        <div class="col-12">
+                                                <button *ngIf="isFollowUp" type="button" class="btn px-4 register-btn" (click)="Submit()">
+                                Save
+                            </button>  
+                              <button *ngIf="!isFollowUp" type="button" class="btn px-4 register-btn" (click)="OnNext()">
+                                Next
+                            </button>  
+                              <button *ngIf="!isFollowUp" type="button" class="btn px-4 register-btn" (click)="goback()">
+                                Back
+                            </button>  
+                             <button (click)="onNext()" *ngIf="isFollowUp" class="btn px-4 register-btn" type="button">
+                                Next
+                            </button>
+                            <button (click)="back()" *ngIf="isFollowUp" class="btn px-4 register-btn" type="button">
+                                Back
+                            </button>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div> -->

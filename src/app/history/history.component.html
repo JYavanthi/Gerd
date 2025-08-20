@@ -1,0 +1,78 @@
+<div class="container" [formGroup]="patientHistoryForm">
+  <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
+  <div class="main-content">
+    <div class="form-card">
+      <div class="form-header">PATIENT HISTORY
+        <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+      <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+        <div [ngClass]="getStatusClass(1)" class="arrow">
+          Baseline
+          <i *ngIf="tabId === 1"></i>
+        </div>
+        <div [ngClass]="getStatusClass(2)" class="arrow">
+          Follow-up 1
+          <i *ngIf="tabId === 2"></i>
+        </div>
+        <div [ngClass]="getStatusClass(3)" class="arrow">
+          Follow-up 2
+          <i *ngIf="tabId === 3"></i>
+        </div>
+      </div>
+      <form [formGroup]="patientHistoryForm">
+        <div class="form-group">
+          <label for="past-history">Past History</label>
+          <textarea id="past-history" formControlName="pastHistory" placeholder="Enter past history here"
+            class="form-control"></textarea>
+        </div>
+        <div class="form-subsection">
+          <h4>PERSONAL HISTORY
+          </h4>
+          <!-- <div class="checkbox-group">
+            <label><b>Diet:</b></label>
+            <label>
+              <input type="radio" formControlName="Diet_Vegetarian" [disabled]="isViewMode" /> Vegetarian
+            </label>
+            <label>
+              <input type="radio" formControlName="Diet_NonVegetarian" [disabled]="isViewMode" /> Non-Vegetarian
+            </label>
+          </div> -->
+          <div class="checkbox-group">
+            <label><b>Diet:</b></label>
+            <label>
+              <input type="radio" formControlName="diet" value="Vegetarian" [disabled]="isViewMode" /> Vegetarian
+            </label>
+            <label>
+              <input type="radio" formControlName="diet" value="Non-Vegetarian" [disabled]="isViewMode" />
+              Non-Vegetarian
+            </label>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="row mt-4">
+            <div class="d-flex mt-4">
+              <button type="button" class="btn px-4 register-btn me-2" (click)="Submit()"
+                 *ngIf="stage === 0 || stage === 2 || stage === 4">Save</button>
+              <button type="button" *ngIf="!isPrintMode && !isFollowUp" (click)="goNext()" class="btn px-4 register-btn me-2"
+                [disabled]="!isSaved"
+               >
+                Next
+              </button>
+              <button (click)="onNext()" *ngIf="isFollowUp" class="btn px-4 register-btn me-2" type="button"
+                [disabled]="!isSaved" >
+                Next
+              </button>
+              <button type="button" class="btn px-4 register-btn" (click)="goback()" *ngIf="!isPrintMode && !isFollowUp">Back</button>
+              <button (click)="back()" *ngIf="isFollowUp" class="btn px-4 register-btn me-2" type="button"
+                [disabled]="!patientHistoryForm.valid">
+                Back
+              </button>
+            </div>
+           
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

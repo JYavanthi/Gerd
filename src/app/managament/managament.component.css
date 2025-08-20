@@ -1,0 +1,106 @@
+.card {
+    background-color: white;
+    border-radius: 0.75rem;
+    border: none;
+  }
+  
+  .table th, .table td {
+    vertical-align: middle;
+  }
+
+  .arrow-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin: 30px 0; */
+}
+
+.arrow {
+  position: relative;
+  background: gray;
+  padding: 20px 25px 20px 30px;
+  color: white;
+  font-weight: bold;
+  margin-right: 10px;
+  min-width: 200px;
+  text-align: center;
+  clip-path: polygon(0% 0%, calc(100% - 15px) 0%, 100% 50%, calc(100% - 15px) 100%, 0% 100%, 15px 50%);
+  transition: background-color 0.3s ease;
+  font-size: 20px;
+}
+.baseline-green {
+  background-color: green;
+  color: white;
+}
+ .baseline-blue {
+  background-color: blue;
+  color: white;
+}
+  
+  .register-btn {
+    background-color: #027082;
+    color: white;
+    border: 1px solid white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .register-btn:hover {
+    background-color: white;
+    color: #027082;
+    border: 1px solid #027082;
+  }
+  h6{
+    font-weight: bold;
+  }
+
+  .modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.modal-container {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 50%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+
+  
+}
+.mb-4{
+  display: flex;
+}
+.modal-content h5 {
+  font-weight: 600;
+  font-size: 30px;
+  text-align: center;
+
+}
+.btn{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+
+  button{
+    width: 75px;
+  }
+
+  .btn:hover {
+    background-color: white;
+    color: #027082;
+    border: 1px solid #027082;
+  }
+.flex{
+  display: flex;
+  gap: 10px !important;
+}
+}

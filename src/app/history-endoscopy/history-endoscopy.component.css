@@ -1,0 +1,218 @@
+.container {
+    display: flex;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.sidebar {
+    color: white;
+    padding: 20px;
+    width: 220px;
+    min-height: 100vh;
+    flex-shrink: 0;
+}
+
+.sidebar h5 {
+    margin-bottom: 5px;
+}
+.arrow-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin: 30px 0; */
+}
+.arrow {
+  position: relative;
+  background: gray;
+  padding: 20px 25px 20px 30px;
+  color: white;
+  font-weight: bold;
+  margin-right: 10px;
+  min-width: 200px;
+  text-align: center;
+  clip-path: polygon(0% 0%, calc(100% - 15px) 0%, 100% 50%, calc(100% - 15px) 100%, 0% 100%, 15px 50%);
+  transition: background-color 0.3s ease;
+  font-size: 20px;
+}
+.baseline-green {
+  background-color: green;
+  color: white;
+}
+ .baseline-blue {
+  background-color: blue;
+  color: white;
+}
+ .disabled-btn {
+  background-color: #027082;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px;
+    background-color: #027082;
+}
+
+.form-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input[type="file"] {
+    margin-right: 15px;
+    width: auto;
+    padding: 5px;
+}
+
+input[type="date"].form-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+    box-sizing: border-box;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.file-list ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.attachment-remarks-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: flex-start;
+}
+
+.attachment-block {
+    flex: 1 1 60%;
+    min-width: 300px;
+}
+
+.remarks-block {
+    flex: 1 1 35%;
+    min-width: 200px;
+}
+
+.underline-input {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    padding: 4px 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.underline-input:focus {
+    border-bottom-color: #007bff;
+}
+
+.checkbox-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-group h6 {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.register-btn {
+    background-color: #026f83;
+    color: #fff;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+.surgery-table {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    max-width: 100%;
+}
+
+.surgery-header,
+.surgery-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.col-surgery-title,
+.col-surgery {
+    flex: 2;
+}
+
+.col-choice {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+}
+
+.col-remarks-title,
+.col-remarks {
+    flex: 2;
+}
+
+.specify-input {
+    border: none;
+    border-bottom: 1px solid #000;
+    outline: none;
+    margin-left: 5px;
+    font-size: 14px;
+    width: 30%;
+}
+
+.form-header {
+    background-color: #19667d;
+    color: white;
+    padding: 10px 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.col-12{
+    display: flex;
+    gap: 10px;
+}

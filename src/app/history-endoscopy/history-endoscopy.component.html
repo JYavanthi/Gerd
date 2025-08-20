@@ -1,0 +1,233 @@
+<form [formGroup]="endoscopyGSForm">
+    <div class="container">
+        <!-- <div class="sidebar text-white p-4 pt-5" style="width: 212px; flex-shrink: 0; overflow-y: auto;">
+            <h5 class="mb-3">👨‍⚕️ Dr. Krishna Kumar</h5>
+            <p class="mb-4">kumar&#64;gmail.com</p>
+            <hr class="bg-white" />
+            <ul class="list-unstyled mb-4">
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Dashboard</a></li>
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Methodology</a></li>
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Protocol and Case Form</a></li>
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Instructions</a></li>
+            </ul>
+            <hr class="bg-white" />
+            <a href="/login" class="btn w-100 mt-3" style="background-color: white; color: #027082; font-weight: 600;">
+                Already registered? Login
+            </a>
+        </div> -->
+        <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
+        <div class="main-content">
+            <div class="form-card">
+                <div class="form-group">
+                    <div class="form-header">FAMILY HISTORY
+                        <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
+
+                    </div>
+                    <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+                        <div [ngClass]="getStatusClass(1)" class="arrow">
+                            Baseline
+                            <i *ngIf="tabId === 1"></i>
+                        </div>
+                        <div [ngClass]="getStatusClass(2)" class="arrow">
+                            Follow-up 1
+                            <i *ngIf="tabId === 2"></i>
+                        </div>
+                        <div [ngClass]="getStatusClass(3)" class="arrow">
+                            Follow-up 2
+                            <i *ngIf="tabId === 3"></i>
+                        </div>
+                    </div>
+
+                    <label style="font-weight: bold;">History of Endoscopy</label>
+                    <div class="checkbox-group">
+                        <!-- Main Yes/No for Endoscopy -->
+                        <label>
+                            <input type="radio" value="yes" formControlName="historyofEndoscopy" /> Yes
+                        </label>
+                        <label>
+                            <input type="radio" value="no" formControlName="historyofEndoscopy" /> No
+                        </label>
+
+                        <!-- Date Field -->
+                        <div class="checkbox-group mt-3">
+                            <h6>Date:</h6>
+                            <input type="date" class="form-input" formControlName="endoscopyDate" [max]="today" />
+                        </div>
+
+                        <!-- Report Attached -->
+                        <div class="checkbox-group mt-3">
+                            <h6>Report Attached:</h6>
+                            <label>
+                                <input type="radio" value="yes" formControlName="endoscopyAttached" /> Yes
+                            </label>
+                            <label>
+                                <input type="radio" value="no" formControlName="endoscopyAttached" /> No
+                            </label>
+
+                            <!-- Attachment & Remarks -->
+                            <div class="attachment-remarks-container">
+
+                                <!-- File Upload -->
+                                <div *ngIf="endoscopyGSForm.get('endoscopyAttached')?.value === 'yes'"
+                                    class="attachment-block">
+                                    <label><strong>Attachment</strong></label>
+                                    <div class="input-group">
+                                        <input type="file" [accept]="acceptedTypes" #fileInput
+                                            (change)="onFileChange($event)" [disabled]="fileUploadDisabled" />
+
+                                    </div>
+                                    <small class="text-muted">Only JPG, JPEG, PNG, and PDF formats allowed.</small>
+
+                                    <div *ngIf="files.length > 0" class="file-list mt-2">
+                                        <h6>Selected Files:</h6>
+                                        <ul>
+                                            <li *ngFor="let file of files">{{ file.name }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="remarks-block">
+                                    <label><strong>Remarks</strong></label>
+                                    <input type="text" class="underline-input" placeholder="Enter remarks"
+                                        formControlName="endoscopyRemark" [disabled]="fileUploadDisabled" />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="form-group">
+                    <label style="font-weight: bold;">History of Gastro Surgery</label>
+                    <div class="checkbox-group">
+                        <label><input type="radio" value="yes" formControlName="historyofGS" /> Yes</label>
+                        <label><input type="radio" value="no" formControlName="historyofGS" /> No</label>
+                    </div>
+                </div>
+                <br />
+
+                <div *ngIf="endoscopyGSForm.get('historyofGS')?.value === 'yes'" class="form-subsection">
+                    <h4>If Yes, Specify</h4>
+                    <br />
+
+                    <div class="surgery-table">
+                        <div class="surgery-header">
+                            <div class="col-surgery-title"><b>Type of Gastro Surgery</b></div>
+                            <div class="col-choice"><b>Choose</b></div>
+                            <div class="col-remarks-title"><b>Remarks</b></div>
+                        </div>
+
+                        <div class="surgery-row">
+                            <div class="col-surgery">Bariatric surgery</div>
+                            <div class="col-choice">
+                                <label><input type="radio" value="yes" formControlName="gs_BariatricSurgery" />
+                                    Yes</label>
+                                <label><input type="radio" value="no" formControlName="gs_BariatricSurgery" />
+                                    No</label>
+                            </div>
+                            <div class="col-remarks">
+                                <input type="text" class="underline-input" placeholder="Remarks, Please Specify..."
+                                    formControlName="gs_BSRemark"
+                                    [disabled]="endoscopyGSForm.get('gs_BariatricSurgery')?.value !== 'yes'" />
+                            </div>
+                        </div>
+
+                        <div class="surgery-row">
+                            <div class="col-surgery">Fundoplication surgery</div>
+                            <div class="col-choice">
+                                <label><input type="radio" value="yes" formControlName="gs_FundoplicationSurgery" />
+                                    Yes</label>
+                                <label><input type="radio" value="no" formControlName="gs_FundoplicationSurgery" />
+                                    No</label>
+                            </div>
+                            <div class="col-remarks">
+                                <input type="text" class="underline-input" placeholder="Remarks, Please Specify..."
+                                    formControlName="gs_FSRemark"
+                                    [disabled]="endoscopyGSForm.get('gs_FundoplicationSurgery')?.value !== 'yes'" />
+                            </div>
+                        </div>
+
+                        <div class="surgery-row">
+                            <div class="col-surgery">Gastric POEM surgery</div>
+                            <div class="col-choice">
+                                <label><input type="radio" value="yes" formControlName="gs_GastricPOEMSurgery" />
+                                    Yes</label>
+                                <label><input type="radio" value="no" formControlName="gs_GastricPOEMSurgery" />
+                                    No</label>
+                            </div>
+                            <div class="col-remarks">
+                                <input type="text" class="underline-input" placeholder="Remarks, Please Specify..."
+                                    formControlName="gs_GPSRemark"
+                                    [disabled]="endoscopyGSForm.get('gs_GastricPOEMSurgery')?.value !== 'yes'" />
+                            </div>
+                        </div>
+
+                        <div class="surgery-row">
+                            <div class="col-surgery">Gastrojejunostomy</div>
+                            <div class="col-choice">
+                                <label><input type="radio" value="yes" formControlName="gs_Gastrojejunostomy" />
+                                    Yes</label>
+                                <label><input type="radio" value="no" formControlName="gs_Gastrojejunostomy" />
+                                    No</label>
+                            </div>
+                            <div class="col-remarks">
+                                <input type="text" class="underline-input" placeholder="Remarks, Please Specify..."
+                                    formControlName="gs_GJRemark"
+                                    [disabled]="endoscopyGSForm.get('gs_Gastrojejunostomy')?.value !== 'yes'" />
+                            </div>
+                        </div>
+
+                        <div class="surgery-row">
+                            <div class="col-surgery">
+                                Other (Please Specify)
+                                <input type="text" class="specify-input" formControlName="gs_OtherText" />
+                            </div>
+                            <div class="col-choice">
+                                <label><input type="radio" value="yes" formControlName="gs_OtherYesNo" />
+                                    Yes</label>
+                                <label><input type="radio" value="no" formControlName="gs_OtherYesNo" /> No</label>
+                            </div>
+                            <div class="col-remarks">
+                                <input type="text" class="underline-input" placeholder="Remarks, Please Specify..."
+                                    formControlName="gs_OtherRemark"
+                                    [disabled]="endoscopyGSForm.get('gs_OtherYesNo')?.value !== 'yes'" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode" type="button"
+                            class="btn px-4 register-btn" (click)="onSave()">
+                            Save
+                        </button>
+                        <button *ngIf="!isPrintMode && isFollowUp" type="button" class="btn px-4 register-btn"
+                            (click)="onNext()" [disabled]="!isSaved">
+                            Next
+                        </button>
+
+                        <button *ngIf="!isPrintMode && isFollowUp" type="button" class="btn px-4 register-btn"
+                            (click)="goback()">
+                            Back
+                        </button>
+                        <button *ngIf="!isPrintMode && !isFollowUp" type="button" class="btn px-4 register-btn"
+                            (click)="onNext()" [disabled]="!isSaved">
+                            Next
+                        </button>
+                        <button *ngIf="!isPrintMode && !isFollowUp" type="button" class="btn px-4 register-btn"
+                            (click)="back()">
+                            Back
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

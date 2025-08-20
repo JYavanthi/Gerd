@@ -1,0 +1,6 @@
+@Gred_HostAddress = http://localhost:5058
+
+GET {{Gred_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,39 @@
+
+
+   <!-- <div class="sidebar text-white p-4 pt-5" style="width: 212px; flex-shrink: 0; overflow-y: auto;">
+  <h5 class="mb-3">👨‍⚕️ Dr. {{ doctor?.name || 'Loading...' }}</h5>
+  <p class="mb-4">{{ doctor?.email || 'Loading email...' }}</p>
+  <hr class="bg-white" />
+  <ul class="list-unstyled mb-4">
+    <li><a routerLink="/dashboard" class="text-white text-decoration-none d-block py-2">Dashboard</a></li>
+    <li><a routerLink="/methodology" class="text-white text-decoration-none d-block py-2">Methodology</a></li>
+    <li><a routerLink="/protocol" class="text-white text-decoration-none d-block py-2">Protocol and Case Form</a></li>
+    <li><a routerLink="/instructions" class="text-white text-decoration-none d-block py-2">Instructions</a></li>
+  </ul>
+  <hr class="bg-white" />
+  <a routerLink="/login" class="btn w-100 mt-3" style="background-color: white; color: #027082; font-weight: 600;">
+    Logout
+  </a>
+</div> -->
+
+
+
+<div class="sidebar text-white p-4 pt-5" style="width: 212px; flex-shrink: 0;">
+  <h5 class="mb-3">
+    👨‍⚕️ Dr. {{ doctor?.name || 'Loading...' }} 
+    <small *ngIf="doctor?.doctorId" style="color: white;">(ID: {{ doctor.doctorId }})</small>
+  </h5>
+  <p class="mb-4">{{ doctor?.email || 'Loading email...' }}</p>
+
+  <hr class="bg-white" />
+  <ul class="list-unstyled mb-4">
+    <li><a routerLink="/dashboard" class="text-white text-decoration-none d-block py-2">Dashboard</a></li>
+    <li><a routerLink="/methodology" class="text-white text-decoration-none d-block py-2">Methodology</a></li>
+    <li><a routerLink="/protocol" class="text-white text-decoration-none d-block py-2">Protocol and Case Form</a></li>
+    <li><a routerLink="/instructions" class="text-white text-decoration-none d-block py-2">Instructions</a></li>
+  </ul>
+  <hr class="bg-white" />
+  <a routerLink="/login" class="btn w-100 mt-3" style="background-color: white; color: #027082; font-weight: 600;">
+    Logout
+  </a>
+</div>

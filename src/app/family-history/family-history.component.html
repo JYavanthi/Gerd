@@ -1,0 +1,103 @@
+<div class="container">
+  <app-sidebar></app-sidebar>
+
+  <form [formGroup]="familyhistoryForm" class="main-content">
+    <div class="form-card">
+      <div class="form-header">FAMILY HISTORY
+        <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
+
+      </div>
+  <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+  <div [ngClass]="getStatusClass(1)" class="arrow">
+    Baseline
+    <i *ngIf="tabId === 1"></i>
+  </div>
+  <div [ngClass]="getStatusClass(2)" class="arrow">
+    Follow-up 1
+    <i *ngIf="tabId === 2"></i>
+  </div>
+  <div [ngClass]="getStatusClass(3)" class="arrow">
+    Follow-up 2
+    <i *ngIf="tabId === 3"></i>
+  </div>
+</div>
+      <div class="form-group">
+        <label style="font-weight: bold;">Family History of GERD</label>
+        <div class="newDiv">
+          <div class="checkbox-group">
+            <label>
+              <input type="radio" value="yes" formControlName="fH_GRED" /> Yes
+            </label>
+            <label>
+              <input type="radio" value="no" formControlName="fH_GRED" /> No
+            </label>
+          </div>
+          <input type="text" class="underline-input1" placeholder="Remarks, Please Specify..."
+            formControlName="fH_Remark" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label style="font-weight: bold;">Family History of Esophago-Gastric Cancer</label>
+        <div class="newDiv">
+          <div class="checkbox-group">
+            <label>
+              <input type="radio" value="yes" formControlName="fH_EGC" /> Yes
+            </label>
+            <label>
+              <input type="radio" value="no" formControlName="fH_EGC" /> No
+            </label>
+          </div>
+          <input type="text" class="underline-input1" placeholder="Remarks, Please Specify..."
+            formControlName="fH_EGCRemark" />
+        </div>
+      </div>
+
+      <div class="form-subsection">
+        <h4 style="font-weight: bold;">GERD History&nbsp;[in Patients With Case Of GERD]</h4>
+        <div class="checkbox-group mb-3">
+          <label class="label-heading">Usage of PPI</label>
+          <label>
+            <input type="radio" value="yes" formControlName="ppiusage"  /> Yes
+          </label>
+          <label>
+            <input type="radio" value="no" formControlName="ppiusage" /> No
+          </label>
+        </div>
+
+        <div formArrayName="medications" class="table-wrapper">
+
+    <div class="table-row font-weight-bold">
+      <div class="table-col">Medication Name</div>
+      <div class="table-col">Dose</div>
+      <div class="table-col">Frequency</div>
+      <div class="table-col">Action</div>
+    </div>
+
+    <div *ngFor="let group of medications.controls; let i = index" [formGroupName]="i" class="table-row">
+      <div class="table-col">
+        <input type="text" formControlName="medicationName" class="underline-input" placeholder="Enter medication name" />
+      </div>
+      <div class="table-col">
+        <input type="text" formControlName="dose" class="underline-input" placeholder="Enter dose" />
+      </div>
+      <div class="table-col">
+        <input type="text" formControlName="frequency" class="underline-input" placeholder="Enter frequency" />
+      </div>
+      <div class="table-col action-buttons">
+        <button type="button" (click)="deleteRow(i)">🗑️</button>
+        <button type="button" (click)="addRow()">➕</button>
+      </div>
+    </div>
+
+  </div>
+      </div>
+
+<div class="d-flex mt-4">
+  <button type="button" class="btn px-4 register-btn me-2"  *ngIf="(stage === 0 || stage === 2 || stage === 4)"  (click)="Submit()">Save</button>
+  <button type="button" class="btn px-4 register-btn me-2" (click)="OnNext()" 
+             [disabled]="!isSaved"  [ngClass]="{ 'disabled-btn': !familyhistoryForm.valid, 'btn-dark': familyhistoryForm.valid }" *ngIf="!isFollowUp">Next</button>
+  <button type="button" class="btn px-4 register-btn" (click)="goback()" *ngIf="!isFollowUp">Back</button>
+</div>
+    </div>
+  </form>
+</div>

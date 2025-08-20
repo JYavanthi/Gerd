@@ -1,0 +1,83 @@
+<form [formGroup]="medicationsForm">
+    <div class="container">
+        <div class="sidebar text-white p-4 pt-5" style="width: 212px; flex-shrink: 0; overflow-y: auto;">
+            <h5 class="mb-3">👨‍⚕️ Dr. Krishna Kumar</h5>
+            <p class="mb-4">kumar&#64;gmail.com</p>
+
+            <hr class="bg-white" />
+
+            <ul class="list-unstyled mb-4">
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Dashboard</a></li>
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Methodology</a></li>
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Protocol and Case Form</a></li>
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Instructions</a></li>
+            </ul>
+
+            <hr class="bg-white" />
+
+            <a href="/login" class="btn w-100 mt-3" style="background-color: white; color: #027082; font-weight: 600;">
+                Already registered? Login
+            </a>
+        </div>
+
+        <div class="main-content">
+            <div class="form-card">
+                <div class="form-header">CURRENT MEDICATION</div>
+
+                <div class="form-subsection">
+                    <div class="table-wrapper">
+                        <div class="table-row">
+                            <div class="table-col">Drug Class</div>
+                            <div class="table-col">Molecule</div>
+                            <div class="table-col">Dose</div>
+                            <div class="table-col">Frequency</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="table-col">NSAIDs</div>
+                            <div class="table-col"><input type="text" formControlName="nsaidsMolecule"></div>
+                            <div class="table-col"><input type="text" formControlName="nsaidsDose"></div>
+                            <div class="table-col"><input type="text" formControlName="nsaidsFrequency"></div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="table-col">Bisphosphonates</div>
+                            <div class="table-col"><input type="text" formControlName="bisphosphonatesMolecule"></div>
+                            <div class="table-col"><input type="text" formControlName="bisphosphonatesDose"></div>
+                            <div class="table-col"><input type="text" formControlName="bisphosphonatesFrequency"></div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="table-col">Steroids</div>
+                            <div class="table-col"><input type="text" formControlName="steroidsMolecule"></div>
+                            <div class="table-col"><input type="text" formControlName="steroidsDose"></div>
+                            <div class="table-col"><input type="text" formControlName="steroidsFrequency"></div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="table-col">Anti-platelet-Agents</div>
+                            <div class="table-col"><input type="text" formControlName="antiplateletMolecule"></div>
+                            <div class="table-col"><input type="text" formControlName="antiplateletDose"></div>
+                            <div class="table-col"><input type="text" formControlName="antiplateletFrequency"></div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="table-col">Any Others</div>
+                            <div class="table-col"><input type="text" formControlName="othersMolecule"></div>
+                            <div class="table-col"><input type="text" formControlName="othersDose"></div>
+                            <div class="table-col"><input type="text" formControlName="othersFrequency"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div  class="d-flex mt-4">
+  <button type="button" class="btn px-4 register-btn me-2" (click)="onSubmit()">Save</button>
+  <button type="button" class="btn px-4 register-btn me-2" (click)="OnNext()">Next</button>
+  <button type="button" class="btn px-4 register-btn" (click)="goback()">Back</button>
+</div>
+
+            </div>
+        </div>
+    </div>
+</form>

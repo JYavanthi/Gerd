@@ -1,0 +1,4844 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Gred API",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Assessment/GetAssessment": {
+      "get": {
+        "tags": [
+          "Assessment"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Assessment/SaveAssessment": {
+      "post": {
+        "tags": [
+          "Assessment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EAssessment"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EAssessment"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EAssessment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Assessment/GetAssessmentById/{id}/{stage}": {
+      "get": {
+        "tags": [
+          "Assessment"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ELogin"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ELogin"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ELogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/BaselineReport/GetBaselineReportData": {
+      "get": {
+        "tags": [
+          "BaselineReport"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/BaselineReport/DownloadBaselineReport": {
+      "get": {
+        "tags": [
+          "BaselineReport"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/CheifComplaint/SaveCheifComplaint": {
+      "post": {
+        "tags": [
+          "CheifComplaint"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ECheifComplaint"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ECheifComplaint"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ECheifComplaint"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CheifComplaint/GetCheifComplaint": {
+      "get": {
+        "tags": [
+          "CheifComplaint"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CheifComplaint/GetCheifComplaintById/{patientId}/{stage}": {
+      "get": {
+        "tags": [
+          "CheifComplaint"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/City/GetCitiesById": {
+      "get": {
+        "tags": [
+          "City"
+        ],
+        "parameters": [
+          {
+            "name": "stateId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Comorbidities/GetComorbidities": {
+      "get": {
+        "tags": [
+          "Comorbidities"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Comorbidities/GetComorbditiesById/{patientId}/{stage}": {
+      "get": {
+        "tags": [
+          "Comorbidities"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Comorbidities/SaveComorbidities": {
+      "post": {
+        "tags": [
+          "Comorbidities"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EComorbidities"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EComorbidities"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EComorbidities"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ComorbitiesRpt/GetAll": {
+      "get": {
+        "tags": [
+          "ComorbitiesRpt"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/CompletedReport/GetCompletedReportData": {
+      "get": {
+        "tags": [
+          "CompletedReport"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/CompletedReport/DownloadCompletedReport": {
+      "get": {
+        "tags": [
+          "CompletedReport"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Country/GetCountries": {
+      "get": {
+        "tags": [
+          "Country"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CurrentMedication/GetCurrentMedication": {
+      "get": {
+        "tags": [
+          "CurrentMedication"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CurrentMedication/SaveCurrentMedication": {
+      "post": {
+        "tags": [
+          "CurrentMedication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ECurrentMedication"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ECurrentMedication"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ECurrentMedication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CurrentMedication/GetCurrentMedicationById/{patientId}": {
+      "get": {
+        "tags": [
+          "CurrentMedication"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Diagnosis/SaveDiagnosis": {
+      "post": {
+        "tags": [
+          "Diagnosis"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EDiagnosis"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EDiagnosis"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EDiagnosis"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Diagnosis/GetDoctor": {
+      "get": {
+        "tags": [
+          "Diagnosis"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Diagnosis/GetDiagnosisById/{patientId}": {
+      "get": {
+        "tags": [
+          "Diagnosis"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DoctorLog/GetDoctorLogs": {
+      "get": {
+        "tags": [
+          "DoctorLog"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/DoctorLog/PostDoctorLogs": {
+      "post": {
+        "tags": [
+          "DoctorLog"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EDoctorLog"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EDoctorLog"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EDoctorLog"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DoctorReg/SaveDoctorReg": {
+      "post": {
+        "tags": [
+          "DoctorReg"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EDoctorReg"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EDoctorReg"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EDoctorReg"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DoctorReg/GetDoctor": {
+      "get": {
+        "tags": [
+          "DoctorReg"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Email": {
+      "post": {
+        "tags": [
+          "Email"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Case"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Case"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Case"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/FamiyHistory/GetFamilyHistory": {
+      "get": {
+        "tags": [
+          "FamiyHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/FamiyHistory/SaveFamilyHistory": {
+      "post": {
+        "tags": [
+          "FamiyHistory"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EFamilyHistory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EFamilyHistory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EFamilyHistory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/FamiyHistory/GetFamilyHistoryById/{id}/{stage}": {
+      "get": {
+        "tags": [
+          "FamiyHistory"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/FollowUp1Report/DownloadFollowUp1Report": {
+      "get": {
+        "tags": [
+          "FollowUp1Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/FollowUp2Report/DownloadFollowUp1Report": {
+      "get": {
+        "tags": [
+          "FollowUp2Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Gadget/GetGadget": {
+      "get": {
+        "tags": [
+          "Gadget"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Gadget/SaveGadget": {
+      "post": {
+        "tags": [
+          "Gadget"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EGadget"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EGadget"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EGadget"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Gadget/GetGadgetById/{PatientId}/{stage}": {
+      "get": {
+        "tags": [
+          "Gadget"
+        ],
+        "parameters": [
+          {
+            "name": "PatientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/GenderRPT/GetAll": {
+      "get": {
+        "tags": [
+          "GenderRPT"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/GerdHistory/AddGerdHistory": {
+      "post": {
+        "tags": [
+          "GerdHistory"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EGerdHistory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EGerdHistory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EGerdHistory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/GerdHistory/GetGerdHistory": {
+      "get": {
+        "tags": [
+          "GerdHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/GerdHistory/GetGerdHistoryById/{patientId}": {
+      "get": {
+        "tags": [
+          "GerdHistory"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/History/GetHistory": {
+      "get": {
+        "tags": [
+          "History"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/History/SaveHistory": {
+      "post": {
+        "tags": [
+          "History"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EHistory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EHistory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EHistory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/History/GetHistoryById/{id}/{stage}": {
+      "get": {
+        "tags": [
+          "History"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/HistoryEndsocopy/SaveHistoryEndsocopy": {
+      "post": {
+        "tags": [
+          "HistoryEndsocopy"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EHistoryEndsocopy"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EHistoryEndsocopy"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EHistoryEndsocopy"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/HistoryEndsocopy/GetHistoryEndsocopy": {
+      "get": {
+        "tags": [
+          "HistoryEndsocopy"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/InCompletedReport/GetInCompletedReportData": {
+      "get": {
+        "tags": [
+          "InCompletedReport"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/InCompletedReport/DownloadInCompletedReport": {
+      "get": {
+        "tags": [
+          "InCompletedReport"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Management/GetManagement": {
+      "get": {
+        "tags": [
+          "Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Management/SaveManagement": {
+      "post": {
+        "tags": [
+          "Management"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EManagement"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EManagement"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EManagement"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Management/GetManagementById/{id}/{stage}": {
+      "get": {
+        "tags": [
+          "Management"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Management/GetCurrentStage/{patientId}/{stage}": {
+      "get": {
+        "tags": [
+          "Management"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Management/CompleteCase": {
+      "post": {
+        "tags": [
+          "Management"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EStageUpdate"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EStageUpdate"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EStageUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/MedicalExamination/GetMedicalExamination": {
+      "get": {
+        "tags": [
+          "MedicalExamination"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MedicalExamination/SaveMedicalExamination": {
+      "post": {
+        "tags": [
+          "MedicalExamination"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EMedicalExamination"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EMedicalExamination"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EMedicalExamination"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MedicalExamination/GetMedicalExaminationById/{patientId}": {
+      "get": {
+        "tags": [
+          "MedicalExamination"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Medication/SaveMedication": {
+      "post": {
+        "tags": [
+          "Medication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EMedication"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EMedication"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EMedication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Medication/GetMedicationByPatientId/{patientId}/{stage}": {
+      "get": {
+        "tags": [
+          "Medication"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatientHistory/SavePatientHistory": {
+      "post": {
+        "tags": [
+          "PatientHistory"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EPatientHistory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EPatientHistory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EPatientHistory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatientHistory/GetPatientHistory": {
+      "get": {
+        "tags": [
+          "PatientHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatientHistory/GetPatientHistoryById/{id}": {
+      "get": {
+        "tags": [
+          "PatientHistory"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatientReg/SavePatient": {
+      "post": {
+        "tags": [
+          "PatientReg"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EPatientReg"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EPatientReg"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EPatientReg"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatientReg/GetPatient": {
+      "get": {
+        "tags": [
+          "PatientReg"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatientReg/GetPatient/{id}": {
+      "get": {
+        "tags": [
+          "PatientReg"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PersonalHistory/GetPersonalHistory": {
+      "get": {
+        "tags": [
+          "PersonalHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PersonalHistory/SavePersonalHistory": {
+      "post": {
+        "tags": [
+          "PersonalHistory"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EPersonalHistory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EPersonalHistory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EPersonalHistory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PersonalHistory/GetPersonalHistoryById/{id}/{stage}": {
+      "get": {
+        "tags": [
+          "PersonalHistory"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PtnTrack/GetPageRouterByPatientId/{patientId}": {
+      "get": {
+        "tags": [
+          "PtnTrack"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Report/DownloadFullReport": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Sleep/SaveSleep": {
+      "post": {
+        "tags": [
+          "Sleep"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ESleep"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ESleep"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ESleep"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Sleep/GetSleep": {
+      "get": {
+        "tags": [
+          "Sleep"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Sleep/GetSleepByPatientId/{patientId}/{stage}": {
+      "get": {
+        "tags": [
+          "Sleep"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonRsult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/State/GetState": {
+      "get": {
+        "tags": [
+          "State"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/VwMedicationRpt/GetAll": {
+      "get": {
+        "tags": [
+          "VwMedicationRpt"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/WeatherForecast": {
+      "get": {
+        "tags": [
+          "WeatherForecast"
+        ],
+        "operationId": "GetWeatherForecast",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeatherForecast"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeatherForecast"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeatherForecast"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Case": {
+        "type": "object",
+        "properties": {
+          "patientId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "body": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CommonRsult": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EAssessment": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "assessmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pid": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q1": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q2": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q3": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q4": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q5": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q6": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q7": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q8": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q9": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q10": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q11": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "q12": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "acidRefluxSymptom": {
+            "type": "string",
+            "nullable": true
+          },
+          "dysmotity": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalPoints": {
+            "type": "string",
+            "nullable": true
+          },
+          "heartburnNil": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "heartburnMinimal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "heartburnModerate": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "heartburnHeartburn": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "regurgitationNil": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "regurgitationMinimal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "regurgitationModerate": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "regurgitationHeartburn": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "retrosternalPainNil": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "retrosternalPainMinimal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "retrosternalPainModerate": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "retrosternalPainHeartburn": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "acidTasteMouthNil": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "acidTasteMouthMinimal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "acidTasteMouthModerate": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "acidTasteMouthHeartburn": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "eeLaxlesClassification": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "eeAngelesGrade": {
+            "type": "string",
+            "nullable": true
+          },
+          "eeAgremarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "eeBarrettRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "eeHillClassificationGrade": {
+            "type": "string",
+            "nullable": true
+          },
+          "eeHillRemarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "pHimpedanceMonitoring": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "pHimDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "pHimAttached": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "pHimAttachement": {
+            "type": "string",
+            "nullable": true
+          },
+          "pHimRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "manometryTest": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "mtDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "mtAttached": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "mtAttachement": {
+            "type": "string",
+            "nullable": true
+          },
+          "mtRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "biopsy": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "biopsyDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "biopsyAttached": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "biopsyAttachement": {
+            "type": "string",
+            "nullable": true
+          },
+          "biopsyRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalSymptomScore": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "symptomScore": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ECheifComplaint": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "cheifCompliantID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "doctorID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hB_Duration": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hB_Frequency": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hB_Postural": {
+            "type": "string",
+            "nullable": true
+          },
+          "hB_Nocturnal": {
+            "type": "string",
+            "nullable": true
+          },
+          "r_Duration": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "r_Frequency": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "r_Postural": {
+            "type": "string",
+            "nullable": true
+          },
+          "r_Nocturnal": {
+            "type": "string",
+            "nullable": true
+          },
+          "rP_Duration": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rP_Frequency": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rP_Postural": {
+            "type": "string",
+            "nullable": true
+          },
+          "rP_Nocturnal": {
+            "type": "string",
+            "nullable": true
+          },
+          "aT_Duration": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "aT_Frequency": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "aT_Postural": {
+            "type": "string",
+            "nullable": true
+          },
+          "aT_Nocturnal": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EComorbidities": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "comorbiditiesID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "patientID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "doctorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "hT_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "hT_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "dB_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "dB_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "dD_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "dD_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "clD_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "clD_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "nD_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "nD_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "cD_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "cD_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "h_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "h_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "htD_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "htD_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "bD_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "bD_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "ckD_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "ckD_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "a_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "a_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "o_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "o_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "rA_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "rA_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "sS_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "sS_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "c_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "c_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "cmO_Present": {
+            "type": "string",
+            "nullable": true
+          },
+          "cmO_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ECurrentMedication": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "nsaiDs_Molecule": {
+            "type": "string",
+            "nullable": true
+          },
+          "nsaiDs_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "nsaiDs_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "bisphosphonates_Molecule": {
+            "type": "string",
+            "nullable": true
+          },
+          "bisphosphonates_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "bisphosphonates_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "steroids_Molecule": {
+            "type": "string",
+            "nullable": true
+          },
+          "steroids_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "steroids_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "antiplatelet_Molecule": {
+            "type": "string",
+            "nullable": true
+          },
+          "antiplatelet_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "antiplatelet_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "others_Molecule": {
+            "type": "string",
+            "nullable": true
+          },
+          "others_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "others_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EDiagnosis": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string"
+          },
+          "diagnosisID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "patientID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "doctorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "newlyDiagnosed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "knownCaseOfGERD": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "greD_NoOfYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "gerdType": {
+            "type": "string",
+            "nullable": true
+          },
+          "refractoryToPPI": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "adherenceToTherapy": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EDoctorLog": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string"
+          },
+          "doctorlogID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "doctorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "loginTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "logoutTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EDoctorReg": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "doctorID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNO": {
+            "type": "string",
+            "nullable": true
+          },
+          "mciCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "placeOfPractice": {
+            "type": "string",
+            "nullable": true
+          },
+          "hospitalName": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "city": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "enterCodeNO": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EFamilyHistory": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "familyHistoryID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "doctorID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fH_GRED": {
+            "type": "string",
+            "nullable": true
+          },
+          "fH_Remark": {
+            "type": "string",
+            "nullable": true
+          },
+          "fH_EGC": {
+            "type": "string",
+            "nullable": true
+          },
+          "fH_EGCRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "gH_PPI": {
+            "type": "string",
+            "nullable": true
+          },
+          "medication_Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EGadget": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "computerUsed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "computerFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "computerDurationYears": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "smartphoneUsed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "smartphoneFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "smartphoneDurationYears": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "workingHours": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobType": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalWorkingYears": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EGerdHistory": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "ghid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "doctorID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "usageOfPPI": {
+            "type": "string",
+            "nullable": true
+          },
+          "historyofEndoscopy": {
+            "type": "string",
+            "nullable": true
+          },
+          "endoscopyDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endoscopyAttached": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "endoscopyAttement": {
+            "type": "string",
+            "nullable": true
+          },
+          "endoscopyRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "historyofGS": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "gS_BariatricSurgery": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "gS_BSRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "gS_FundoplicationSurgery": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "gS_FSRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "gS_GastricPOEMSurgery": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "gS_GPSRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "gS_Gastrojejunostomy": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "gS_GJRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "gs_OtherText": {
+            "type": "string",
+            "nullable": true
+          },
+          "gS_Other": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "gS_OtherRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EHistory": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "doctorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "patientID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "past_History": {
+            "type": "string",
+            "nullable": true
+          },
+          "diet_Vegetarian": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "diet_NonVegetarian": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EHistoryEndsocopy": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "endoscopy_History": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "endoscopy_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endoscopy_ReportAttached": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "endoscopy_Remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "gastroSurgery_History": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "bariatric_Surgery": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "bariatric_Remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "fundoplication_Surgery": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "fundoplication_Remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "poeM_Surgery": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "poeM_Remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "gastrojejunostomy_Surgery": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "gastrojejunostomy_Remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "other_Surgery": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "other_Surgery_Specify": {
+            "type": "string",
+            "nullable": true
+          },
+          "other_Remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "modifiedDt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ELogin": {
+        "type": "object",
+        "properties": {
+          "mobileNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EManagement": {
+        "type": "object",
+        "properties": {
+          "managementID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "patientID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "lifestyleRecommendations": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "modifiedDt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ppI_Medication_Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "ppI_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "ppI_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "prokinetics_Medication_Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "prokinetics_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "prokinetics_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "sucralfate_Medication_Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "sucralfate_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "sucralfate_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "alginate_Medication_Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "alginate_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "alginate_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "h2Blockers_Medication_Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "h2Blockers_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "h2Blockers_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "h2BlockersC_Medication_Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "h2BlockersC_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "h2BlockersC_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "pcaB_Medication_Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "pcaB_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "pcaB_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "others_Medication_Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "others_Dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "others_Frequency": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EMedicalExamination": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "meid": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "doctorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "patientID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "pE_Height": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pE_Weight": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pE_BMI": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "sE_GANormal": {
+            "type": "boolean"
+          },
+          "sE_GAAbNormalCS": {
+            "type": "boolean"
+          },
+          "sE_GAAbNormalNCS": {
+            "type": "boolean"
+          },
+          "pE_BMSE_GAAbNormalRemarkI5": {
+            "type": "string",
+            "nullable": true
+          },
+          "paE_Findings": {
+            "type": "string",
+            "nullable": true
+          },
+          "sE_RSNormal": {
+            "type": "boolean"
+          },
+          "sE_RSAbNormal_CS": {
+            "type": "boolean"
+          },
+          "sE_RSAbNormal_NCS": {
+            "type": "boolean"
+          },
+          "sE_RSAbNormalRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "othersNormal": {
+            "type": "boolean"
+          },
+          "othersAbNormal_CS": {
+            "type": "boolean"
+          },
+          "othersAbNormal_NCS": {
+            "type": "boolean"
+          },
+          "othersAbNormalRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EMedication": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "medicationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ghid": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "medicationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "dose": {
+            "type": "string",
+            "nullable": true
+          },
+          "frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "molecule": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "modifiedDt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EPatientHistory": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "patientHistoryID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "aD_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "aD_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "aD_Quantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "aD_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "cF_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "cF_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "cF_Quantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "cF_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "t_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "t_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "t_Quantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "t_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "sF_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "sF_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "sF_Quantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "sF_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "aH_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "aH_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "aH_Quantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "aH_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "cS_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "cS_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "cS_Quantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "cS_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "s_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "s_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "s_Quantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "s_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "tB_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "tB_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "tB_Quantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "tB_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "g_Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "g_Usage": {
+            "type": "string",
+            "nullable": true
+          },
+          "g_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "g_YearOfUsage": {
+            "type": "string",
+            "nullable": true
+          },
+          "workingHours": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobType": {
+            "type": "string",
+            "nullable": true
+          },
+          "duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "past_History": {
+            "type": "string",
+            "nullable": true
+          },
+          "diet": {
+            "type": "string",
+            "nullable": true
+          },
+          "sleepApnea_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "sleepApnea_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "sleepApnea_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "exercise_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "walking_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "walking_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "walking_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "jogging_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "jogging_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "jogging_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "gym_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "gym_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "gym_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "yoga_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "yoga_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "yoga_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "aerobics_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "aerobics_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "aerobics_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "zumba_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "zumba_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "zumba_Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "othersExercise_Intake": {
+            "type": "string",
+            "nullable": true
+          },
+          "othersExercise_Frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "othersExercise_Duration": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EPatientReg": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "patientID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "doctorID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "initial": {
+            "type": "string",
+            "nullable": true
+          },
+          "subjectNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "education": {
+            "type": "string",
+            "nullable": true
+          },
+          "occupation": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "city": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pincode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "placeType": {
+            "type": "string",
+            "nullable": true
+          },
+          "socioeconomicStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "familyIncome": {
+            "type": "string",
+            "nullable": true
+          },
+          "pastHistory": {
+            "type": "string",
+            "nullable": true
+          },
+          "diet": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EPersonalHistory": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "personalHistoryId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "doctorId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "aeratedIntake": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "aeratedFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "aeratedQuantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "aeratedDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "coffeeIntake": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "coffeeFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "coffeeQuantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "coffeeDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "teaIntake": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "teaFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "teaQuantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "teaDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "spicyIntake": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "spicyFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "spicyQuantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "spicyDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "alcoholIntake": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "alcoholFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "alcoholQuantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "alcoholDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "sweetsIntake": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "sweetsFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "sweetsQuantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "sweetsDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "smokingIntake": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "smokingFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "smokingQuantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "smokingDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "tobaccoIntake": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tobaccoFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "tobaccoQuantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "tobaccoDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ESleep": {
+        "type": "object",
+        "properties": {
+          "flag": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sleepApneayes": {
+            "type": "string",
+            "nullable": true
+          },
+          "sleepApneano": {
+            "type": "string",
+            "nullable": true
+          },
+          "sleepApneaFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "sleepApneaDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "exerciseIntakeyes": {
+            "type": "string",
+            "nullable": true
+          },
+          "exerciseIntakeno": {
+            "type": "string",
+            "nullable": true
+          },
+          "joggingSelectedyes": {
+            "type": "string",
+            "nullable": true
+          },
+          "joggingSelectedno": {
+            "type": "string",
+            "nullable": true
+          },
+          "joggingFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "joggingDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "gymSelectedyes": {
+            "type": "string",
+            "nullable": true
+          },
+          "gymSelectedno": {
+            "type": "string",
+            "nullable": true
+          },
+          "gymFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "gymDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "yogaSelectedyes": {
+            "type": "string",
+            "nullable": true
+          },
+          "yogaSelectedno": {
+            "type": "string",
+            "nullable": true
+          },
+          "yogaFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "yogaDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "walkingSelectedyes": {
+            "type": "string",
+            "nullable": true
+          },
+          "walkingSelectedno": {
+            "type": "string",
+            "nullable": true
+          },
+          "walkingFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "walkingDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "aerobicsyes": {
+            "type": "string",
+            "nullable": true
+          },
+          "aerobicsno": {
+            "type": "string",
+            "nullable": true
+          },
+          "aerobicsFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "aerobicsDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "zumbayes": {
+            "type": "string",
+            "nullable": true
+          },
+          "zumbano": {
+            "type": "string",
+            "nullable": true
+          },
+          "zumbaFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "zumbaDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "othersText": {
+            "type": "string",
+            "nullable": true
+          },
+          "othersyes": {
+            "type": "string",
+            "nullable": true
+          },
+          "othersno": {
+            "type": "string",
+            "nullable": true
+          },
+          "othersFrequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "othersDuration": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EStageUpdate": {
+        "type": "object",
+        "properties": {
+          "patientId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdby": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WeatherForecast": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "temperatureC": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "temperatureF": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Enter 'Bearer <your_token>'",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}

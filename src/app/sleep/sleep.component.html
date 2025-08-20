@@ -1,0 +1,196 @@
+<form [formGroup]="sleepForm">
+  <div class="container">
+    <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
+
+    <div class="main-content">
+      <div class="form-card">
+        <div class="form-header">PERSONAL HISTORY
+          <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+        <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+          <div [ngClass]="getStatusClass(1)" class="arrow">
+            Baseline
+            <i *ngIf="tabId === 1"></i>
+          </div>
+          <div [ngClass]="getStatusClass(2)" class="arrow">
+            Follow-up 1
+            <i *ngIf="tabId === 2"></i>
+          </div>
+          <div [ngClass]="getStatusClass(3)" class="arrow">
+            Follow-up 2
+            <i *ngIf="tabId === 3"></i>
+          </div>
+        </div>
+        <div class="form-group">
+          <label><strong>Sleep Apnea</strong></label>
+          <table class="single-row-table">
+            <tbody>
+              <tr>
+                <td class="radio-cell">
+                  <label>
+                    <input type="radio" formControlName="sleepApnea" value="yes"> Yes
+                  </label>
+                  <label>
+                    <input type="radio" formControlName="sleepApnea" value="no"> No
+                  </label>
+                  <div *ngIf="sleepForm.get('sleepApnea')?.touched && sleepForm.get('sleepApnea')?.invalid"
+                    class="text-danger">
+                    This field is required.
+                  </div>
+                </td>
+                <td>
+                  <!-- <input type="text" formControlName="sleepApneaFrequency" [disabled]="!sleepApneaYes || isViewMode"
+                    class="underline-input" placeholder="/week" /> -->
+                  <input type="text" formControlName="sleepApneaDuration" [disabled]="!sleepApneaYes || isViewMode"
+                    class="underline-input" placeholder="/week" /> hr/week
+                </td>
+                <td>
+                  <!-- <input type="text" formControlName="sleepApneaDuration" [disabled]="!sleepApneaYes || isViewMode"
+                    class="underline-input" placeholder="years" /> -->
+                  <input type="text" formControlName="sleepApneaDuration" [disabled]="!sleepApneaYes || isViewMode"
+                    class="underline-input" placeholder="years" />years
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="form-group">
+          <label><strong>Exercise</strong></label>
+          <!-- <div class="checkbox-group">
+            <label>
+              <input type="radio" formControlName="exerciseIntake" value="yes" [disabled]="joggingSelectedyes || isViewMode"> Yes
+            </label>
+            <label>
+              <input type="radio" formControlName="exerciseIntake" value="no" [disabled]="joggingSelectedyes || isViewMode"> No
+            </label>
+          </div> -->
+          <div class="checkbox-group">
+            <label>
+              <input type="radio" formControlName="exerciseIntake" value="yes" [disabled]="isViewMode" />
+              Yes
+            </label>
+            <label>
+              <input type="radio" formControlName="exerciseIntake" value="no" [disabled]="isViewMode" />
+              No
+            </label>
+          </div>
+
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Exercise</th>
+                <th>Choose</th>
+                <th>Frequency</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jogging</td>
+                <td>
+                  <label><input type="radio" formControlName="jogging" value="yes">
+                    Yes</label>
+                  <label><input type="radio" formControlName="jogging" value="no">
+                    No</label>
+                </td>
+                <td><input type="text" formControlName="joggingFrequency" [disabled]="!joggingSelectedyes || isViewMode"
+                    class="underline-input" /> hr/week</td>
+                <td><input type="text" formControlName="joggingDuration" [disabled]="!joggingSelectedyes || isViewMode"
+                    class="underline-input" /> years</td>
+              </tr>
+              <tr>
+                <td>GYM</td>
+                <td>
+                  <label><input type="radio" formControlName="gym" value="yes"> Yes</label>
+                  <label><input type="radio" formControlName="gym" value="no"> No</label>
+                </td>
+                <td><input type="text" formControlName="gymFrequency" [disabled]="!gymSelectedyes"
+                    class="underline-input" />
+                  hr/week</td>
+                <td><input type="text" formControlName="gymDuration" [disabled]="!gymSelectedyes"
+                    class="underline-input" />
+                  years</td>
+              </tr>
+              <tr>
+                <td>Yoga</td>
+                <td>
+                  <label><input type="radio" formControlName="yoga" value="yes"> Yes</label>
+                  <label><input type="radio" formControlName="yoga" value="no"> No</label>
+                </td>
+                <td><input type="text" formControlName="yogaFrequency" [disabled]="isViewMode"
+                    class="underline-input" /> hr/week</td>
+                <td><input type="text" formControlName="yogaDuration" [disabled]="isViewMode" class="underline-input" />
+                  years</td>
+              </tr>
+              <tr>
+                <td>Walking</td>
+                <td>
+                  <label><input type="radio" formControlName="walking" value="yes"> Yes</label>
+                  <label><input type="radio" formControlName="walking" value="no"> No</label>
+                </td>
+                <td><input type="text" formControlName="walkingFrequency" [disabled]="isViewMode"
+                    class="underline-input" /> hr/week</td>
+                <td><input type="text" formControlName="walkingDuration" [disabled]="isViewMode"
+                    class="underline-input" /> years</td>
+              </tr>
+              <tr>
+                <td>Aerobics</td>
+                <td>
+                  <label><input type="radio" formControlName="aerobics" value="yes" [disabled]="isViewMode">
+                    Yes</label>
+                  <label><input type="radio" formControlName="aerobics" value="no" [disabled]="isViewMode">
+                    No</label>
+                </td>
+                <td><input type="text" formControlName="aerobicsFrequency" [disabled]="isViewMode"
+                    class="underline-input" /> hr/week</td>
+                <td><input type="text" formControlName="aerobicsDuration" [disabled]="isViewMode"
+                    class="underline-input" /> years</td>
+              </tr>
+              <tr>
+                <td>Zumba</td>
+                <td>
+                  <label><input type="radio" formControlName="zumba" value="yes" [disabled]="isViewMode">
+                    Yes</label>
+                  <label><input type="radio" formControlName="zumba" value="no" [disabled]="isViewMode">
+                    No</label>
+                </td>
+                <td><input type="text" formControlName="zumbaFrequency" [disabled]="isViewMode"
+                    class="underline-input" /> hr/week</td>
+                <td><input type="text" formControlName="zumbaDuration" [disabled]="isViewMode"
+                    class="underline-input" /> years</td>
+              </tr>
+              <tr>
+                <td class="other">Others
+                  <input type="text" formControlName="othersText" [disabled]="isViewMode">
+                </td>
+                <td>
+                  <label><input type="radio" formControlName="others" value="yes" [disabled]="isViewMode">
+                    Yes</label>
+                  <label><input type="radio" formControlName="others" value="no" [disabled]="isViewMode">
+                    No</label>
+                </td>
+                <td><input type="text" formControlName="othersFrequency" [disabled]="isViewMode"
+                    class="underline-input" /> hr/week</td>
+                <td><input type="text" formControlName="othersDuration" [disabled]="isViewMode"
+                    class="underline-input" /> years</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex mt-4">
+          <button type="button" class="btn px-4 register-btn me-2"
+            *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode" (click)="onSave()">Save</button>
+          <button type="button" class="btn px-4 register-btn me-2" (click)="OnNext()"
+            *ngIf="!isPrintMode && !isFollowUp" [disabled]="!isSaved">
+            Next
+          </button>
+          <button type="button" class="btn px-4 register-btn" (click)="goback()"
+            *ngIf="!isPrintMode && !isFollowUp">Back</button>
+          <button (click)="onNext()" class="btn px-4 register-btn me-2" type="button" *ngIf="isFollowUp"
+            [disabled]="!isSaved">Next</button>
+          <button (click)="goback()" class="btn px-4 register-btn me-2" type="button" *ngIf="isFollowUp">Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,81 @@
+<!-- <div class="followup-container d-flex">
+    <div class="sidebar">
+      <h5 class="mb-3">👨‍⚕️ Dr. Krishna Kumar</h5>
+      <p class="mb-4">kumar&#64;gmail.com</p>
+  
+      <hr class="bg-white" />
+  
+      <ul class="list-unstyled mb-4">
+        <li><a routerLink="/dashboard" class="nav-link">Dashboard</a></li>
+        <li><a href="#" class="nav-link">Methodology</a></li>
+        <li><a href="#" class="nav-link">Protocol and Case Form</a></li>
+        <li><a href="#" class="nav-link">Instructions</a></li>
+      </ul>
+  
+      <hr class="bg-white" />
+  
+      <a routerLink="/login" class="login-btn">
+        Already registered? Login
+      </a>
+    </div>
+  
+    <main class="content p-4">
+      <div class="header-bar">Welcome to GIRD REGISTRY</div>
+  
+      <div class="row mb-4">
+        <div class="col-md-2 fw-bold">Total Follow-Up Cases</div>
+        <div class="col-md-2">
+          <select class="form-select">
+            <option>Status</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <input type="text" class="form-control" placeholder="Date Range" />
+        </div>
+        <div class="col-md-2">
+          <input type="text" class="form-control" placeholder="Search" />
+        </div>
+        <div class="col-md-2">
+          <label class="fw-bold">Patient Gender</label>
+          <input type="number" class="form-control" value="10" />
+        </div>
+      </div>
+  
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Case ID</th>
+              <th>Case Name</th>
+              <th>Follow Up Date</th>
+              <th>Status</th>
+              <th>Doctor</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let case of caseList">
+              <td>{{ case.id }}</td>
+              <td>{{ case.name }}</td>
+              <td>{{ case.date }}</td>
+              <td>
+                <span [ngClass]="{
+                  'text-primary': case.status === 'Completed',
+                  'text-warning': case.status === 'Pending'
+                }">
+                  {{ case.status }}
+                </span>
+              </td>
+              <td>{{ case.doctor }}</td>
+              <td>
+                <button class="btn btn-info btn-sm text-white" >
+                    View Details
+                  </button>
+                                </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+   -->

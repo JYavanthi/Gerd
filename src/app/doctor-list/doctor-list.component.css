@@ -1,0 +1,9 @@
+/* td{
+    color: white;
+} */
+
+
+.border{
+    display: flex;
+    gap: 5px;
+}

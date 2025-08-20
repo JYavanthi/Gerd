@@ -1,0 +1,41 @@
+.guideline-section {
+    padding: 40px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 94%;
+    margin: auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.section-title {
+    background-color: #007b8a;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.guideline-item {
+    margin-bottom: 2rem;
+}
+
+.guideline-heading {
+    font-weight: bold;
+    color: #b00020;
+    margin-bottom: 0.5rem;
+}
+
+.guideline-link {
+    color: #007b8a;
+    text-decoration: underline;
+    word-break: break-word;
+}
+
+
+.contact-info h4 {
+    margin-bottom: 0.2rem;
+    font-weight: bold;
+}
+.contact-info{
+    display: grid;
+    gap: 10px;
+}

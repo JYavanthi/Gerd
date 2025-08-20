@@ -1,0 +1,262 @@
+
+
+<div class="d-flex flex-column" style="background-color: #027082; min-height: 100vh;">
+
+  <!-- Content Section -->
+  <div class="d-flex flex-grow-1">
+    <!-- Sidebar -->
+    <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
+    <!-- Registration Form -->
+    <div class="flex-grow-1 d-flex align-items-start justify-content-start"
+      style="margin-top: 2rem; margin-bottom: 2rem;">
+      <div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+        <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
+          Demographic Details
+        </h2>
+        <div class="personal-history">
+          <h2 class="title">PERSONAL HISTORY
+            <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
+
+          </h2>
+          <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+            <div [ngClass]="getStatusClass(1)" class="arrow">
+              Baseline
+              <i *ngIf="tabId === 1"></i>
+            </div>
+            <div [ngClass]="getStatusClass(2)" class="arrow">
+              Follow-up 1
+              <i *ngIf="tabId === 2"></i>
+            </div>
+            <div [ngClass]="getStatusClass(3)" class="arrow">
+              Follow-up 2
+              <i *ngIf="tabId === 3"></i>
+            </div>
+          </div>
+          <!-- <p class="case-info">Case #1 <span class="doctor-name">of Dr Krishna Kumar</span></p>
+                    <h3>Patient Personal History</h3> -->
+
+          <table class="history-table" [formGroup]="formData">
+            <thead>
+              <tr>
+                <th>Items</th>
+                <th>Intake</th>
+                <th>Frequency (No. of times)</th>
+                <th>Quantity</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr formGroupName="aerated">
+                <td>Aerated Drinks (ml/day)</td>
+                <td class="redioButton">
+                
+                  <label>
+                    <input type="radio" name="aerated_intake" (change)="onSelect('aerated', true)"
+                      [checked]="intakeStates['aerated'] === true" [disabled]="isViewMode" />
+                    Yes
+                  </label>
+
+                  <label>
+                    <input type="radio" name="aerated_intake" (change)="onSelect('aerated', false)"
+                      [checked]="intakeStates['aerated'] === false" [disabled]="isViewMode" />
+                    No
+                  </label>
+                </td>
+                <td>
+                  <input type="text" placeholder="/day" formControlName="frequency"
+                    [disabled]="!intakeStates['aerated'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="ml" formControlName="quantity"
+                    [disabled]="!intakeStates['aerated'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="years" formControlName="duration"
+                    [disabled]="!intakeStates['aerated'] || isViewMode" />
+                </td>
+              </tr>
+            
+              <tr formGroupName="coffee">
+                <td>Coffee (ml/day)</td>
+
+                <td class="redioButton">
+                  <!-- <label><input type="radio" name="tea_intake" (change)="onSelect('tea', true)"
+                      [disabled]="isViewMode" /> Yes</label> -->
+                  <label>
+                    <input type="radio" name="coffee_intake" (change)="onSelect('coffee', true)"
+                      [checked]="intakeStates['coffee'] === true" [disabled]="isViewMode" />
+                    Yes
+                  </label>
+                  <label><input type="radio" name="coffee_intake" (change)="onSelect('coffee', false)"
+                      [checked]="intakeStates['coffee'] === false" [disabled]="isViewMode" /> No</label>
+                </td>
+
+                <td>
+                  <input type="text" placeholder="/day" formControlName="frequency"
+                    [disabled]="!intakeStates['coffee'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="ml" formControlName="quantity"
+                    [disabled]="!intakeStates['coffee'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="years" formControlName="duration"
+                    [disabled]="!intakeStates['coffee'] || isViewMode" />
+                </td>
+              </tr>
+
+              <tr formGroupName="tea">
+                <td>Tea (ml/day)</td>
+                <td class="redioButton">
+                  <!-- <label><input type="radio" name="tea_intake" (change)="onSelect('tea', true)"
+                      [disabled]="isViewMode" /> Yes</label> -->
+                  <label>
+                    <input type="radio" name="tea_intake" (change)="onSelect('tea', true)"
+                      [checked]="intakeStates['tea'] === true" [disabled]="isViewMode" />
+                    Yes
+                  </label>
+                  <label><input type="radio" name="tea_intake" (change)="onSelect('tea', false)"
+                      [checked]="intakeStates['tea'] === false" [disabled]="isViewMode" /> No</label>
+                </td>
+                <td>
+                  <input type="text" placeholder="/day" formControlName="frequency"
+                    [disabled]="!intakeStates['tea'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="ml" formControlName="quantity"
+                    [disabled]="!intakeStates['tea'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="years" formControlName="duration"
+                    [disabled]="!intakeStates['tea'] || isViewMode" />
+                </td>
+              </tr>
+
+              <tr formGroupName="spicy">
+                <td>Spicy food</td>
+                <td class="redioButton">
+                  <label><input type="radio" name="spicy_intake" (change)="onSelect('spicy', true)"
+                      [checked]="intakeStates['spicy'] === true" [disabled]="isViewMode" /> Yes</label>
+                  <label><input type="radio" name="spicy_intake" (change)="onSelect('spicy', false)"
+                      [checked]="intakeStates['spicy'] === false" [disabled]="isViewMode" /> No</label>
+                </td>
+                <td>
+                  <input type="text" placeholder="/week" formControlName="frequency"
+                    [disabled]="!intakeStates['spicy'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="quantity" formControlName="quantity"
+                    [disabled]="!intakeStates['spicy'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="years" formControlName="duration"
+                    [disabled]="!intakeStates['spicy'] || isViewMode" />
+                </td>
+              </tr>
+
+              <tr formGroupName="alcohol">
+                <td>Alcohol (ml/week)</td>
+                <td class="redioButton">
+                  <label><input type="radio" name="alcohol_intake" (change)="onSelect('alcohol', true)"
+                      [checked]="intakeStates['alcohol'] === true" [disabled]="isViewMode" /> Yes</label>
+                  <label><input type="radio" name="alcohol_intake" (change)="onSelect('alcohol', false)"
+                      [checked]="intakeStates['alcohol'] === false" [disabled]="isViewMode" /> No</label>
+                </td>
+                <td>
+                  <input type="text" placeholder="/week" formControlName="frequency"
+                    [disabled]="!intakeStates['alcohol'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="ml" formControlName="quantity"
+                    [disabled]="!intakeStates['alcohol'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="years" formControlName="duration"
+                    [disabled]="!intakeStates['alcohol'] || isViewMode" />
+                </td>
+              </tr>
+
+              <tr formGroupName="sweets">
+                <td>Chocolates/sweets (gms/day)</td>
+                <td class="redioButton">
+                  <label><input type="radio" name="sweets_intake" (change)="onSelect('sweets', true)"
+                      [checked]="intakeStates['sweets'] === true" [disabled]="isViewMode" /> Yes</label>
+                  <label><input type="radio" name="sweets_intake" (change)="onSelect('sweets', false)"
+                      [checked]="intakeStates['sweets'] === false" [disabled]="isViewMode" /> No</label>
+                </td>
+                <td>
+                  <input type="text" placeholder="/week" formControlName="frequency"
+                    [disabled]="!intakeStates['sweets'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="g" formControlName="quantity"
+                    [disabled]="!intakeStates['sweets'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="years" formControlName="duration"
+                    [disabled]="!intakeStates['sweets'] || isViewMode" />
+                </td>
+              </tr>
+
+              <tr formGroupName="smoking">
+                <td>Smoking (cigarettes/day)</td>
+                <td class="redioButton">
+                  <label><input type="radio" name="smoking_intake" (change)="onSelect('smoking', true)"
+                      [checked]="intakeStates['smoking'] === true" [disabled]="isViewMode" /> Yes</label>
+                  <label><input type="radio" name="smoking_intake" (change)="onSelect('smoking', false)"
+                      [checked]="intakeStates['smoking'] === false" [disabled]="isViewMode" /> No</label>
+                </td>
+                <td>
+                  <input type="text" placeholder="/day" formControlName="frequency"
+                    [disabled]="!intakeStates['smoking'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="packs" formControlName="quantity"
+                    [disabled]="!intakeStates['smoking'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="years" formControlName="duration"
+                    [disabled]="!intakeStates['smoking'] || isViewMode" />
+                </td>
+              </tr>
+
+              <tr formGroupName="tobacco">
+                <td>Tobacco (other forms/day)</td>
+                <td class="redioButton">
+                  <label><input type="radio" name="tobacco_intake" (change)="onSelect('tobacco', true)"
+                      [checked]="intakeStates['tobacco'] === true" [disabled]="isViewMode" /> Yes</label>
+                  <label><input type="radio" name="tobacco_intake" (change)="onSelect('tobacco', false)"
+                      [checked]="intakeStates['tobacco'] === false" [disabled]="isViewMode" /> No</label>
+                </td>
+                <td>
+                  <input type="text" placeholder="/day" formControlName="frequency"
+                    [disabled]="!intakeStates['tobacco'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="quantity" formControlName="quantity"
+                    [disabled]="!intakeStates['tobacco'] || isViewMode" />
+                </td>
+                <td>
+                  <input type="text" placeholder="years" formControlName="duration"
+                    [disabled]="!intakeStates['tobacco'] || isViewMode" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+        <div class="d-flex mt-4">
+          <button type="button" class="btn px-4 register-btn me-2" *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode"
+            (click)="Submit()">Save</button>
+          <button type="button" class="btformData['tobacco']['duration']n px-4 register-btn me-2" (click)="OnNext()"
+            *ngIf="!isPrintMode && !isFollowUp" [disabled]="!isSaved">Next</button> <button type="button"
+            class="btn px-4 register-btn" (click)="back()" *ngIf="!isPrintMode && !isFollowUp">Back</button>
+        
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

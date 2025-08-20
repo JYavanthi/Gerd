@@ -1,0 +1,117 @@
+<div class="d-flex flex-column" style="background-color: #027082; min-height: 100vh;">
+
+
+        <!-- Content Section -->
+        <div class="d-flex flex-grow-1">
+                <!-- Sidebar -->
+                <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
+
+                <!-- Registration Form -->
+                <div class="flex-grow-1 d-flex align-items-start justify-content-start"
+                        style="margin-top: 2rem; margin-bottom: 2rem;">
+                        <div class="form-container p-4 shadow bg-white"
+                                style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+
+                                <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
+                                        COMORBIDITIES
+                                        <div *ngIf="isFollowUp" (click)="OnNext()"><i
+                                                        class="fa-solid fa-arrow-right"></i></div>
+
+                                </h2>
+                                <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+                                        <div [ngClass]="getStatusClass(1)" class="arrow">
+                                                Baseline
+                                                <i *ngIf="tabId === 1"></i>
+                                        </div>
+                                        <div [ngClass]="getStatusClass(2)" class="arrow">
+                                                Follow-up 1
+                                                <i *ngIf="tabId === 2"></i>
+                                        </div>
+                                        <div [ngClass]="getStatusClass(3)" class="arrow">
+                                                Follow-up 2
+                                                <i *ngIf="tabId === 3"></i>
+                                        </div>
+                                </div>
+
+                                <form #form="ngForm" (ngSubmit)="Submit()" novalidate>
+                                        <table class="comorbidity-table">
+                                                <thead>
+                                                        <tr>
+                                                                <th>COMORBIDITIES</th>
+                                                                <th>Present</th>
+                                                                <th>If Yes, Remarks</th>
+                                                        </tr>
+                                                </thead>
+                                                <tbody>
+                                                        <ng-container *ngFor="let key of comorbidityKeys">
+                                                                <tr>
+                                                                        <td>{{ comorbidityLabels[key] }}</td>
+                                                                        <td>
+                                                                                <label>
+                                                                                        <input type="radio"
+                                                                                                [name]="key + '_present'"
+                                                                                                [value]="true"
+                                                                                                (change)="updateComorbidityStatus(key, true)"
+                                                                                                [checked]="comorbidities[key].present === true" />
+                                                                                        Yes
+                                                                                </label>
+                                                                                <label>
+                                                                                        <input type="radio"
+                                                                                                [name]="key + '_present'"
+                                                                                                [value]="false"
+                                                                                                (change)="updateComorbidityStatus(key, false)"
+                                                                                                [checked]="comorbidities[key].present === false" />
+                                                                                        No
+                                                                                </label>
+                                                                        </td>
+                                                                        <td>
+                                                                                <input type="text"
+                                                                                        [name]="key + '_remarks'"
+                                                                                        [(ngModel)]="comorbidities[key].remarks"
+                                                                                        [disabled]="!comorbidities[key].present"
+                                                                                        [required]="!!comorbidities[key].present"
+                                                                                        #remarksRef="ngModel" />
+                                                                                <div *ngIf="remarksRef.invalid && remarksRef.touched"
+                                                                                        style="color: red;">
+                                                                                        Remarks required
+                                                                                </div>
+                                                                        </td>
+                                                                </tr>
+                                                        </ng-container>
+                                                </tbody>
+                                        </table>
+
+
+                                </form>
+
+                                <div class="row mt-4">
+                                        <div class="col-12">
+                                                <button
+                                                      
+                                                        type="button" class="btn px-4 register-btn" (click)="Submit()" *ngIf="(stage === 0 || stage === 2 || stage === 4) !isPrintMode">
+                                                        Save
+                                                </button>
+                                                <button *ngIf="!isPrintMode && !isFollowUp" type="button"
+                                                        class="btn px-4 register-btn" (click)="OnNext()"
+                                                        [disabled]="!isSaved">
+                                                        Next
+                                                </button>
+                                                <button *ngIf="!isPrintMode && !isFollowUp" type="button"
+                                                        class="btn px-4 register-btn" (click)="back()">
+                                                        Back
+                                                </button>
+                                                <!-- <button (click)="OnNext()" *ngIf="!isPrintMode && isFollowUp"
+                                                        class="btn px-4 register-btn" type="button" type="button"
+                                                        [disabled]="!isSaved">>
+                                                        Next
+                                                </button>
+                                                <button (click)="back()" *ngIf="!isPrintMode && isFollowUp"
+                                                        class="btn px-4 register-btn" type="button">
+                                                        Back
+                                                </button> -->
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>

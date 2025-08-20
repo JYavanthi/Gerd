@@ -1,0 +1,130 @@
+<form class="container d-flex" [formGroup]="gadgetForm" (ngSubmit)="Submit()">
+  <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
+  <div class="main-content p-4">
+    <div class="form-card">
+      <div class="form-header">PERSONAL HISTORY
+        <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+      <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+        <div [ngClass]="getStatusClass(1)" class="arrow">
+          Baseline
+          <i *ngIf="tabId === 1"></i>
+        </div>
+        <div [ngClass]="getStatusClass(2)" class="arrow">
+          Follow-up 1
+          <i *ngIf="tabId === 2"></i>
+        </div>
+        <div [ngClass]="getStatusClass(3)" class="arrow">
+          Follow-up 2
+          <i *ngIf="tabId === 3"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label style="font-weight: bold;">Gadget Usage Details</label>
+        <table class="history-table table table-bordered">
+          <thead>
+            <tr>
+              <th>Device</th>
+              <th>Used?</th>
+              <th>Frequency</th>
+              <th>Years of Usage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Computers</td>
+              <td>
+                <label>
+                  <input type="radio" formControlName="computerUsed" name="computerUsed" [value]="true" />
+                  Yes
+                </label> &nbsp;
+                <label>
+                  <input type="radio" formControlName="computerUsed" name="computerUsed" [value]="false" />
+                  No
+                </label>
+              </td>
+              <td>
+                <input type="text" class="form-control" formControlName="computerUsedhrs" placeholder="hrs/day"  [disabled]="!gadgetForm.get('computerUsed')?.value"/>
+              </td>
+              <td>
+                <input type="text" class="form-control" formControlName="computerUsedyears" placeholder="years"  [disabled]="!gadgetForm.get('computerUsed')?.value"/>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Smartphones</td>
+              <td>
+                <label><input type="radio" formControlName="smartphoneUsed" name="smartphoneUsed" [value]="true" />
+                  Yes</label>&nbsp;
+                <label><input type="radio" formControlName="smartphoneUsed" name="smartphoneUsed" [value]="false" />
+                  No</label>
+              </td>
+              <td><input type="text" class="form-control" formControlName="smartphoneUsedhrs" placeholder="hrs/day" />
+              </td>
+              <td><input type="text" class="form-control" formControlName="smartphoneUsedyears" placeholder="years" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-group">
+        <label style="font-weight: bold;">Working Hours (Occupation)</label>
+        <div class="step-container">
+          <ul class="list-unstyled">
+            <li>
+              <label><input type="radio" formControlName="workingHours" name="workingHours" value="early" />
+                4.00 am to 12.00 noon (Early Morning Shift)</label>
+            </li>
+            <li>
+              <label><input type="radio" formControlName="workingHours" name="workingHours" value="morning" />
+                6.00 am to 3.00 pm (Morning Shift)</label>
+            </li>
+            <li>
+              <label><input type="radio" formControlName="workingHours" name="workingHours" value="general" />
+                9.00 am to 6.00 pm (General Shift)</label>
+            </li>
+            <li>
+              <label><input type="radio" formControlName="workingHours" name="workingHours" value="afternoon" />
+                12.00 noon to 8.00 pm (Afternoon Shift)</label>
+            </li>
+            <li>
+              <label><input type="radio" formControlName="workingHours" name="workingHours" value="night" />
+                8.00 pm to 8.00 am (Night Shift)</label>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label style="font-weight: bold;">Job Type/Occupation</label>
+        <div>
+          <label><input type="radio" formControlName="jobType" name="jobType" value="Sedentary" /> Sedentary</label>
+          <label><input type="radio" formControlName="jobType" name="jobType" value="Non-Sedentary" />
+            Non-Sedentary</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label style="font-weight: bold;">Duration (No. of Years in the Above Working Hours)</label>
+        <input type="text" class="form-control" formControlName="totalWorkingYears"
+          placeholder="Enter duration in years" />
+      </div>
+
+      <div class="form-group text-start">
+        <!-- <button type="button" class="btn btn-primary px-4" (click)="Submit()"
+          *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode">Save</button> -->
+        <button type="submit" class="btn btn-primary px-4"
+          *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode">Save</button>
+        <button *ngIf="!isPrintMode && !isFollowUp" type="button" class="btn btn-primary px-4" (click)="OnNext()"
+          [disabled]="!isSaved">Next</button>
+        <button *ngIf="!isPrintMode && !isFollowUp" type="button" class="btn btn-primary px-4"
+          (click)="goback()">Back</button>
+        <!-- <button *ngIf="isFollowUp" type="button" class="btn btn-primary px-4" (click)="onNext()"
+          [disabled]="!isSaved">Next</button> -->
+        <!-- <button *ngIf="isFollowUp" type="button" class="btn btn-primary px-4" (click)="back()">Back</button>
+      </div> -->
+      </div>
+    </div>
+  </div>

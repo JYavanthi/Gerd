@@ -1,0 +1,57 @@
+<div class="p-8 bg-blue-100 min-h-screen">
+  <div class="bg-white rounded-xl shadow-lg overflow-auto">
+    <table class="min-w-full table-auto border border-gray-300 text-sm text-gray-800">
+      <thead class="bg-gray-100">
+        <tr class="text-left">
+          <th class="px-4 py-3 border">Doctor ID</th>
+          <th class="px-4 py-3 border">Name</th>
+          <th class="px-4 py-3 border">Email</th>
+          <th class="px-4 py-3 border">Phone No</th>
+          <th class="px-4 py-3 border">MCI Code</th>
+          <th class="px-4 py-3 border">Place of Practice</th>
+          <th class="px-4 py-3 border">Hospital Name</th>
+          <th class="px-4 py-3 border">Password</th>
+          <th class="px-4 py-3 border">State</th>
+          <th class="px-4 py-3 border">City</th>
+          <th class="px-4 py-3 border">Enter Code No</th>
+          <th class="px-4 py-3 border">Status</th>
+          <th class="px-4 py-3 border">Created By</th>
+          <th class="px-4 py-3 border">Baseline</th>
+          <th class="px-4 py-3 border">FollowUpOne</th>
+          <th class="px-4 py-3 border">FollowUpTwo</th>
+          <th class="px-4 py-3 border">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doctor of doctorList" class="hover:bg-blue-50">
+          <td class="border px-4 py-2">{{ doctor.doctorId }}</td>
+          <td class="border px-4 py-2">{{ doctor.name }}</td>
+          <td class="border px-4 py-2">{{ doctor.email }}</td>
+          <td class="border px-4 py-2">{{ doctor.phoneNo }}</td>
+          <td class="border px-4 py-2">{{ doctor.mciCode }}</td>
+          <td class="border px-4 py-2">{{ doctor.placeOfPractice }}</td>
+          <td class="border px-4 py-2">{{ doctor.hospitalName }}</td>
+          <td class="border px-4 py-2">{{ doctor.password }}</td>
+          <td class="border px-4 py-2">{{ doctor.state }}</td>
+          <td class="border px-4 py-2">{{ doctor.city }}</td>
+          <td class="border px-4 py-2">{{ doctor.enterCodeNO }}</td>
+          <td class="border px-4 py-2">{{ doctor.status }}</td>
+          <td class="border px-4 py-2">{{ doctor.createdBy }}</td>
+          <td class="border px-4 py-2">{{ doctor.baseline }}</td>
+          <td class="border px-4 py-2">{{ doctor.followUpOne }}</td>
+          <td class="border px-4 py-2">{{ doctor.followUpTwo }}</td>
+          <td class="border px-4 py-2">
+            <div class="flex ">
+              <button (click)="viewDoctor(doctor)" class="p-2 text-blue-600 hover:text-blue-800">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+              <button (click)="sendTestEmail(doctor)" class="p-2 text-green-600 hover:text-green-800">
+                <i class="fa-solid fa-envelope-circle-check"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

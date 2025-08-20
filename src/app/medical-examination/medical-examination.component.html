@@ -1,0 +1,139 @@
+<form [formGroup]="medicalExaminationForm" (ngSubmit)="Submit()">
+    <div class="container d-flex" style="min-height: 100vh;">
+        <!-- Sidebar (unchanged) -->
+        <!-- <div class="sidebar text-white p-4 pt-5"
+            style="width: 212px; flex-shrink: 0; overflow-y: auto; background-color: #027082;">
+            <h5 class="mb-3">👨‍⚕️ Dr. Krishna Kumar</h5>
+            <p class="mb-4">kumar&#64;gmail.com</p>
+            <hr class="bg-white" />
+            <ul class="list-unstyled mb-4">
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Dashboard</a></li>
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Methodology</a></li>
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Protocol and Case Form</a></li>
+                <li><a href="#" class="text-white text-decoration-none d-block py-2">Instructions</a></li>
+            </ul>
+            <hr class="bg-white" />
+            <a href="/login" class="btn w-100 mt-3" style="background-color: white; color: #027082; font-weight: 600;">
+                Already registered? Login
+            </a>
+        </div> -->
+        <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
+        <!-- Main Content -->
+        <div class="flex-grow-1 d-flex align-items-start justify-content-start" style="margin: 2rem 0;">
+            <div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+                <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
+                    MEDICAL EXAMINATION
+                    <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
+                </h2>
+
+                <div class="arrow-status" *ngIf="isFollowUp" style="margin-bottom: 20px;">
+                    <div [ngClass]="getStatusClass(1)" class="arrow">Baseline</div>
+                    <div [ngClass]="getStatusClass(2)" class="arrow">Follow-up 1</div>
+                    <div [ngClass]="getStatusClass(3)" class="arrow">Follow-up 2</div>
+                </div>
+
+                <h4 style="color: #333;"><b>Physical Examination</b></h4><br />
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="height" class="form-label">Height (in cms)</label>
+                        <input type="number" id="height" class="form-control" formControlName="PE_Height"
+                            (input)="calculateBMI()">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="weight" class="form-label">Weight (in kg)</label>
+                        <input type="number" id="weight" class="form-control" formControlName="PE_Weight"
+                            (input)="calculateBMI()">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="bmi" class="form-label">BMI (Auto fill)</label>
+                        <input type="text" id="bmi" class="form-control" formControlName="PE_BMI">
+                    </div>
+                </div>
+
+                <h4 style="color: #333;"><b>Systemic Examination</b></h4><br />
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Examination Area</th>
+                                <th>NORMAL</th>
+                                <th>ABNORMAL<br>Clinically significant (CS)</th>
+                                <th>ABNORMAL<br>Nothing Clinically Significant (NCS)</th>
+                                <th>Comments (if Abnormal CS)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- General Appearance -->
+                            <tr>
+                                <td>General appearance</td>
+                                <td><input type="radio" name="gaGroup" value="normal" (change)="onGAChange('normal')"
+                                        [checked]="medicalExaminationForm.get('SE_GANormal')?.value === 'normal'"></td>
+                                <td><input type="radio" name="gaGroup" value="cs" (change)="onGAChange('cs')"
+                                        [checked]="medicalExaminationForm.get('SE_GAAbNormalCS')?.value === 'cs'"></td>
+                                <td><input type="radio" name="gaGroup" value="ncs" (change)="onGAChange('ncs')"
+                                        [checked]="medicalExaminationForm.get('SE_GAAbNormalNCS')?.value === 'ncs'">
+                                </td>
+                                <td><input type="text" class="form-control" formControlName="PE_BMSE_GAAbNormalRemarkI5"
+                                        placeholder="Enter comment"></td>
+                            </tr>
+
+                            <!-- Respiratory -->
+                            <tr>
+                                <td>Respiratory system</td>
+                                <td><input type="radio" name="rsGroup" value="normal"
+                                        (change)="onRespiratoryChange('normal')"
+                                        [checked]="medicalExaminationForm.get('SE_RSNormal')?.value === 'normal'"></td>
+                                <td><input type="radio" name="rsGroup" value="cs" (change)="onRespiratoryChange('cs')"
+                                        [checked]="medicalExaminationForm.get('SE_RSAbNormal_CS')?.value === 'cs'"></td>
+                                <td><input type="radio" name="rsGroup" value="ncs" (change)="onRespiratoryChange('ncs')"
+                                        [checked]="medicalExaminationForm.get('SE_RSAbNormal_NCS')?.value === 'ncs'">
+                                </td>
+                                <td><input type="text" class="form-control" formControlName="SE_RSAbNormalRemark"
+                                        placeholder="Enter comment"></td>
+                            </tr>
+
+                            <!-- Others -->
+                            <tr>
+                                <td>Others, specify if any</td>
+                                <td><input type="radio" name="othersGroup" value="normal"
+                                        (change)="onOthersChange('normal')"
+                                        [checked]="medicalExaminationForm.get('OthersNormal')?.value === 'normal'"></td>
+                                <td><input type="radio" name="othersGroup" value="cs" (change)="onOthersChange('cs')"
+                                        [checked]="medicalExaminationForm.get('OthersAbNormal_CS')?.value === 'cs'">
+                                </td>
+                                <td><input type="radio" name="othersGroup" value="ncs" (change)="onOthersChange('ncs')"
+                                        [checked]="medicalExaminationForm.get('OthersAbNormal_NCS')?.value === 'ncs'">
+                                </td>
+                                <td><input type="text" class="form-control" formControlName="OthersAbNormalRemark"
+                                        placeholder="Enter comment"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 style="color: #333;"><b>Per Abdomen Examination</b></h4><br />
+                <div class="mb-3">
+                    <label for="abdomenFindings" class="form-label">Findings:</label>
+                    <textarea id="abdomenFindings" class="form-control" formControlName="PAE_Findings" rows="3"
+                        placeholder="Describe findings"></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <button *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode" type="submit"
+                            class="btn px-4 register-btn">Save</button>
+                        <button *ngIf="!isPrintMode && !isFollowUp" type="button" class="btn px-4 register-btn"
+                            (click)="OnNext()" [disabled]="!isSaved">Next</button>
+                        <button *ngIf="!isPrintMode && !isFollowUp" type="button" class="btn px-4 register-btn"
+                            (click)="goback()">Back</button>
+                        <button *ngIf="!isPrintMode && isFollowUp" type="button" class="btn px-4 register-btn"
+                            (click)="onNext()" [disabled]="!isSaved">Next</button>
+                        <button *ngIf="!isPrintMode && isFollowUp" type="button" class="btn px-4 register-btn"
+                            (click)="back()">Back</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

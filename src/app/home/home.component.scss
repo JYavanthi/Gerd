@@ -1,0 +1,58 @@
+
+
+.home {
+  margin-top: 0;
+  padding-top: 80px;
+  background-color: #326978;
+  color: white;
+  height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .hero {
+    display: flex
+    ;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: 1200px;
+        padding: 2rem;
+        gap: 130px;
+        margin-bottom: 100px;
+
+    .hero-left {
+      max-width: 500px;
+
+      h1 {
+        font-size: 3rem;
+      }
+
+      p {
+        margin: 1rem 0;
+      }
+
+      .disease h2 {
+        font-weight: bold;
+      }
+
+      .register-button {
+        margin-top: 2rem;
+        background-color: white;
+        color: black;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 20px;
+        font-weight: bold;
+      }
+    }
+
+    .hero-right {
+      img {
+        width: 100%;
+        max-width: 400px;
+      }
+    }
+  }
+}

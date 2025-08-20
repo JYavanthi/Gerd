@@ -1,0 +1,219 @@
+// .mainDiv {
+//     display: flex;
+//     gap: 158px;
+//     align-items: center;
+//     position: fixed;
+//     background-color: white;
+//     width: 100%;
+//     top: 0;
+//     // margin-top: 10px;
+//     padding: 10px;
+//     z-index: 1000;
+//     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+//     font-family: "Times New Roman", Times, serif;
+
+
+//     .project-name {
+//         img {
+//             width: 50px;
+//         }
+
+//         .bothbtn {
+//             display: flex;
+//             gap: 10px;
+
+//             button:first-of-type {
+
+//                 width: 85px;
+//                 padding: 10px;
+//                 border-radius: 10px;
+//                 background-color: #70e69e;
+//                 border: none;
+//                 color: white;
+//                 font-weight: bold;
+//                 opacity: 0.6;
+//                 transition: opacity 0.3s ease-in-out;
+
+
+//                 button:hover {
+//                     opacity: 1;
+//                 }
+//             }
+
+
+//         }
+
+//         button:hover {
+//             opacity: 1;
+//         }
+
+//         button:nth-child(2) {
+
+//             width: 85px;
+//             padding: 10px;
+//             border-radius: 10px;
+//             background-color: #e74956;
+//             border: none;
+//             color: white;
+//             font-weight: bold;
+//             opacity: 0.6;
+//             transition: opacity 0.3s ease-in-out;
+
+
+
+//         }
+
+//         button:hover {
+//             opacity: 1;
+//         }
+
+//     }
+
+//     div:first-of-type {
+//         font-size: 21px;
+//         color: #36657e;
+//         text-transform: uppercase;
+//         font-family: "Times New Roman", Times, serif;
+//         display: flex;
+//         align-items: center;
+//         gap: 18px;
+//         margin-left: 100px;
+//     }
+
+//     .homeSell {
+//         display: flex;
+//         gap: 15px;
+//         align-items: center;
+
+//         button {
+//             border: none;
+//             background-color: white;
+//             font-size: 15px;
+//         }
+
+//         button:hover {
+//             color: #36657e;
+//         }
+//     }
+
+//     .search-container {
+//         position: relative;
+//         display: flex;
+//         align-items: center;
+//         width: 300px;
+//         /* border: 1px solid #ccc; */
+//         /* border-radius: 5px; */
+//         padding: 5px;
+//         background-color: white;
+//         border-bottom: 1px solid #ccc;
+//     }
+
+//     .search-icon {
+//         margin-left: 8px;
+//         color: #888;
+//     }
+
+//     input {
+//         border: none;
+//         outline: none;
+//         flex: 1;
+//         padding: 5px;
+//         font-size: 14px;
+//         padding-left: 10px;
+//     }
+
+//     .clear-btn {
+//         display: none;
+//         cursor: pointer;
+//         color: #888;
+//         font-size: 16px;
+//         margin-right: 8px;
+//     }
+
+//     .btn {
+//         button {
+//             padding: 10px;
+//             width: 150px;
+//             border-radius: 5px;
+//             background-color: #36657e;
+//             color: white;
+//             border: none;
+//         }
+
+//         button:hover {
+//             background-color: white;
+//             color: #36657e;
+//             border: 1px solid lightgrey;
+//         }
+
+//     }
+
+// }
+
+
+
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #326978;
+    transition: background-color 0.3s ease;
+
+    &.scrolled {
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        .nav-links li a,
+        .logo span {
+            color: #333;
+        }
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem 2rem;
+        gap: 130px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+
+        img {
+            height: 40px;
+            margin-right: 0.5rem;
+        }
+
+        span {
+            font-weight: bold;
+            color: #fff;
+            transition: color 0.3s;
+        }
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        list-style: none;
+        display: flex;
+        gap: 3.5rem;
+
+        li a {
+            text-decoration: none;
+            color: #fff;
+            transition: color 0.3s;
+        }
+    }
+
+    .login-button {
+        background-color: #fff;
+        color: #000;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        border: none;
+        font-weight: bold;
+    }
+}

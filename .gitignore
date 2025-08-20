@@ -1,0 +1,71 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
+.DS_Store
+Thumbs.db
+/Gred/.vs/Gred/FileContentIndex/18793cca-f3a9-4140-8e71-4654cf2ed20d.vsidx
+/Gred/.vs/Gred/FileContentIndex/551418f6-f224-4157-8127-12c4bde3db4a.vsidx
+/Gred/.vs/Gred/FileContentIndex/7b152b58-6e07-4b9a-8055-3b0be71cbddb.vsidx
+/Gred/.vs/Gred/FileContentIndex/afb582dd-b0ee-4775-8bd6-4b6bd467958b.vsidx
+/Gred/.vs/Gred/FileContentIndex/b14f4986-cc87-4917-9d99-a764ce57017d.vsidx
+/Gred/.vs/Gred/v17/HierarchyCache.v1.txt
+/Gred/Gred/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Gred/Gred/bin/Debug/net8.0/Microsoft.Bcl.Memory.dll
+/Gred/Gred/obj/Debug/net8.0/staticwebassets/msbuild.build.Gred.props
+/Gred/Gred/obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.Gred.props
+/Gred/Gred/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.Gred.props
+/Gred/.vs/Gred/FileContentIndex/21c15154-ab35-4a63-aa5c-b36fa949f7e8.vsidx
+/Gred/.vs/Gred/FileContentIndex/24ae80f0-a584-4cd2-9a28-3a6770a73ba1.vsidx
+/Gred/.vs/Gred/FileContentIndex/372a81fc-a2a2-4901-aa5a-fe477f12f2b3.vsidx
+/Gred/.vs/Gred/FileContentIndex/f6bd14cd-6830-4ab6-9e12-441dddcd9ff8.vsidx
+/Gred/.vs/Gred/FileContentIndex/1b55746a-41bb-4802-8c54-082f5022b2e6.vsidx
+/Gred/.vs/Gred/FileContentIndex/6cc25dac-dacb-4662-a1e5-111dfc2532a9.vsidx
+/Gred/.vs/Gred/FileContentIndex/8d84ab05-5e91-4179-a792-b892cb0f7d6d.vsidx
+/Gred/.vs/Gred/FileContentIndex/0a04e6f0-8523-4116-951d-eb2b7fbf2d33.vsidx
+/Gred/.vs/Gred/FileContentIndex/6c204ee9-eaa9-423a-86e3-81014223f4f2.vsidx
+/Gred/.vs/Gred/FileContentIndex/1ad8dc60-6afe-4e41-8de0-a15c5eb88d2f.vsidx
+/Gred/.vs/Gred/FileContentIndex/5ac7ac9d-ef05-4284-be46-994874c36370.vsidx
+/Gred/.vs/Gred/FileContentIndex/5b70799e-0fe2-4436-9cf4-028ecce36401.vsidx
+/Gred/.vs/Gred/FileContentIndex/25d5065e-2e60-4a5a-bb65-a871d2f93129.vsidx
+/Gred/.vs/Gred/FileContentIndex/f1a37ab2-3dfc-4176-a50b-f9b19c85be27.vsidx
+/Gred/.vs/Gred/FileContentIndex/b733b72f-8135-4d82-a382-049c8eaa2504.vsidx
+/Gred/.vs/Gred/FileContentIndex/3d6f42d4-0b23-49ed-8034-feda2ea41d10.vsidx
+/Gred/.vs/Gred/FileContentIndex
+/Gred/Gred/bin/Debug/net8.0/Dapper.dll

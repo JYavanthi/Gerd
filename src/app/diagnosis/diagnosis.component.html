@@ -1,0 +1,138 @@
+<div class="flex" style="min-height: 100vh;">
+  <!-- Static Sidebar -->
+  <!-- <div style="width: 212px; background-color: #027082; padding: 1rem; color: white;">
+    <h5 class="mb-3">👨‍⚕️ Dr. Krishna Kumar</h5>
+    <p class="mb-4">kumar&#64;gmail.com</p>
+
+    <hr class="bg-white" />
+
+    <ul class="list-unstyled mb-4">
+      <li><a routerLink="/dashboard" class="text-white text-decoration-none d-block py-2">Dashboard</a></li>
+      <li><a routerLink="/methodology" class="text-white text-decoration-none d-block py-2">Methodology</a></li>
+      <li><a routerLink="/case-form" class="text-white text-decoration-none d-block py-2">Protocol and Case Form</a>
+      </li>
+      <li><a routerLink="/instructions" class="text-white text-decoration-none d-block py-2">Instructions</a></li>
+    </ul>
+
+    <hr class="bg-white" />
+
+    <a routerLink="/login" class="btn w-100 mt-3" style="background-color: white; color: #027082; font-weight: 600;">
+      Already registered? Login
+    </a>
+  </div> -->
+  <!-- Diagnosis Form Area -->
+
+  <div class="rrr">
+    <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
+    <div class="flex-grow-1 d-flex align-items-start justify-content-start"
+      style="margin-top: 2rem; margin-bottom: 2rem;">
+      <div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+
+        <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
+          DIAGNOSIS
+          <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
+        </h2>
+        <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+          <div [ngClass]="getStatusClass(1)" class="arrow">
+            Baseline
+            <i *ngIf="tabId === 1"></i>
+          </div>
+          <div [ngClass]="getStatusClass(2)" class="arrow">
+            Follow-up 1
+            <i *ngIf="tabId === 2"></i>
+          </div>
+          <div [ngClass]="getStatusClass(3)" class="arrow">
+            Follow-up 2
+            <i *ngIf="tabId === 3"></i>
+          </div>
+        </div>
+        <form [formGroup]="diagnosisForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Newly Diagnosed:</label><br />
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="NewlyDig" (click)="showDiag()" formControlName="newlyDiagnosed"  value="Yes"  />
+              <label class="form-check-label">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="NewlyDig" (click)="showDiag()" formControlName="newlyDiagnosed"  value="No" />
+              <label class="form-check-label">No</label>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Known case of GERD?</label><br />
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" formControlName="knownCase" value="Yes" />
+              <label class="form-check-label">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" formControlName="knownCase" value="No" />
+              <label class="form-check-label">No</label>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">If Yes, Since how many years?</label>
+            <input type="number" formControlName="yearsKnown" class="form-control" placeholder="Enter years"
+              [disabled]="diagnosisForm.get('knownCase')?.value !== 'Yes'" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">GERD Type:</label><br />
+
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="gerdType" formControlName="gerdType" value="Erosive" />
+              <label class="form-check-label">Erosive GERD</label>
+            </div>
+
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="gerdType" formControlName="gerdType"
+                value="Non-Erosive" />
+              <label class="form-check-label">Non-Erosive GERD</label>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">
+              Refractory to PPI
+              <small class="text-muted">(presence of persistent troublesome GERD symptoms and objective evidence of <br>
+                GERD despite optimized PPI therapy for 8 weeks)</small>
+            </label><br />
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" formControlName="refractory" value="Yes" />
+              <label class="form-check-label">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" formControlName="refractory" value="No" />
+              <label class="form-check-label">No</label>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold">Adherence to Therapy:</label><br />
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" formControlName="adherence" value="Yes" />
+              <label class="form-check-label">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" formControlName="adherence" value="No" />
+              <label class="form-check-label">No</label>
+            </div>
+          </div>
+
+          <button *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode" type="submit"
+            class="btn px-4 register-btn" (click)="Submit()">Save</button>
+          <button *ngIf="!isPrintMode && !isFollowUp" type="button" class="btn px-4 register-btn" (click)="OnNext()"
+            [disabled]="!isSaved" [ngClass]="{ 'disabled-btn': !diagnosisForm.valid, 'btn-dark': diagnosisForm.valid }">
+            Next
+          </button>
+
+          <button *ngIf="!isPrintMode && !isFollowUp" type="submit" class="btn px-4 register-btn"
+            (click)="goback()">Back</button>
+          <button *ngIf="!isPrintMode && isFollowUp" type="submit" class="btn px-4 register-btn" (click)="onNext()"
+            [disabled]="!isSaved">Next</button>
+          <button *ngIf="!isPrintMode && isFollowUp" type="submit" class="btn px-4 register-btn"
+            (click)="back()">Back</button>
+
+        </form>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,80 @@
+<!-- <div class="d-flex" style="min-height: 100vh;">
+  <app-sidebar></app-sidebar>
+
+  <div class="flex-grow-1 p-4">
+    <div class="rounded shadow-sm p-4 " style="background-color: white;">
+
+      <div class="mt-4" style="padding-left: 1rem; padding-right: 1rem;">
+        <h5 class="text-white p-2 mb-4" style="background-color: #357083;">MANAGEMENT</h5>
+<div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+  <div [ngClass]="getStatusClass(1)" class="arrow">
+    Baseline
+    <i *ngIf="tabId === 1"></i>
+  </div>
+  <div [ngClass]="getStatusClass(2)" class="arrow">
+    Follow-up 1
+    <i *ngIf="tabId === 2"></i>
+  </div>
+  <div [ngClass]="getStatusClass(3)" class="arrow">
+    Follow-up 2
+    <i *ngIf="tabId === 3"></i>
+  </div>
+</div>
+        <div class="p-3 border rounded mb-4">
+          <h6>Lifestyle Recommendations</h6><br>
+          <div class="form-check" *ngFor="let item of lifestyleItems">
+            <input type="checkbox" class="form-check-input" [id]="item" [(ngModel)]="lifestyle[item]">
+            <label class="form-check-label" [for]="item">{{ item }}</label>
+          </div>
+        </div>
+
+        <div class="p-3 border rounded mb-3">
+          <h6>Drug Therapy Advised</h6><br>
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm text-center align-middle" style="font-size: 0.9rem;">
+              <thead class="table-warning">
+                <tr>
+                  <th style="width: 25%;">Drug Class</th>
+                  <th style="width: 30%;">Medication Name</th>
+                  <th style="width: 20%;">Dose</th>
+                  <th style="width: 20%;">Frequency</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let drug of drugTherapy">
+                  <td>{{ drug.class }}</td>
+                  <td><input type="text" [(ngModel)]="drug.name" class="w-100 border-0" style="outline: none;"></td>
+                  <td><input type="text" [(ngModel)]="drug.dose" class="w-100 border-0" style="outline: none;"></td>
+                  <td><input type="text" [(ngModel)]="drug.frequency" class="w-100 border-0" style="outline: none;">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+       <div class="flex mt-3" >
+         <button *ngIf="isFollowUp" class="btn px-4 register-btn" (click)="Submit()">
+          Save
+        </button>
+         <button *ngIf="!isFollowUp" class="btn px-4 register-btn" (click)="goback()">
+          Back
+        </button>
+         <button *ngIf="isFollowUp" class="btn px-4 register-btn" (click)="back()">
+          Back
+        </button>
+       </div>
+      </div>
+
+      <div class="modal-backdrop" *ngIf="showConfirmation">
+        <div class="modal-container">
+          <div class="modal-content">
+            <h5 class="mb-4">Plase reconfirm if u want to submit.Once submitted,the case cannot be edited</h5>
+            <div class="btn">
+              <button class="btn btn-primary" (click)="confirmSave()">Yes</button>
+
+              <button class="btn btn-primary" (click)="cancelSave()">No</button>
+            </div>
+          </div>
+        </div>
+      </div> -->

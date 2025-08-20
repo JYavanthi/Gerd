@@ -1,0 +1,174 @@
+<div class="d-flex flex-column" style="background-color: #027082; min-height: 100vh;">
+
+
+  <div class="d-flex flex-grow-1">
+
+    <div class="flex-grow-1 d-flex align-items-start justify-content-start"
+      style="margin-top: 2rem; margin-bottom: 2rem;">
+      <div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+        <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
+          Doctor Registration Form
+        </h2>
+
+        <form [formGroup]="doctorForm" (ngSubmit)="Submit()">
+          <div class="form-row mb-3">
+            <div class="form-group">
+              <input formControlName="firstName" class="form-input" placeholder=" " required />
+              <label class="form-label">First Name</label>
+              <div *ngIf="doctorForm.controls['firstName'].touched && doctorForm.controls['firstName'].invalid"
+                class="error">
+                First Name is required.
+              </div>
+            </div>
+            <div class="form-group">
+              <input formControlName="lastName" class="form-input" placeholder=" " required />
+              <label class="form-label">Last Name</label>
+              <div *ngIf="doctorForm.controls['lastName'].touched && doctorForm.controls['lastName'].invalid"
+                class="error">
+                Last Name is required.
+              </div>
+            </div>
+            <div class="form-group">
+              <input formControlName="email" type="email" class="form-input" placeholder=" " required />
+              <label class="form-label">Email ID</label>
+              <div *ngIf="doctorForm.controls['email'].touched && doctorForm.controls['email'].invalid" class="error">
+                <div *ngIf="doctorForm.controls['email'].hasError('required')">Email is required.</div>
+                <div *ngIf="doctorForm.controls['email'].hasError('email')">Invalid email format.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="form-row mb-3">
+            <div class="form-group">
+              <input formControlName="phone" class="form-input" placeholder=" " required maxlength="10"
+                pattern="^[0-9]{10}$" />
+              <label class="form-label">Phone No</label>
+              <div *ngIf="doctorForm.controls['phone'].touched && doctorForm.controls['phone'].invalid" class="error">
+                Phone Number is required and must be 10 digits.
+              </div>
+            </div>
+            <div class="form-group">
+              <input formControlName="mciCode" class="form-input" placeholder=" " required />
+              <label class="form-label">MCI Registration number</label>
+              <div *ngIf="doctorForm.controls['mciCode'].touched && doctorForm.controls['mciCode'].invalid"
+                class="error">
+                MCI Code is required.
+              </div>
+            </div>
+            <div class="form-group">
+              <input formControlName="practicePlace" class="form-input" placeholder=" " required />
+              <label class="form-label">Place of Practice</label>
+              <div *ngIf="doctorForm.controls['practicePlace'].touched && doctorForm.controls['practicePlace'].invalid"
+                class="error">
+                Place of Practice is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="form-row mb-3">
+            <div class="form-group">
+              <input formControlName="hospitalName" class="form-input" placeholder=" " required />
+              <label class="form-label">Hospital Name</label>
+              <div *ngIf="doctorForm.controls['hospitalName'].touched && doctorForm.controls['hospitalName'].invalid"
+                class="error">
+                Hospital Name is required.
+              </div>
+            </div>
+            <div class="form-group">
+              <select formControlName="state" class="form-select" (change)="getCities($event)">
+                <option value="" disabled>Select State</option>
+                <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
+              </select>
+              <label class="form-label">State</label>
+              <div *ngIf="doctorForm.get('state')?.touched && doctorForm.get('state')?.invalid" class="error">
+                State is required.
+              </div>
+            </div>
+
+
+            <div class="form-group">
+              <!-- <input formControlName="city" class="form-input" placeholder=" " required /> -->
+              <select formControlName="city" class="form-select">
+                <option value="" disabled>Select City</option>
+                <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+              </select>
+              <label class="form-label">City</label>
+              <div *ngIf="doctorForm.controls['city'].touched && doctorForm.get('city')?.invalid" class="error">
+                City is required.
+              </div>
+            </div>
+
+            <!-- <div class="form-group col-md-4">
+              <select formControlName="state" class="form-select" (change)="getCities($event)">
+                <option value="" disabled>Select State</option> 
+                <option *ngFor="let state of states" [value]="state.id"
+                >{{ state.name }}</option>
+              </select>
+
+              <label class="form-label">State</label>
+              <div *ngIf="doctorForm.get('state')?.touched && doctorForm.get('state')?.invalid"
+                class="text-danger small">
+                State is required.
+              </div>
+            </div> -->
+
+          </div>
+
+          <!-- Row 4 -->
+          <div class="form-row mb-3">
+            <div class="form-group">
+              <input formControlName="codeNumber" type="text" class="form-input" placeholder=" " required />
+              <label class="form-label">Enter Code Number</label>
+              <!-- <div *ngIf="doctorForm.controls['codeNumber'].touched && doctorForm.controls['codeNumber'].invalid"
+                class="error">
+                Enter Code Number is required.
+              </div> -->
+            </div>
+            <div class="form-group">
+              <input formControlName="password" type="password" class="form-input" placeholder=" " required />
+              <label class="form-label">Password</label>
+              <div *ngIf="doctorForm.controls['password'].touched && doctorForm.controls['password'].invalid"
+                class="error">
+                Password is required.
+              </div>
+            </div>
+            <div class="form-group">
+              <input formControlName="reenterPassword" type="password" class="form-input" placeholder=" " required />
+              <label class="form-label">Re-enter Password</label>
+              <div *ngIf="doctorForm.controls['password'].touched && doctorForm.controls['password'].invalid"
+                class="error">
+                Re-enter Password is required.
+              </div>
+            </div>
+
+            <!-- <div class="form-group">
+              <select formControlName="status" class="form-select" required>
+                <option value="" disabled selected hidden></option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+              <label class="form-label">Status</label>
+              <div *ngIf="doctorForm.controls['status'].touched && doctorForm.controls['status'].invalid" class="error">
+                Status is required.
+              </div>
+            </div> -->
+          </div>
+
+          <!-- Button Row -->
+          <div class="row">
+            <div class="col-12 col-md-10">
+              <!-- <button type="submit" class="btn px-4 register-btn" [disabled]="doctorForm.invalid" (click)="Submit()">
+                Register
+              </button> -->
+              <button type="submit" class="btn px-4 register-btn" [disabled]="doctorForm.invalid">
+                Register
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

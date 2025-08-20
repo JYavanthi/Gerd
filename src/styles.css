@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-color: #027082; /* Your desired background color */
+    margin-top: 0; /* Remove any top margin */
+  }
+  .error {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .page-break {
+  page-break-before: always;
+  break-before: page;
+}

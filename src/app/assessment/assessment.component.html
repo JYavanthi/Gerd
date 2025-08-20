@@ -1,0 +1,459 @@
+<div class="d-flex" style="min-height: 100vh;">
+  <!-- Sidebar -->
+  <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
+
+  <!-- Main Content -->
+  <div class="flex-grow-1 p-4 assessment-page">
+    <div class="rounded shadow-sm p-4 bg-white">
+      <h5 class="text-white p-2 mb-4" style="background-color: #357083;">ASSESSMENTS
+
+        <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
+
+      </h5>
+      <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
+        <div [ngClass]="getStatusClass(1)" class="arrow">
+          Baseline
+          <i *ngIf="tabId === 1"></i>
+        </div>
+        <div [ngClass]="getStatusClass(2)" class="arrow">
+          Follow-up 1
+          <i *ngIf="tabId === 2"></i>
+        </div>
+        <div [ngClass]="getStatusClass(3)" class="arrow">
+          Follow-up 2
+          <i *ngIf="tabId === 3"></i>
+        </div>
+      </div>
+      <div>
+        <h2>GERD Assessments Score/Scale</h2>
+      </div>
+
+      <div>
+        <h2>
+          Frequency Scale for the Symptoms of GERD Scale (FSSG)
+        </h2>
+      </div>
+
+      <!-- FSSG Table -->
+      <div class="table-responsive mb-4">
+        <table class="table table-bordered text-center align-middle">
+          <thead class="table-primary">
+            <tr>
+              <th>Sl.No</th>
+              <th>Question</th>
+              <th>NEVER (0)</th>
+              <th>OCCASIONALLY (1)</th>
+              <th>SOMETIMES (2)</th>
+              <th>OFTEN (3)</th>
+              <th>ALWAYS (4)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let question of fssgQuestions; let i = index">
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ question }}</td>
+                <td>
+                  <input type="radio" [name]="'q' + i" [value]="0" [(ngModel)]="fssgAnswers[i]" />
+                </td>
+                <td>
+                  <input type="radio" [name]="'q' + i" [value]="1" [(ngModel)]="fssgAnswers[i]" />
+                </td>
+                <td>
+                  <input type="radio" [name]="'q' + i" [value]="2" [(ngModel)]="fssgAnswers[i]" />
+                </td>
+                <td>
+                  <input type="radio" [name]="'q' + i" [value]="3" [(ngModel)]="fssgAnswers[i]" />
+                </td>
+                <td>
+                  <input type="radio" [name]="'q' + i" [value]="4" [(ngModel)]="fssgAnswers[i]" />
+                </td>
+              </tr>
+
+
+              <!-- <ng-container *ngIf="i === 11">
+                <tr class="table-light" style="font-size: large;">
+                  <td colspan="2"><strong>Total</strong></td>
+                  <td>{{ countFssgByValue(0) }}</td>
+                  <td>{{ countFssgByValue(1) }}</td>
+                  <td>{{ countFssgByValue(2) }}</td>
+                  <td>{{ countFssgByValue(3) }}</td>
+                  <td>{{ countFssgByValue(4) }}</td>
+                </tr>
+              </ng-container> -->
+
+            </ng-container>
+
+            <tr>
+              <td colspan="2">
+                <strong>Acid Reflux Related Symptom (Q1 + Q4 + Q6 + Q7 + Q9 + Q10 + Q12)</strong>
+              </td>
+              <td colspan="5"><strong>{{ calculateAcidRefluxScore() }}</strong></td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <strong>Dyspeptic (Dysmotility) Symptom (Q2 + Q3 + Q5 + Q8 + Q11)</strong>
+              </td>
+              <td colspan="5"><strong>{{ calculateDysmotilityScore() }}</strong></td>
+            </tr>
+            <tr>
+              <td colspan="7" class="text-center">
+                <strong>Sum Points:</strong>
+                <span class="score-box">{{ calculateAcidRefluxScore() }}</span> +
+                <span class="score-box">{{ calculateDysmotilityScore() }}</span> =
+                <span class="score-box">{{ calculateTotalFssgScore() }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+      <!-- Symptom Score -->
+      <div class="mb-4">
+        <h6>Total Symptom Score in GERD Patients</h6>
+        <div class="table-responsive">
+          <table class="table table-bordered text-center">
+            <thead>
+              <tr>
+                <th>Symptom</th>
+                <th>Nil (0)</th>
+                <th>Minimal (1)</th>
+                <th>Moderate (2)</th>
+                <th>Severe (3)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of symptoms; let i = index">
+                <td>{{ s }}</td>
+                <td><input type="radio" [name]="s" [value]="0" [(ngModel)]="symptomAnswers[i]"> 0</td>
+                <td><input type="radio" [name]="s" [value]="1" [(ngModel)]="symptomAnswers[i]"> 1</td>
+                <td><input type="radio" [name]="s" [value]="2" [(ngModel)]="symptomAnswers[i]"> 2</td>
+                <td><input type="radio" [name]="s" [value]="3" [(ngModel)]="symptomAnswers[i]"> 3</td>
+              </tr>
+            </tbody>
+
+          </table>
+          <p><strong>Total Symptom Score in GERD Patients:</strong>&nbsp; &nbsp;<span
+              style="color: green; font-size: larger;"><b>
+              {{getTotalSymptomScore() }}</b></span></p>
+        </div>
+      </div>
+
+      <div class="form-container" style="margin-left: 10px;">
+        <h2 style="font-weight: bold;">Symptom score (4-point Likert scale) <p
+            style="color: black; font-weight: 300px;">(Heartburn, Acid Regurgitation, at
+            awakening and/or at bedtime)</p>
+        </h2>
+
+        <div class="likert-group">
+          <label *ngFor="let score of symptomScores">
+            <input type="radio" name="symptomScore" [value]="score.value" [(ngModel)]="form.symptomScore" />
+            {{ score.label }}
+          </label>
+        </div>
+
+        <p>
+          <strong>Symptom score (4-point Likert scale):</strong>
+          <input [(ngModel)]="form.symptomScore" class="underline-input inline-input" placeholder="Enter score"
+            readonly />
+        </p>
+        <br>
+        <div class="section">
+          <h3 style="font-weight: bold;">Endoscopy Evaluation</h3>
+          <div class="field-row">
+            <label><span class="bullet">•</span> LAX les classification</label>
+            <div class="radio-flex">
+              <label><input type="radio" name="lax" [(ngModel)]="form.lax" value="Yes" /> Yes</label>
+              <label><input type="radio" name="lax" [(ngModel)]="form.lax" value="No" /> No</label>
+            </div>
+          </div>
+          <div class="field-row">
+            <label><span class="bullet">•</span> Los Angeles Grade:</label>
+            <div class="checkbox-row">
+              <label *ngFor="let grade of laGrades">
+                <input type="radio" name="laGrade" [(ngModel)]="form.laGrade" [value]="grade"
+                  [disabled]="form.lax !== 'Yes'" />
+                {{ grade }}
+              </label>
+            </div>
+            <input type="text" placeholder="Remarks" class="underline-input" [(ngModel)]="form.laRemarks"
+              [disabled]="form.lax !== 'Yes'" />
+          </div>
+
+          <div class="field-row">
+            <label><span class="bullet">•</span> Barrett’s</label>
+            <input type="text" placeholder="Remarks" class="underline-input" [(ngModel)]="form.barrettsRemarks"
+              [disabled]="form.lax !== 'Yes'" />
+          </div>
+
+          <div class="field-row">
+            <label><span class="bullet">•</span> Hill’s classification</label>
+            <div class="radio-flex">
+              <label><input type="radio" name="hill" [(ngModel)]="form.hill" value="Yes" /> Yes</label>
+              <label><input type="radio" name="hill" [(ngModel)]="form.hill" value="No" /> No</label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label><span class="bullet">•</span> Grade:</label>
+            <div class="checkbox-row">
+              <label *ngFor="let grade of hillGrades">
+                <input type="radio" name="hillGrade" [(ngModel)]="form.hillGrade" [value]="grade"
+                  [disabled]="form.hill !== 'Yes'" />
+                {{ grade }}
+              </label>
+            </div>
+            <input type="text" placeholder="Remarks" class="underline-input" [(ngModel)]="form.hillRemarks"
+              [disabled]="form.hill !== 'Yes'" />
+          </div>
+          <label class="test-label">pH Impedance Monitoring</label>
+          <br>
+          <!-- <div class="test-row">
+            <div class="newDiv">
+              <div class="form-inline">
+                <div class="form-item">
+                  <input type="radio" id="phYes" [(ngModel)]="phYes" value="yes" />
+                  <label for="phYes">Yes</label>
+                </div>
+                <div class="form-item">
+                  <input type="radio" id="phNo" [(ngModel)]="phYes" value="no" />
+                  <label for="phNo">No</label>
+                </div>
+              </div>
+              <div class="form-item">
+                <label>Date:</label>
+                <input type="date" [(ngModel)]="phDate" placeholder="dd/mm/yyyy" [max]="today" />
+              </div>
+
+              <div class="form-inline">
+                <label>Report Attached:</label>
+                <div class="form-item">
+                  <input type="radio" id="phReportYes" name="phReportAttached" [(ngModel)]="phReportAttached"
+                    value="yes" />
+                  <label for="phReportYes">Yes</label>
+                </div>
+                <div class="form-item">
+                  <input type="radio" id="phReportNo" name="phReportAttached" [(ngModel)]="phReportAttached" value="no"
+                    (change)="onPhReportChange()" />
+                  <label for="phReportNo">No</label>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="attachment-remarks-container" *ngIf="phReportAttached === 'yes'">
+              <div class="attachment-block">
+                <label><strong>Attachment</strong></label>
+                <div class="input-group">
+                  <input type="file" id="phFileInput" [accept]="acceptedTypes" #phFileInput />
+                  <button type="button" class="btn btn-primary" (click)="addPhFile(phFileInput)">
+                    Add File
+                  </button>
+                </div>
+                <small class="text-muted">Only JPG, JPEG, PNG, and PDF formats allowed.</small>
+                <div *ngIf="phFiles.length > 0" class="file-list mt-2">
+                  <h6>Selected Files:</h6>
+                  <ul>
+                    <li *ngFor="let file of phFiles">{{ file.name }}</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="remarks-block">
+                <input type="text" class="underline-input" placeholder="Enter remarks" [(ngModel)]="phRemarks" />
+              </div>
+            </div>
+          </div> -->
+
+          <div class="test-row">
+            <div class="newDiv">
+              <div class="form-inline">
+                <div class="form-item">
+                  <input type="radio" id="phYes" [(ngModel)]="phYes" value="yes" />
+                  <label for="phYes">Yes</label>
+                </div>
+                <div class="form-item">
+                  <input type="radio" id="phNo" [(ngModel)]="phYes" value="no" />
+                  <label for="phNo">No</label>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label>Date:</label>
+                <input type="date" [(ngModel)]="phDate" placeholder="dd/mm/yyyy" [max]="today"
+                  [disabled]="phYes !== 'yes'" />
+              </div>
+
+              <div class="form-inline">
+                <label>Report Attached:</label>
+                <div class="form-item">
+                  <input type="radio" id="phReportYes" name="phReportAttached" [(ngModel)]="phReportAttached"
+                    value="yes" [disabled]="phYes !== 'yes'" />
+                  <label for="phReportYes">Yes</label>
+                </div>
+                <div class="form-item">
+                  <input type="radio" id="phReportNo" name="phReportAttached" [(ngModel)]="phReportAttached" value="no"
+                    (change)="onPhReportChange()" [disabled]="phYes !== 'yes'" />
+                  <label for="phReportNo">No</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="attachment-remarks-container" *ngIf="phReportAttached === 'yes' && phYes === 'yes'">
+              <div class="attachment-block">
+                <label><strong>Attachment</strong></label>
+                <div class="input-group">
+                  <input type="file" id="phFileInput" [accept]="acceptedTypes" #phFileInput />
+                  <button type="button" class="btn btn-primary" (click)="addPhFile(phFileInput)">
+                    Add File
+                  </button>
+                </div>
+                <small class="text-muted">Only JPG, JPEG, PNG, and PDF formats allowed.</small>
+                <div *ngIf="phFiles.length > 0" class="file-list mt-2">
+                  <h6>Selected Files:</h6>
+                  <ul>
+                    <li *ngFor="let file of phFiles">{{ file.name }}</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="remarks-block">
+                <input type="text" class="underline-input" placeholder="Enter remarks" [(ngModel)]="phRemarks" />
+              </div>
+            </div>
+          </div>
+
+
+
+          <label class="test-label">Manometry Test</label>
+          <br>
+          <div class="test-row">
+            <div class="newDiv">
+              <div class="form-inline">
+                <div class="form-item">
+                  <input type="radio" name="manometryTest" id="manometryYes" [(ngModel)]="manometryTest" value="yes" />
+                  <label for="manometryYes">Yes</label>
+                </div>
+                <div class="form-item">
+                  <input type="radio" name="manometryTest" id="manometryNo" [(ngModel)]="manometryTest" value="no" />
+                  <label for="manometryNo">No</label>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label>Date:</label>
+                <input type="date" [(ngModel)]="manometryDate" [max]="today" [disabled]="manometryTest !== 'yes'" />
+              </div>
+
+              <div class="form-inline">
+                <label>Report Attached:</label>
+                <div class="form-item">
+                  <input type="radio" name="manometryReport" id="manometryReportYes"
+                    [(ngModel)]="manometryReportAttached" value="yes" (change)="onManometryReportAttachedChange()" [disabled]="manometryTest !== 'yes'"/>
+                  <label for="manometryReportYes">Yes</label>
+                </div>
+                <div class="form-item">
+                  <input type="radio" name="manometryReport" id="manometryReportNo"
+                    [(ngModel)]="manometryReportAttached" value="no" (change)="onManometryReportAttachedChange()" [disabled]="manometryTest !== 'yes'"/>
+                  <label for="manometryReportNo">No</label>
+                </div>
+              </div>
+            </div>
+            <!-- Attachment & Remarks -->
+            <div class="attachment-remarks-container" *ngIf="manometryReportAttached === 'yes' && manometryTest === 'yes'">
+              <div class="attachment-block">
+                <label><strong>Attachment</strong></label>
+                <div class="input-group">
+                  <input type="file" id="manometryFileInput" [accept]="acceptedTypes" #fileInput
+                    (change)="onManometryFileChange($event)" />
+                  <button type="button" class="btn btn-primary" (click)="addManometryFile(fileInput)">Add File</button>
+                </div>
+                <small class="text-muted">Only JPG, JPEG, PNG, and PDF formats allowed.</small>
+
+                <div *ngIf="manometryFiles.length > 0" class="file-list mt-2">
+                  <h6>Selected Files:</h6>
+                  <ul>
+                    <li *ngFor="let file of manometryFiles">{{ file.name }}</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="remarks-block">
+                <input type="text" class="underline-input" placeholder="Enter remarks" [(ngModel)]="manometryRemarks" />
+              </div>
+            </div>
+          </div>
+
+          <label class="test-label">Biopsy</label>
+          <br>
+          <div class="test-row">
+            <div class="newDiv">
+              <div class="form-inline">
+                <div class="form-item">
+                  <input type="radio" name="biopsyTest" id="biopsyYes" [(ngModel)]="biopsyTest" value="yes" />
+                  <label for="biopsyYes">Yes</label>
+                </div>
+                <div class="form-item">
+                  <input type="radio" name="biopsyTest" id="biopsyNo" [(ngModel)]="biopsyTest" value="no" />
+                  <label for="biopsyNo">No</label>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label>Date:</label>
+                <input type="date" [(ngModel)]="biopsyDate" [max]="today" [disabled]="biopsyTest !== 'yes'" />
+              </div>
+
+              <div class="form-inline">
+                <label>Report Attached:</label>
+                <div class="form-item">
+                  <input type="radio" name="biopsyReport" id="biopsyReportYes" [(ngModel)]="biopsyReportAttached"
+                    value="yes" (change)="onBiopsyReportAttachedChange()" [disabled]="biopsyTest !== 'yes'"/>
+                  <label for="biopsyReportYes">Yes</label>
+                </div>
+                <div class="form-item">
+                  <input type="radio" name="biopsyReport" id="biopsyReportNo" [(ngModel)]="biopsyReportAttached"
+                    value="no" (change)="onBiopsyReportAttachedChange()" [disabled]="biopsyTest !== 'yes'"/>
+                  <label for="biopsyReportNo">No</label>
+                </div>
+              </div>
+
+            </div>
+            <div class="attachment-remarks-container" *ngIf="biopsyReportAttached === 'yes' && biopsyTest === 'yes'">
+              <div class="attachment-block">
+                <label><strong>Attachment</strong></label>
+                <div class="input-group">
+                  <input type="file" id="biopsyFileInput" [accept]="acceptedTypes" #biopsyFileInput
+                    (change)="onBiopsyFileChange($event)" />
+                  <button type="button" class="btn btn-primary" (click)="addBiopsyFile(biopsyFileInput)">Add
+                    File</button>
+                </div>
+                <small class="text-muted">Only JPG, JPEG, PNG, and PDF formats allowed.</small>
+
+                <div *ngIf="biopsyFiles.length > 0" class="file-list mt-2">
+                  <h6>Selected Files:</h6>
+                  <ul>
+                    <li *ngFor="let file of biopsyFiles">{{ file.name }}</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="remarks-block">
+                <input type="text" class="underline-input" placeholder="Enter remarks" [(ngModel)]="biopsyRemarks" />
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="form-inline">
+            <button class="btn px-4 register-btn" *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode"
+              (click)="submitAssessment()">Save</button>
+            <button class="btn px-4 register-btn" *ngIf="!isPrintMode && isFollowUp" (click)="onNext()"
+              [disabled]="!isSaved">Next</button>
+            <button class="btn px-4 register-btn" *ngIf="!isPrintMode && isFollowUp" (click)="goBack()">Back</button>
+            <button class="btn px-4 register-btn" *ngIf="!isPrintMode && !isFollowUp" (click)="onNext()">Next</button>
+            <button class="btn px-4 register-btn" *ngIf="!isPrintMode && !isFollowUp" (click)="goBack()">Back</button>
+          </div>
+        </div>
+      </div>
+    </div>

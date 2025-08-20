@@ -1,0 +1,171 @@
+.personal-history {
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #357083;
+    padding: 10px;
+    margin-bottom: 24px;
+}
+
+.case-info {
+  float: right;
+  color: blue;
+  font-weight: bold;
+}
+
+.doctor-name {
+  font-weight: normal;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+.arrow-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin: 30px 0; */
+}
+.arrow {
+  position: relative;
+  background: gray;
+  padding: 20px 25px 20px 30px;
+  color: white;
+  font-weight: bold;
+  margin-right: 10px;
+  min-width: 200px;
+  text-align: center;
+  clip-path: polygon(0% 0%, calc(100% - 15px) 0%, 100% 50%, calc(100% - 15px) 100%, 0% 100%, 15px 50%);
+  transition: background-color 0.3s ease;
+  font-size: 20px;
+}
+.baseline-green {
+  background-color: green;
+  color: white;
+}
+.baseline-blue {
+  background-color: blue;
+  color: white;
+}
+.history-table th,
+.history-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.history-table th {
+  background-color: #f4f4f4;
+}
+
+input:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+.history-table input[type="text"] {
+  width: 90%;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.history-table label {
+  margin: 0 5px;
+  display: flex;
+}
+
+.redioButton{
+  display: flex;
+  padding: 13px !important;
+}
+
+.register-btn {
+  background-color: #026f83;
+  color: #fff;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+.register-btn:hover {
+  background-color: #015f72;
+  transform: scale(1.02);
+}
+
+.radio-inline label {
+  display: inline-block;
+  margin-right: 15px;
+}
+.register-btn:disabled {
+  opacity: 0.5; /* visually lighter */
+  cursor: not-allowed;
+  pointer-events: auto;
+}
+
+
+.register-btn {
+  background-color: #026f83;
+  color: #fff;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.disabled-btn {
+  background-color: #026f83 !important;
+  cursor: not-allowed !important;
+  opacity: 0.65; 
+    cursor: not-allowed;
+
+}
+
+
+
+h2 {
+    color: white;
+    font-weight: 600;
+    margin-left: 0.25rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-container {
+  display: flex;
+  gap: 0.75rem;             /* Reduced spacing between buttons */
+  margin-top: 1.5rem;
+  justify-content: flex-start; /* or 'center' if you want centered buttons */
+}
+
+.button-container button {
+  white-space: nowrap;      /* Prevent text wrapping inside buttons */
+  flex-shrink: 0;           /* Prevent buttons from shrinking */
+}
+.intake-row {
+  margin-bottom: 1rem;
+}
+.intake-row label {
+  font-weight: 600;
+}
+.intake-row input[type="text"] {
+  margin-right: 0.5rem;
+  width: 150px;
+}
+

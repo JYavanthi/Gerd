@@ -1,0 +1,128 @@
+<div class="container">
+  <app-sidebar></app-sidebar>
+
+  <div class="content" id="pdf-content">
+    <div class="arrow-status">
+      <div class="arrow" [ngClass]="getStatusClass(1)" (click)="onTabClick(1)">
+        Baseline
+      </div>
+
+      <div class="arrow" [ngClass]="getStatusClass(2)" (click)="Followup1(); onTabClick(2)">
+        Follow-up 1
+      </div>
+
+      <div class="arrow" [ngClass]="getStatusClass(3)" (click)="Followup2(); onTabClick(3)">
+        Follow-up 2
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Patient Information<i *ngIf="getActiveTabId() === 1"
+          class="fa-solid fa-arrow-right right-icon" (click)="navigateToFollowUp('followUp2')"></i></div>
+
+      <form [formGroup]="patientForm" class="form-grid">
+        <div>
+          <label>Patient</label>
+          <input formControlName="patient" />
+        </div>
+        <div>
+          <label>Initial</label>
+          <input formControlName="initial" type="text" />
+        </div>
+        <div>
+          <label>Subject Number</label>
+          <input formControlName="subjectNumber" />
+        </div>
+        <div>
+          <label>Date</label>
+          <input formControlName="date" type="date" />
+        </div>
+        <div>
+          <label>Age in years</label>
+          <input formControlName="age" type="number" />
+        </div>
+        <div>
+          <label>Gender</label>
+          <select formControlName="gender">
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <div>
+          <label>Education</label>
+          <input formControlName="education" />
+        </div>
+        <!-- <select formControlName="occupation">
+          <option value="">Select</option>
+          <option value="Sedentary">Sedentary</option>
+          <option value="Non-Sedentary">Non-Sedentary</option>
+        </select> -->
+
+        <!-- State -->
+        <select formControlName="state">
+          <option value="">Select</option>
+          <option *ngFor="let state of states" [value]="state.id">
+            {{ state.name }}
+          </option>
+        </select>
+
+        <!-- City -->
+        <select formControlName="city">
+          <option value="">Select</option>
+          <option *ngFor="let city of cities" [value]="city.id">
+            {{ city.name }}
+          </option>
+        </select>
+
+        <div>
+          <label>Place Type</label>
+          <select formControlName="placeType">
+            <option value="">Select</option>
+            <option value="urban">Urban</option>
+                <option value="subUrban">Sub Urban</option>
+                <option value="rural">Rural</option>
+          </select>
+        </div>
+        <div>
+          <label>Socioeconomic</label>
+          <select formControlName="socioeconomic">
+            <option value="">Select</option>
+            <option value="abovePoverty">Above Poverty</option>
+            <option value="belowPoverty">Below Poverty</option>
+          </select>
+        </div>
+        <div>
+          <label>Annual Family Income</label>
+          <input formControlName="income" />
+        </div>
+        <!-- <div>
+          <label>Diet</label>
+          <input formControlName="diet" type="text" />
+        </div>
+       
+        <div>
+          <label>Past History</label>
+          <input formControlName="pastHistory" type="text" />
+        </div> -->
+
+        <!-- Status row moved to last
+        <div class="full-row">
+          <label>Status</label>
+          <select formControlName="status">
+            <option value="">Select</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div> -->
+      </form>
+    </div>
+
+    <div class="buttons">
+
+      <button type="button" class="btn px-4 register-btn" *ngIf="this.activeTabId == 1" (click)="onNext('followUp2')">
+        Next </button>
+
+    </div>
+  </div>
+</div>
