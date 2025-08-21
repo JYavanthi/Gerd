@@ -69,6 +69,7 @@ export class ChiefComplaintComponent implements OnInit {
 
      
     this.stage = Number(this.route.snapshot.params['stage'] || 0);
+    this.patientId= Number(this.route.snapshot.params['patientId'] || this.patientService.getPatientId());
     const state = history.state;
     const allowedWithoutSave = [1, 3, 5];
     if (allowedWithoutSave.includes(this.stage)) {
@@ -78,40 +79,45 @@ export class ChiefComplaintComponent implements OnInit {
     this.formData = state?.data;
     //this.isFollowUp = this.router.url.includes('follow-up-1') || this.router.url.includes('follow-up-2');
 
-    this.route.params.subscribe(params => {
-      const routeStage = params['stage'];
-      //if (routeStage) this.stage = routeStage;
+    // this.route.params.subscribe(params => {
+    //   const routeStage = params['stage'];
+    //   //if (routeStage) this.stage = routeStage;
 
-    });
+    // });
     if (state?.patientId) {
-      this.patientId = state.patientId;
+      //this.patientId = state.patientId;
       this.ptnstage = state.stage;
-      this.patientService.setPatientId(this.patientId);
+      //this.patientService.setPatientId(this.patientId);
     }
 
-    this.patientId = this.patientId || this.patientService.getPatientId();
+    //this.patientId = this.patientId || this.patientService.getPatientId();
+    console.log('oninit patientid',this.patientId);
     if (!this.patientId) {
       console.warn('⚠️ No valid patient ID found.');
       return;
     }
+    else{
+      console.log(' patientid',this.patientId);
+      this.fetchChiefComplaintData(this.patientId);
+    }
 
-    this.route.params.subscribe(params => {
-      const idFromRoute = +params['patientId'];
-      const stageFromRoute = params['stage'];
+  //   this.route.params.subscribe(params => {
+  //     const idFromRoute = +params['patientId'];
+  //     const stageFromRoute = params['stage'];
 
-      // if (idFromRoute && idFromRoute !== this.patientId) {
-      //   this.patientId = idFromRoute;
-      //    this.stage = stageFromRoute;
-      //   this.patientService.setPatientId(this.patientId);
-      //   }
+  //     // if (idFromRoute && idFromRoute !== this.patientId) {
+  //     //   this.patientId = idFromRoute;
+  //     //    this.stage = stageFromRoute;
+  //     //   this.patientService.setPatientId(this.patientId);
+  //     //   }
 
-      const cachedData = this.patientService.getChiefComplaintData();
-      if (cachedData) {
-        this.chiefComplaintForm.patchValue(cachedData);
-      } else {
-        this.fetchChiefComplaintData(this.patientId);
-      }
-    });
+  //     const cachedData = this.patientService.getChiefComplaintData();
+      // if (this.patientId !=='') {
+      //   this.chiefComplaintForm.patchValue(cachedData);
+      // } else {
+       // this.fetchChiefComplaintData(this.patientId);
+    //  }
+  //   });
   }
 
 
@@ -146,21 +152,23 @@ export class ChiefComplaintComponent implements OnInit {
       return;
     }
 
-    const cachedData = this.patientService.getChiefComplaintData();
-    if (cachedData) {
-      this.chiefComplaintForm.patchValue(cachedData);
-    } else {
-      this.fetchChiefComplaintData(this.patientId);
-    }
+    // const cachedData = this.patientService.getChiefComplaintData();
+    // if (cachedData) {
+    //   this.chiefComplaintForm.patchValue(cachedData);
+    // } else {
+    //   this.fetchChiefComplaintData(this.patientId);
+    // }
   }
 
   fetchChiefComplaintData(patientId: number): void {
 
-    const stageToFetch = this.stage; // this.stage comes from @Input()
-  if (!stageToFetch) {
-    console.warn('⚠️ Stage not set for ChiefComplaintComponent');
-    return;
-  }
+   // const stageToFetch = this.stage; // this.stage comes from @Input()
+  //  console.log('stage',this.stage);
+  //   console.log('patientId',patientId);
+  // if (!this.stage) {
+  //   console.warn('⚠️ Stage not set for ChiefComplaintComponent');
+  //   return;
+  // }
     this.chiefComplaintService.getChiefComplaintByPatientId(patientId, this.stage).subscribe({
       next: (res: any) => {
         if (res.type === 'S' && res.data) {

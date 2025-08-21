@@ -74,18 +74,18 @@
             <div class="form-group col-md-4">
               <select formControlName="education" class="form-select">
                 <option value="" disabled hidden selected></option>
-                <option value="Above">10th Std & Above</option>
-                <option value="Below">Below 10th</option>
+                <option value="10th Std & Above">10th Std & Above</option>
+                <option value="Below 10th">Below 10th</option>
               </select>
               <label class="form-label">Education</label>
               <div *ngIf="demographicForm.get('education')?.touched && demographicForm.get('education')?.invalid"
                 class="text-danger small">Education is required.</div>
             </div>
-                        <div class="form-group col-md-4">
+            <div class="form-group col-md-4">
               <select formControlName="occupation" class="form-select">
                 <option value="" disabled hidden selected></option>
                 <option value="Sedentary">Sedentary</option>
-                <option value="nonSedentary">Non-Sedentary</option>
+                <option value="Non-Sedentary">Non-Sedentary</option>
               </select>
               <label class="form-label">Occupation</label>
               <div *ngIf="demographicForm.get('occupation')?.touched && demographicForm.get('occupation')?.invalid"
@@ -116,12 +116,20 @@
               <div *ngIf="demographicForm.get('city')?.touched && demographicForm.get('city')?.invalid"
                 class="text-danger small">City is required.</div>
             </div>
-                        <div class="form-group col-md-4">
+             <div class="form-group col-md-4">
+              <input formControlName="pincode" class="form-input" placeholder=" " maxlength="6"
+              inputmode="numeric" pattern="[0-9]*"/>
+              <label class="form-label">Pincode</label>
+               <div *ngIf="demographicForm.get('pincode')?.touched && demographicForm.get('pincode')?.hasError('pattern')"
+                class="text-danger small"> Enter a valid 6-digit pincode.</div>
+            </div>
+          
+            <div class="form-group col-md-4">
               <select formControlName="placeType" class="form-select">
                 <option value="" disabled hidden selected></option>
-                <option value="urban">Urban</option>
-                <option value="subUrban">Sub Urban</option>
-                <option value="rural">Rural</option>
+                <option value="Urban">Urban</option>
+                <option value="Sub Urban">Sub Urban</option>
+                <option value="Rural">Rural</option>
               </select>
               <label class="form-label">Place Type</label>
               <div *ngIf="demographicForm.get('placeType')?.touched && demographicForm.get('placeType')?.invalid"
@@ -132,8 +140,8 @@
             <div class="form-group col-md-4">
               <select formControlName="socioeconomic" class="form-select">
                 <option value="" disabled hidden selected></option>
-                <option value="abovePoverty">Above Poverty Line</option>
-                <option value="belowPoverty">Below Poverty Line</option>
+                <option value="Above Poverty Line">Above Poverty Line</option>
+                <option value="Below Poverty Line">Below Poverty Line</option>
               </select>
               <label class="form-label">Socioeconomic</label>
               <div
@@ -143,9 +151,9 @@
             <div class="form-group col-md-4">
               <select formControlName="annualFamilyIncome" class="form-select">
                 <option value="" disabled hidden selected></option>
-                <option value="Less">Less than 1 Lakh</option>
-                <option value="Lakhs">1-5 Lakhs</option>
-                <option value="Greater">Greater Than 5 Lakhs</option>
+                <option value="Less than 1 Lakh">Less than 1 Lakh</option>
+                <option value="1-5 Lakhs">1-5 Lakhs</option>
+                <option value="Greater Than 5 Lakhs">Greater Than 5 Lakhs</option>
               </select>
               <label class="form-label">Annual Family Income</label>
               <div

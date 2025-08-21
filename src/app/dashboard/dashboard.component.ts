@@ -15,7 +15,7 @@ import { StageService } from '../Services/StageService.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-    @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
+  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
   caseSub!: Subscription;
   tableData: any[] = [];
   doctorlist: any[] = [];
@@ -195,75 +195,75 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
 
-updatePieChart() {
-  this.pieChartData = {
-    labels: this.pieChartLabels,
-    datasets: [{
-      data: [this.completedCases, this.incompleteCases, this.pendingCases],
-      backgroundColor: ['#76e4f7', '#4ab0c4', '#ef476f']
-    }]
-  };
+  updatePieChart() {
+    this.pieChartData = {
+      labels: this.pieChartLabels,
+      datasets: [{
+        data: [this.completedCases, this.incompleteCases, this.pendingCases],
+        backgroundColor: ['#76e4f7', '#4ab0c4', '#ef476f']
+      }]
+    };
 
-  // Optional: manually trigger chart update if you have @ViewChild
-  this.chart?.update();
-}
+    // Optional: manually trigger chart update if you have @ViewChild
+    this.chart?.update();
+  }
 
 
 
-updateBarChart() {
-  const currentYear = new Date().getFullYear();
-  const months = 12;
-  const completedCounts = Array(months).fill(0);
-  const pendingCounts = Array(months).fill(0);
-  const incompleteCounts = Array(months).fill(0);
+  updateBarChart() {
+    const currentYear = new Date().getFullYear();
+    const months = 12;
+    const completedCounts = Array(months).fill(0);
+    const pendingCounts = Array(months).fill(0);
+    const incompleteCounts = Array(months).fill(0);
 
-  console.log('Current year:', currentYear);
+    console.log('Current year:', currentYear);
 
-  this.tableData.forEach(row => {
-    const date = new Date(row.date);
-    const status = row.status?.toLowerCase() || '';
+    this.tableData.forEach(row => {
+      const date = new Date(row.date);
+      const status = row.status?.toLowerCase() || '';
 
-    console.log('Row date:', row.date, 'Parsed year:', date.getFullYear(), 'Status:', status);
+      console.log('Row date:', row.date, 'Parsed year:', date.getFullYear(), 'Status:', status);
 
-    if (!isNaN(date.getTime()) && date.getFullYear() === currentYear) {
-      const month = date.getMonth();
+      if (!isNaN(date.getTime()) && date.getFullYear() === currentYear) {
+        const month = date.getMonth();
 
-      if (status === 'completed') {
-        completedCounts[month]++;
-      } else if (status === 'pending') {
-        pendingCounts[month]++;
-      } else if (status === 'incomplete') {
-        incompleteCounts[month]++;
+        if (status === 'completed') {
+          completedCounts[month]++;
+        } else if (status === 'pending') {
+          pendingCounts[month]++;
+        } else if (status === 'incomplete') {
+          incompleteCounts[month]++;
+        }
       }
-    }
-  });
+    });
 
-  console.log('Monthly counts - Completed:', completedCounts);
-  console.log('Monthly counts - Pending:', pendingCounts);
-  console.log('Monthly counts - Incomplete:', incompleteCounts);
+    console.log('Monthly counts - Completed:', completedCounts);
+    console.log('Monthly counts - Pending:', pendingCounts);
+    console.log('Monthly counts - Incomplete:', incompleteCounts);
 
-  // Replace entire datasets array to ensure change detection
-  this.barChartData = {
-    labels: this.barChartLabels,
-    datasets: [
-      {
-        label: 'Completed',
-        data: completedCounts,
-        backgroundColor: '#76e4f7'
-      },
-      {
-        label: 'Pending',
-        data: pendingCounts,
-        backgroundColor: '#ef476f'
-      },
-      {
-        label: 'Incomplete',
-        data: incompleteCounts,
-        backgroundColor: '#4ab0c4'
-      }
-    ]
-  };
-}
+    // Replace entire datasets array to ensure change detection
+    this.barChartData = {
+      labels: this.barChartLabels,
+      datasets: [
+        {
+          label: 'Completed',
+          data: completedCounts,
+          backgroundColor: '#76e4f7'
+        },
+        {
+          label: 'Pending',
+          data: pendingCounts,
+          backgroundColor: '#ef476f'
+        },
+        {
+          label: 'Incomplete',
+          data: incompleteCounts,
+          backgroundColor: '#4ab0c4'
+        }
+      ]
+    };
+  }
 
 
   handleStageClick(row: any, section: 'baseline' | 'followUp1' | 'followUp2') {
@@ -302,40 +302,59 @@ updateBarChart() {
       this.router.navigate(['/case-details', patientId, stage], {
         state: { data: row, isViewMode: true }
       });
-    } else {
+    }
+    else {
       // Get next route path
       this.http.getPageRouterByPatientId(patientId).subscribe({
         next: (res: any) => {
-          let pageRouter = res?.pageRouter;
-
-          if (pageRouter) {
-            pageRouter = pageRouter.trim().replace(/\/+$/, ''); // Remove trailing slash
-            let parts = pageRouter.split('/').filter(Boolean);
-
-            // Replace {patientId} if it's a template
-            parts = parts.map((p: string) => (p === '{patientId}' ? String(patientId) : p));
-
-            // If stage segment is missing, append it
-            if (parts.length === 2) {
-              parts.push(String(stage));
-            } else if (parts.length >= 3) {
-              parts[2] = String(stage); // Ensure correct stage
-            }
-
-            const finalRoute = '/' + parts.join('/');
-            console.log('Navigating to:', finalRoute);
-
-            this.router.navigate([finalRoute], {
+          console.log('res.data', res.pageRouter);
+          if (res.pageRouter !== '/case-details/{patientId}' ) {
+            let pageRouter = res?.pageRouter;
+            console.log('pageRouter', pageRouter)
+            this.router.navigate([pageRouter], {
               state: { isViewMode: false }
             });
-          } else {
-            alert('No route found for this patient.');
           }
+          else {
+            this.router.navigate(['/case-details', patientId, stage], {
+              state: { data: row, isViewMode: true }
+            })}
+
+//           if (pageRouter) {
+//             // pageRouter = pageRouter.trim().replace(/\/+$/, ''); // Remove trailing slash
+//             // let parts = pageRouter.split('/').filter(Boolean);
+
+//             // // Replace {patientId} if it's a template
+//             // parts = parts.map((p: string) => (p === '{patientId}' ? String(patientId) : p));
+
+//             // // If stage segment is missing, append it
+//             // if (parts.length === 2) {
+//             //   parts.push(String(stage));
+//             // } else if (parts.length >= 3) {
+//             //   parts[2] = String(stage); // Ensure correct stage
+//             // }
+
+//             // const finalRoute = '/' + parts.join('/');
+//             // console.log('Navigating to:', finalRoute);
+
+//             // this.router.navigate([finalRoute], {
+//             //   state: { isViewMode: false }
+//             // });
+//              this.router.navigate([pageRouter], {
+//               state: { isViewMode: false }
+//             });
+
+//           } else {
+// //alert('No route found for this patient.');
+//         this.router.navigate(['/chiefComplaint', patientId, stage], {
+//         state: { data: row, isViewMode: true }
+//       });
+//           }
         },
-        error: err => {
-          console.error('❌ Error fetching page router:', err);
-        }
-      });
+          error: err => {
+            console.error('❌ Error fetching page router:', err);
+          }
+        });
     }
   }
   navigateToAddCase() {
@@ -349,8 +368,8 @@ updateBarChart() {
   //     queryParams: { stage: stageName }
   //   });
   // }
-downloadAllStages(patientID: any) {
-  this.router.navigate([`/case-stage-view/${patientID}`]);
-}
+  downloadAllStages(patientID: any) {
+    this.router.navigate([`/case-stage-view/${patientID}`]);
+  }
 
 }

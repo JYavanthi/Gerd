@@ -29,7 +29,7 @@ export class AssessmentComponent {
     this.symptomAnswers = Array(12).fill(null);
     const pid = this.router.url.includes('id');
     const stage = this.router.url.includes('stage');
-    console.log("constructor patient ID for assessment:", pid, stage);
+   // console.log("constructor patient ID for assessment:", pid, stage);
 
   }
 
@@ -395,12 +395,12 @@ export class AssessmentComponent {
     this.phRemarks = data.pHimRemark?? '';
 
     this.manometryTest = data.manometryTest ? 'yes' : 'no';
-    this.manometryDate = data.mtDate?formatDate(data.mtDate): '2025-08-20T00:00:00Z';
+    this.manometryDate = data.mtDate?new Date(data.mtDate).toISOString(): '2025-08-20T00:00:00Z';
     this.manometryReportAttached = data.mtAttached ? 'yes' : 'no';
     this.manometryRemarks = data.mtRemark??'';
 
     this.biopsyTest = data.biopsy ? 'yes' : 'no';
-    this.biopsyDate = data.biopsyDate?formatDate(data.biopsyDate):'2025-08-20T00:00:00Z';
+    this.biopsyDate = data.biopsyDate?new Date(data.biopsyDate).toISOString():'2025-08-20T00:00:00Z';
     this.biopsyReportAttached = data.biopsyAttached ? 'yes' : 'no';
     this.biopsyRemarks = data.biopsyRemark??'';
 

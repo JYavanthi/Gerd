@@ -4,6 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DemographicService } from '../Services/demographic.service';
 import { PatientService } from '../Services/patient.service';
 import { Case } from '../Services/case-data.services';
+import { API_URLS } from '../shared/API-URLs';
+import { HttpserviceService } from '../httpservice.service';
+import { FormvalidationService } from '../formvalidation.service';
 
 @Component({
   selector: 'app-case-details',
@@ -22,24 +25,17 @@ export class CaseDetailsComponent implements OnInit {
   doctorId: number | null = null;
   tabId = 1
   activeTabId: any = 1;
-
-  states = [
-    { id: 4852, name: 'Tamil Nadu' },
-    { id: 4023, name: 'Maharashtra' },
-    { id: 4024, name: 'Kerala' },
-    // Add more states as needed
-  ];
-
-  cities = [
-    { id: 132399, name: 'Chennai' },
-    { id: 57837, name: 'Mumbai' },
-    { id: 57838, name: 'Kochi' },
-    // Add more cities as needed
-  ];
+  states: Array<{ id: number; name: string }> = [];
+  cities: any;
+  stateval: any;
+  userData:any;
+  
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
+    private formValidation: FormvalidationService,
+    private http: HttpserviceService,
     private demographicService: DemographicService,
     private patientService: PatientService,
   ) {
@@ -53,6 +49,7 @@ export class CaseDetailsComponent implements OnInit {
       occupation: [{ value: '', disabled: true }],
       state: [{ value: '', disabled: true }],
       city: [{ value: '', disabled: true }],
+      pincode: [{ value: '', disabled: true }],
       placeType: [{ value: '', disabled: true }],
       socioeconomic: [{ value: '', disabled: true }],
       income: [{ value: '', disabled: true }],
@@ -72,18 +69,15 @@ export class CaseDetailsComponent implements OnInit {
 
     this.patientId = state?.patientId;
     this.tabId = state?.tabId ?? this.getActiveTabId();
-    console.log('📌 Active Tab ID:', this.getActiveTabId());
     const id = this.route.snapshot.paramMap.get('id');
-    console.log('📌 Case ID from route:', id);
     this.stage = state.stage ?? 0;
-    console.log('Stage received in case-details:', this.stage);
-
     this.doctorId = this.patientService.getDoctorId();
-    console.log('this.doctorId from local', localStorage.getItem('DoctorID'));
-    console.log('this.doctorId from service', this.doctorId);
+    
     this.isViewMode = state.isViewMode ?? false;
     this.formData = state.data;
-    console.log('Loaded case:', this.formData, 'View Mode:', this.isViewMode);
+     
+    this.loadStates();
+    
     if (id) {
       this.demographicService.getDemographicDetailsByPatientId(+id).subscribe({
         next: (response) => {
@@ -96,23 +90,24 @@ export class CaseDetailsComponent implements OnInit {
           }
 
           this.caseData = data; // store for arrows and follow-up
-          this.stage = data.stage
-          console.log('✅ Parsed demographic data:', data);
-          console.log('📌 Stage from DB:', this.stage);
-          console.log('📌 Active Tab ID:', this.getActiveTabId());
+          this.stage = data.stage;
+          //this.stateval=data.state
+          this.stateval=this.caseData.state;
+          console.log('state data',this.stateval)
           if (!this.tabId) {
             this.tabId = this.getActiveTabId();
           }
           this.patientForm.patchValue({
-            patient: data.patientId || '',
-            subjectNumber: data.subjectNo || `MLL/GERD/25-26-${data.patientId}`,
+            patient: data.patientId,
+            subjectNumber: data.subjectNo,
             date: data.date ? this.formatDate(data.date) : '',
             age: data.age ?? '',
             gender: data.gender || '',
             education: data.education || '',
             occupation: data.occupation || '',
-            state: data.state ?? '',
-            city: data.city ?? '',
+            state: data.state,
+            city: data.city,
+            pincode: data.pincode,
             placeType: data.placeType || '',
             socioeconomic: data.socioeconomicStatus || '',
             income: data.familyIncome || '',
@@ -122,7 +117,8 @@ export class CaseDetailsComponent implements OnInit {
             status: data.status || '',
 
           });
-
+          
+          this.getCities(this.stateval);
           console.log('✅ Form values patched.');
         },
         error: (err) => {
@@ -132,6 +128,63 @@ export class CaseDetailsComponent implements OnInit {
     }
   }
 
+  getCity(){
+     this.http.httpGet(API_URLS.CITY_GET, { stateId: 4026 }).subscribe({
+     next: (res: any) => {
+        // Sort cities alphabetically by name
+        this.cities = res.sort((a: any, b: any) => {
+          const nameA = a.name.toLowerCase();
+          const nameB = b.name.toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+      },
+      error: (err) => {
+        this.formValidation.showAlert('Error loading cities', 'danger');
+        console.error(err);
+      }
+    });
+  }
+
+
+   getCities(event: any) {
+    this.http.httpGet(API_URLS.CITY_GET, { stateId: event.target.value }).subscribe({
+      next: (res: any) => {
+        // Sort cities alphabetically by name
+        this.cities = res.sort((a: any, b: any) => {
+          const nameA = a.name.toLowerCase();
+          const nameB = b.name.toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+      },
+      error: (err) => {
+        this.formValidation.showAlert('Error loading cities', 'danger');
+        console.error(err);
+      }
+    });
+  }
+
+ loadStates() {
+  if (this.states.length === 0) {
+    this.http.httpGet(API_URLS.STATE_GET).subscribe({
+      next: (res: any) => {
+        // Sort states alphabetically by name
+        this.states = res.sort((a: any, b: any) => {
+          const nameA = a.name.toLowerCase();
+          const nameB = b.name.toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+      },
+      error: (err) => {
+        this.formValidation.showAlert('Error loading states', 'danger');
+        console.error(err);
+      }
+    });
+    if (this.stateval!=='') {
+       this.patientForm.patchValue({
+        //city: this.getCities(this.stateval),
+      }); 
+    }
+    }}
 
   formatDate(dateString: string): string {
     const date = new Date(dateString);

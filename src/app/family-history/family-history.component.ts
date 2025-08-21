@@ -80,21 +80,22 @@ export class FamilyHistoryComponent implements OnInit {
     
     this.route.params.subscribe(params => {
       this.patientId = +params['patientId'];
+      console.log('this.patientId',this.patientId);
       this.stage = +params['stage'];
 
-      const currentUrl = this.router.url;
-      this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
+      //const currentUrl = this.router.url;
+     // this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
 
       if (this.patientService.getPatientId()) {
-        this.loadFamilyHistory(this.patientService.getPatientId());
+        this.loadFamilyHistory(this.patientId);
         this.loadMedicationData(this.patientId, this.stage);
       }
     });
 
-    const cachedData = this.patientService.getfamalyhistoryData();
-    if (cachedData) {
-      this.familyhistoryForm.patchValue(cachedData);
-    }
+    //const cachedData = this.patientService.getfamalyhistoryData();
+   // if (cachedData) {
+   //   this.familyhistoryForm.patchValue(cachedData);
+   // }
 
     // Ensure at least one medication row exists initially if FormArray is empty
     if (this.medications.length === 0) {
@@ -156,6 +157,7 @@ export class FamilyHistoryComponent implements OnInit {
       const data = res?.data;
       //this.stage = data.stage;
       if (data) {
+         console.log('loadFamilyHistory',data.patientId)
           this.familyhistoryForm.patchValue({
           fH_GRED: data.fhGred,
           fH_Remark: data.fhRemark,
@@ -279,6 +281,7 @@ export class FamilyHistoryComponent implements OnInit {
       });
     }
   }
+  
   OnNext() {
     this.router.navigate([`/history-endoscopy/${this.patientId}/${this.stage}`], {
       state: {
@@ -307,6 +310,7 @@ export class FamilyHistoryComponent implements OnInit {
       }
     });
   }
+  
   getStatusClass(step: number): string {
     if (this.stage === 0 && step === 1) return 'baseline-blue';
 

@@ -22,7 +22,7 @@
 
       <form [formGroup]="patientForm" class="form-grid">
         <div>
-          <label>Patient</label>
+          <label>Patient ID</label>
           <input formControlName="patient" />
         </div>
         <div>
@@ -34,11 +34,11 @@
           <input formControlName="subjectNumber" />
         </div>
         <div>
-          <label>Date</label>
+          <label>Date of Birth</label>
           <input formControlName="date" type="date" />
         </div>
         <div>
-          <label>Age in years</label>
+          <label>Age(in years)</label>
           <input formControlName="age" type="number" />
         </div>
         <div>
@@ -47,54 +47,76 @@
             <option value="">Select</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
+            <option value="Other">Other</option>
           </select>
         </div>
         <div>
           <label>Education</label>
-          <input formControlName="education" />
+          <select formControlName="education" class="form-select">
+            <option value="" disabled hidden selected></option>
+            <option value="10th Std & Above">10th Std & Above</option>
+            <option value="Below 10th">Below 10th</option>
+          </select>
         </div>
-        <!-- <select formControlName="occupation">
-          <option value="">Select</option>
-          <option value="Sedentary">Sedentary</option>
-          <option value="Non-Sedentary">Non-Sedentary</option>
-        </select> -->
+        <div>
+          <label>Occupation</label>
+          <select formControlName="occupation">
+            <option value="">Select</option>
+            <option value="Sedentary">Sedentary</option>
+            <option value="Non-Sedentary">Non-Sedentary</option>
+          </select>
 
-        <!-- State -->
-        <select formControlName="state">
-          <option value="">Select</option>
-          <option *ngFor="let state of states" [value]="state.id">
-            {{ state.name }}
-          </option>
-        </select>
+        </div>
 
-        <!-- City -->
-        <select formControlName="city">
-          <option value="">Select</option>
-          <option *ngFor="let city of cities" [value]="city.id">
-            {{ city.name }}
-          </option>
-        </select>
+        
+        <div>
+          <label>State</label>
+           <select formControlName="state" class="form-select" (onload)="getCities($event)">
+              <option value="" disabled>Select State</option>
+              <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
+            </select>
+         </div>
+
+
+        
+        <div>
+          <label>City</label>
+          <select formControlName="city" class="form-select">
+                <option value="" disabled>Select City</option>
+                <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+              </select>
+        </div>
+
+        <div>
+          <label>Pincode</label>
+           <input formControlName="pincode" >
+        </div>
 
         <div>
           <label>Place Type</label>
           <select formControlName="placeType">
-            <option value="">Select</option>
-            <option value="urban">Urban</option>
-                <option value="subUrban">Sub Urban</option>
-                <option value="rural">Rural</option>
+             <option value="" disabled hidden selected></option>
+                <option value="Urban">Urban</option>
+                <option value="Sub Urban">Sub Urban</option>
+                <option value="Rural">Rural</option>
           </select>
         </div>
         <div>
           <label>Socioeconomic</label>
           <select formControlName="socioeconomic">
-            <option value="">Select</option>
-            <option value="abovePoverty">Above Poverty</option>
-            <option value="belowPoverty">Below Poverty</option>
+            <option value="" disabled hidden selected></option>
+                <option value="Above Poverty Line">Above Poverty Line</option>
+                <option value="Below Poverty Line">Below Poverty Line</option>
           </select>
         </div>
         <div>
           <label>Annual Family Income</label>
-          <input formControlName="income" />
+         <select formControlName="income" class="form-select">
+                <option value="" disabled hidden selected></option>
+                <option value="Less than 1 Lakh">Less than 1 Lakh</option>
+                <option value="1-5 Lakhs">1-5 Lakhs</option>
+                <option value="Greater Than 5 Lakhs">Greater Than 5 Lakhs</option>
+              </select>
         </div>
         <!-- <div>
           <label>Diet</label>

@@ -25,7 +25,7 @@ export class DemographicComponent implements OnInit {
   states: Array<{ id: number; name: string }> = [];
   cities: any;
   userData:any;
-  
+  occupation:any;
 
 
   constructor(
@@ -52,7 +52,7 @@ export class DemographicComponent implements OnInit {
       occupation: ['', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
-      pincode: [''],
+      pincode: ['',Validators.required,Validators.pattern(/^[1-9][0-9]{5}$/)],
       placeType: ['', Validators.required],
       socioeconomic: ['', Validators.required],
       annualFamilyIncome: ['', Validators.required],
@@ -80,7 +80,7 @@ this.demographicForm.get('date')?.valueChanges.subscribe((dobValue: string) => {
 
     this.demographicForm.statusChanges.subscribe(status => {
       this.isSaved = false;
-      console.log('Form status:', status); // "VALID" when ready
+      
     });
     // ✅ Restore form from localStorage
     const demographicData = this.patientService.getDemographicData();
@@ -123,12 +123,14 @@ let user: any = localStorage.getItem('doctor')
       familyIncome: this.demographicForm.controls['annualFamilyIncome'].value,
       pastHistory: this.demographicForm.controls['pastHistory'].value,
       diet: this.demographicForm.controls['diet'].value,
-      createdBy: this.patientService.getDoctorId()
+      createdBy: this.userData?.doctorId
     };
 
     this.http.httpPost('/PatientReg/SavePatient', param).subscribe((res: any) => {
       if (res.type === 'S') {
         this.isSaved = true;
+        this.occupation=this.demographicForm.controls['occupation'].value;
+        this.patientService.setOccupation(this.occupation);
         alert('Saved Successfully'); // ← Test this
         this.formValidation.showAlert('Saved Successfully', 'success');
 
