@@ -35,12 +35,12 @@ namespace Gred.Repositories
       return result;
     }
 
-    public async Task<CommonRsult> GetCurrentMedicationById(int patientId)
+    public async Task<CommonRsult> GetCurrentMedicationById(int patientId ,int stage)
     {
       var result = new CommonRsult();
 
       var complaint = await _context.VwCurrentMedications
-                                    .Where(c => c.PatientId == patientId)
+                                    .Where(c => c.PatientId == patientId && c.Stage == stage)
                                     .OrderByDescending(c => c.Stage)
                                     .FirstOrDefaultAsync();
 

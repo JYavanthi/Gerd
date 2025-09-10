@@ -84,20 +84,20 @@ export class HistoryComponent implements OnInit {
 
 
     // Check if there is a history ID in query params (e.g., ?id=1089)
-    this.route.queryParams.subscribe(params => {
-      if (params['id']) {
-        this.patientHistoryId = parseInt(params['id']);
-        this.historyService.initializeWithID(this.patientHistoryId);
-        console.log('✔️ Initialized with existing ID from query params:', this.patientHistoryId);
-      } else {
-        this.patientHistoryId = 0;
-        this.historyService.initializeWithID(0);
-        console.log('ℹ️ No existing ID in query params, new record mode.');
-      }
-    });
+    // this.route.queryParams.subscribe(params => {
+    //   if (params['id']) {
+    //     this.patientHistoryId = parseInt(params['id']);
+    //     this.historyService.initializeWithID(this.patientHistoryId);
+    //     console.log('✔️ Initialized with existing ID from query params:', this.patientHistoryId);
+    //   } else {
+    //     this.patientHistoryId = 0;
+    //     this.historyService.initializeWithID(0);
+    //     console.log('ℹ️ No existing ID in query params, new record mode.');
+    //   }
+    // });
 
-    const currentUrl = this.router.url;
-    this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
+    // const currentUrl = this.router.url;
+    // this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
   }
 
 
@@ -121,8 +121,8 @@ export class HistoryComponent implements OnInit {
         if (res.type === 'S' && res.data) {
 
           const data = res.data;
-          console.log('history data', data);
-          this.stage = data.stage;
+          // console.log('history data', data);
+          // this.stage = data.stage;
           this.patientHistoryForm.patchValue({
             pastHistory: data.pastHistory || '',
             diet: data.dietVegetarian ? 'Vegetarian' : data.dietNonVegetarian ? 'Non-Vegetarian' : ''
@@ -162,7 +162,7 @@ export class HistoryComponent implements OnInit {
     stage: this.stage,
     Flag: 'I',
     doctorID: this.userData?.doctorId,
-    PatientID: this.patientService.getPatientId(),
+    PatientID: this.patientId,
     Past_History: f.pastHistory,
     Diet_Vegetarian: f.diet === 'Vegetarian',
     Diet_NonVegetarian: f.diet === 'Non-Vegetarian',
@@ -176,23 +176,6 @@ export class HistoryComponent implements OnInit {
       if (res.type === 'S') {
         alert('Saved Successfully');
         this.isSaved = true;
-
-        this.http.httpGet('/PatientReg/GetPatient').subscribe((getRes: any) => {
-          if (getRes.type === 'S' && getRes.data?.length > 0) {
-            const latestPatient = getRes.data[getRes.data.length - 1];
-            const updatedPatientId = latestPatient.patientId;
-
-            this.formValidation.showAlert('Chief complaint saved successfully', 'success');
-            this.router.navigate([], {
-              queryParams: {
-                patientId: updatedPatientId,
-              }
-            });
-          } else {
-            this.formValidation.showAlert('Unable to fetch Patient ID after save', 'danger');
-          }
-        });
-
       } else {
         this.formValidation.showAlert('Error saving data!', 'danger');
       }

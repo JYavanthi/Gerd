@@ -22,12 +22,26 @@ namespace Gred.Controllers
       _configuration = configuration;
       _context = context;
     }
+    //[HttpGet("GetInCompletedReportData")]
+    //public async Task<IActionResult> GetInCompletedReportCount()
+    //{
+    //  try
+    //  {
+    //    var data = await _context.VwInCompletedRpts.ToListAsync();
+    //    return Ok(data);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return Ok(ex.Message);
+    //  }
+    //}
     [HttpGet("GetInCompletedReportData")]
-    public async Task<IActionResult> GetCompletedReportCount()
+    public async Task<IActionResult> GetInCompletedReportCount()
     {
       try
       {
-        var data = await _context.VwInCompletedRpts.ToListAsync();
+        _context.Database.SetCommandTimeout(300);
+        var data = await _context.VwInCompletedRpts.ToArrayAsync();
         return Ok(data);
       }
       catch (Exception ex)

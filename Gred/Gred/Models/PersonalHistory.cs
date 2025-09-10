@@ -84,4 +84,6 @@ public partial class PersonalHistory
     public int ModifiedBy { get; set; }
 
     public DateTime? ModifiedDt { get; set; }
+
+    public virtual Patient Patient { get; set; } = null!;
 }

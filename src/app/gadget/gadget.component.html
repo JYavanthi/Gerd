@@ -43,9 +43,12 @@
                   <input type="radio" formControlName="computerUsed" name="computerUsed" [value]="false" />
                   No
                 </label>
+                <div  style="color: red;" *ngIf="gadgetForm.get('computerUsed')?.touched && gadgetForm.get('computerUsed')?.invalid" 
+     class="text-danger small">  Computer Used is required.</div>
               </td>
               <td>
                 <input type="text" class="form-control" formControlName="computerUsedhrs" placeholder="hrs/day"  [disabled]="!gadgetForm.get('computerUsed')?.value"/>
+              
               </td>
               <td>
                 <input type="text" class="form-control" formControlName="computerUsedyears" placeholder="years"  [disabled]="!gadgetForm.get('computerUsed')?.value"/>
@@ -59,6 +62,8 @@
                   Yes</label>&nbsp;
                 <label><input type="radio" formControlName="smartphoneUsed" name="smartphoneUsed" [value]="false" />
                   No</label>
+                  <div  style="color: red;" *ngIf="gadgetForm.get('smartphoneUsed')?.touched && gadgetForm.get('smartphoneUsed')?.invalid" 
+     class="text-danger small">  Computer Used is required.</div>
               </td>
               <td><input type="text" class="form-control" formControlName="smartphoneUsedhrs" placeholder="hrs/day" />
               </td>
@@ -74,23 +79,23 @@
         <div class="step-container">
           <ul class="list-unstyled">
             <li>
-              <label><input type="radio" formControlName="workingHours" name="workingHours" value="early" />
+              <label><input type="radio" formControlName="workingHours" name="workingHours" value="4.00 am to 12.00 noon (Early Morning Shift)" />
                 4.00 am to 12.00 noon (Early Morning Shift)</label>
             </li>
             <li>
-              <label><input type="radio" formControlName="workingHours" name="workingHours" value="morning" />
+              <label><input type="radio" formControlName="workingHours" name="workingHours" value="6.00 am to 3.00 pm (Morning Shift)" />
                 6.00 am to 3.00 pm (Morning Shift)</label>
             </li>
             <li>
-              <label><input type="radio" formControlName="workingHours" name="workingHours" value="general" />
+              <label><input type="radio" formControlName="workingHours" name="workingHours" value="9.00 am to 6.00 pm (General Shift)" />
                 9.00 am to 6.00 pm (General Shift)</label>
             </li>
             <li>
-              <label><input type="radio" formControlName="workingHours" name="workingHours" value="afternoon" />
+              <label><input type="radio" formControlName="workingHours" name="workingHours" value="12.00 noon to 8.00 pm (Afternoon Shift)" />
                 12.00 noon to 8.00 pm (Afternoon Shift)</label>
             </li>
             <li>
-              <label><input type="radio" formControlName="workingHours" name="workingHours" value="night" />
+              <label><input type="radio" formControlName="workingHours" name="workingHours" value="8.00 pm to 8.00 am (Night Shift)" />
                 8.00 pm to 8.00 am (Night Shift)</label>
             </li>
           </ul>
@@ -108,7 +113,7 @@
 
       <div class="form-group">
         <label style="font-weight: bold;">Duration (No. of Years in the Above Working Hours)</label>
-        <input type="text" class="form-control" formControlName="totalWorkingYears"
+        <input type="number" class="form-control" formControlName="totalWorkingYears"
           placeholder="Enter duration in years" />
       </div>
 

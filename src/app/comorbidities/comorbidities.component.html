@@ -1,4 +1,4 @@
-<div class="d-flex flex-column" style="background-color: #027082; min-height: 100vh;">
+<div class="d-flex flex-column" style="background-color:  min-height 100vh;">
 
 
         <!-- Content Section -->
@@ -86,9 +86,8 @@
 
                                 <div class="row mt-4">
                                         <div class="col-12">
-                                                <button
-                                                      
-                                                        type="button" class="btn px-4 register-btn" (click)="Submit()" *ngIf="(stage === 0 || stage === 2 || stage === 4) !isPrintMode">
+                                                <button type="button" class="btn px-4 register-btn" (click)="Submit()"
+                                                        *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode">
                                                         Save
                                                 </button>
                                                 <button *ngIf="!isPrintMode && !isFollowUp" type="button"

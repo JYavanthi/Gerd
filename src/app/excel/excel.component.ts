@@ -20,6 +20,7 @@ export class ExcelComponent {
     private personalHistoryService: PersonalHistoryService,
   ) { }
 
+  stage: number =0;
   exportToExcel(): void {
     console.log('🔍 Attempting to export demographic data...');
 
@@ -102,7 +103,7 @@ export class ExcelComponent {
 
     console.log('🔍 Fetching chief complaint data for patientId:', patientId);
 
-    this.chiefComplaintService.getChiefComplaintByPatientId(patientId).subscribe({
+    this.chiefComplaintService.getChiefComplaintByPatientId(patientId,this.stage).subscribe({
       next: (res: any) => {
         if (res?.type === 'S' && res?.data) {
           const data = res.data;

@@ -11,7 +11,6 @@ export class PatientService {
   private readonly patientIdKey = 'patientId';
   private readonly doctorIdKey = 'doctorId';
   private readonly patientStage ='stage';
-  private readonly ptnOccupation ='occupation';
   // ✅ Store demographic data only in memory
   private demographicData: any = null;
   private personalHistoryData: any = null;
@@ -57,19 +56,10 @@ constructor(private http: HttpClient) { }
     const id = localStorage.getItem(this.doctorIdKey);
     return id ? +id : 0;
   }
-  getOccupation(): string {
-    const occup = localStorage.getItem(this.ptnOccupation);
-    return occup ? occup : 'Sedentary';
-  }
-  setOccupation(val: string): void {
-    localStorage.setItem(this.ptnOccupation, val.toString());
-  }
-
 
   clearIds(): void {
     localStorage.removeItem(this.patientIdKey);
     localStorage.removeItem(this.doctorIdKey);
-    localStorage.removeItem(this.ptnOccupation);
   }
 
   // ✅ Only in-memory demographic data (cleared on refresh)
@@ -151,4 +141,8 @@ getDiagnosisData(): any {
 getCaseStatus(): string {
   return this.caseStatus;
 }
+
+ getPatientById(id: number): Observable<any> {
+    return this.http.get<any>(`${API_URLS.BASE_URL}/PatientReg/GetPatient/${id}`);
+  }
 }

@@ -73,8 +73,8 @@ export class PersonalHistoryService {
     }
 
 
-      getComorbiditiesById(patientId: number, stage: number): Observable<any> {
-return this.http.get(`${this.baseUrl}/Comorbidities/GetComorbditiesById/${patientId}/${stage}`);  }
+      getPersonalHistoryById(patientId: number, stage: number): Observable<any> {
+return this.http.get(`${this.baseUrl}/PersonalHistory/GetPersonalHistoryById/${patientId}/${stage}`);  }
 
     
 }

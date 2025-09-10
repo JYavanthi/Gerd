@@ -19,8 +19,6 @@ public partial class FamilyHistory
 
     public string? FhEgcremark { get; set; }
 
-    public string? GHPpi { get; set; }
-
     public int? CreatedBy { get; set; }
 
     public DateTime? CreatedDt { get; set; }
@@ -30,4 +28,8 @@ public partial class FamilyHistory
     public DateTime? ModifiedDt { get; set; }
 
     public int? Stage { get; set; }
+
+    public string? GHPpi { get; set; }
+
+    public virtual Patient? Patient { get; set; }
 }

@@ -1,42 +1,42 @@
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.EntityFrameworkCore;
-//using gred.Data;
-//using gred.Models;
-//using Microsoft.AspNetCore.Mvc;
+using gred.Data;
+using gred.Models;
+using Microsoft.EntityFrameworkCore;
 
-//namespace gred.Repositories
-//{
-//  [ApiController]
-//  [Route("api/[controller]")]
-//  public class AttachmentsController : ControllerBase
-//  {
-//    private readonly IAttachmentRepository _repository;
+namespace gred.Repository
+{
+  public class AttachmentRepository : IAttachmentRepository
+  {
+    private readonly GredDbContext _context;
+    public AttachmentRepository(GredDbContext context)
+    {
+      _context = context;
+    }
 
-//    public AttachmentsController(IAttachmentRepository repository)
-//    {
-//      _repository = repository;
-//    }
+    public async Task<Attachment> AddAttachmentAsync(Attachment attachment)
+    {
+      _context.Attachments.Add(attachment);
+      await _context.SaveChangesAsync();
+      return attachment;
+    }
 
-//    // GET api/attachments/patient/{patientId}
-//    [HttpGet("patient/{patientId}")]
-//    public async Task<ActionResult<IEnumerable<Attachment>>> GetByPatientId(int patientId)
-//    {
-//      var attachments = await _repository.GetByPatientIdAsync(patientId);
-//      if (attachments == null || !attachments.Any())
-//        return NotFound();
+    public async Task<Attachment?> GetAttachmentAsync(int id)
+    {
+      return await _context.Attachments.FirstOrDefaultAsync(x => x.AttachmentId == id);
+    }
 
-//      return Ok(attachments);
-//    }
+    public async Task<IEnumerable<Attachment>> GetAttachmentsByPatientAsync(int patientId, int stage, string filesection)
+    {
+        return await _context.Attachments.Where(x => x.PatientId == patientId && x.Stage == stage && x.Section == filesection).ToListAsync();
+    }
 
-//    // POST api/attachments
-//    [HttpPost]
-//    public async Task<ActionResult<Attachment>> CreateAttachment([FromBody] Attachment attachment)
-//    {
-//      await _repository.AddAsync(attachment);
-//      return CreatedAtAction(nameof(GetByPatientId), new { patientId = attachment.PatientId }, attachment);
-//    }
-//  }
+    public async Task<bool> DeleteAttachmentAsync(int id)
+    {
+      var attachment = await _context.Attachments.FindAsync(id);
+      if (attachment == null) return false;
 
-//}
+      _context.Attachments.Remove(attachment);
+      await _context.SaveChangesAsync();
+      return true;
+    }
+  }
+}

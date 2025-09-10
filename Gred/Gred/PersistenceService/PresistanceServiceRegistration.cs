@@ -1,4 +1,6 @@
 using gred.Data;
+using gred.Repository;
+
 
 
 //using gred.Repositories;
@@ -47,7 +49,8 @@ namespace Gred.PersistenceService
       services.AddScoped<IComorbitiesRptRepository, ComorbitiesRptRepository>();
       services.AddScoped<IVwMedicationRptRepository, VwMedicationRptRepository>();
       services.AddScoped<IPtnTrackRepository, PtnTrackRepository>();
-      
+      services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+
       return services;
         }
     }

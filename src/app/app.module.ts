@@ -16,7 +16,6 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { DemographicComponent } from './demographic/demographic.component';
 import { NgChartsModule } from 'ng2-charts';
 import { FollowUpComponent } from './follow-up/follow-up.component';
-import { CaseDetailsComponent } from './case-details/case-details.component';
 import { HistoryComponent } from './history/history.component';
 import { ChiefComplaintComponent } from './chief-complaint/chief-complaint.component';
 import { ComorbiditiesComponent } from './comorbidities/comorbidities.component';
@@ -49,6 +48,7 @@ import { Comorbidities3Component } from './followUpTwo/comorbidities3/comorbidit
 import { Managament3Component } from './followUpTwo/management3/management3.component';
 import { CaseStageViewComponent } from './case-stage-view/case-stage-view.component';
 import { DoctorListComponent } from './doctor-list/doctor-list.component';
+import { StageProgressComponent } from './stage-progress/stage-progress.component';
 
 
 @NgModule({
@@ -64,7 +64,6 @@ import { DoctorListComponent } from './doctor-list/doctor-list.component';
     NavbarComponent,
     DemographicComponent,
     FollowUpComponent,
-    CaseDetailsComponent,
     HistoryComponent,
     FamilyHistoryComponent,
     ChiefComplaintComponent,
@@ -97,6 +96,7 @@ import { DoctorListComponent } from './doctor-list/doctor-list.component';
    // Comorbidities3Component,
     CaseStageViewComponent,
    DoctorListComponent,
+   StageProgressComponent,
    
   ],
 

@@ -34,4 +34,6 @@ public partial class Gadget
     public DateTime? ModifiedAt { get; set; }
 
     public int? Stage { get; set; }
+
+    public virtual Patient Patient { get; set; } = null!;
 }

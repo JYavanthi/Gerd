@@ -28,10 +28,10 @@
               <tr>
                 <td class="radio-cell">
                   <label>
-                    <input type="radio" formControlName="sleepApnea" value="yes"> Yes
+                    <input type="radio" formControlName="sleepApnea" value="Yes"> Yes
                   </label>
                   <label>
-                    <input type="radio" formControlName="sleepApnea" value="no"> No
+                    <input type="radio" formControlName="sleepApnea" value="No"> No
                   </label>
                   <div *ngIf="sleepForm.get('sleepApnea')?.touched && sleepForm.get('sleepApnea')?.invalid"
                     class="text-danger">
@@ -41,12 +41,10 @@
                 <td>
                   <!-- <input type="text" formControlName="sleepApneaFrequency" [disabled]="!sleepApneaYes || isViewMode"
                     class="underline-input" placeholder="/week" /> -->
-                  <input type="text" formControlName="sleepApneaDuration" [disabled]="!sleepApneaYes || isViewMode"
+                  <input type="text" formControlName="sleepApneaFrequency" [disabled]="!sleepApneaYes || isViewMode"
                     class="underline-input" placeholder="/week" /> hr/week
                 </td>
                 <td>
-                  <!-- <input type="text" formControlName="sleepApneaDuration" [disabled]="!sleepApneaYes || isViewMode"
-                    class="underline-input" placeholder="years" /> -->
                   <input type="text" formControlName="sleepApneaDuration" [disabled]="!sleepApneaYes || isViewMode"
                     class="underline-input" placeholder="years" />years
                 </td>
@@ -56,21 +54,14 @@
         </div>
         <div class="form-group">
           <label><strong>Exercise</strong></label>
-          <!-- <div class="checkbox-group">
-            <label>
-              <input type="radio" formControlName="exerciseIntake" value="yes" [disabled]="joggingSelectedyes || isViewMode"> Yes
-            </label>
-            <label>
-              <input type="radio" formControlName="exerciseIntake" value="no" [disabled]="joggingSelectedyes || isViewMode"> No
-            </label>
-          </div> -->
+          
           <div class="checkbox-group">
             <label>
-              <input type="radio" formControlName="exerciseIntake" value="yes" [disabled]="isViewMode" />
+              <input type="radio" formControlName="exerciseIntake" value="Yes" [disabled]="isViewMode" />
               Yes
             </label>
             <label>
-              <input type="radio" formControlName="exerciseIntake" value="no" [disabled]="isViewMode" />
+              <input type="radio" formControlName="exerciseIntake" value="No" [disabled]="isViewMode" />
               No
             </label>
           </div>
@@ -88,91 +79,134 @@
               <tr>
                 <td>Jogging</td>
                 <td>
-                  <label><input type="radio" formControlName="jogging" value="yes">
+                  <label><input type="radio" formControlName="jogging" value="Yes">
                     Yes</label>
-                  <label><input type="radio" formControlName="jogging" value="no">
+                  <label><input type="radio" formControlName="jogging" value="No">
                     No</label>
                 </td>
                 <td><input type="text" formControlName="joggingFrequency" [disabled]="!joggingSelectedyes || isViewMode"
-                    class="underline-input" /> hr/week</td>
+                    class="underline-input" /> hr/week
+                  <div  style="color: red;" *ngIf="sleepForm.get('joggingFrequency')?.invalid && sleepForm.get('joggingFrequency')?.touched">
+                    Frequency is required
+                  </div></td>
                 <td><input type="text" formControlName="joggingDuration" [disabled]="!joggingSelectedyes || isViewMode"
-                    class="underline-input" /> years</td>
+                    class="underline-input" /> years
+                  <div  style="color: red;" *ngIf="sleepForm.get('joggingDuration')?.invalid && sleepForm.get('joggingDuration')?.touched">
+                    Duration is required
+                  </div></td>
               </tr>
               <tr>
                 <td>GYM</td>
                 <td>
-                  <label><input type="radio" formControlName="gym" value="yes"> Yes</label>
-                  <label><input type="radio" formControlName="gym" value="no"> No</label>
+                  <label><input type="radio" formControlName="gym" value="Yes"> Yes</label>
+                  <label><input type="radio" formControlName="gym" value="No"> No</label>
                 </td>
                 <td><input type="text" formControlName="gymFrequency" [disabled]="!gymSelectedyes"
                     class="underline-input" />
-                  hr/week</td>
+                  hr/week
+                <div  style="color: red;" *ngIf="sleepForm.get('gymFrequency')?.invalid && sleepForm.get('gymFrequency')?.touched">
+                    Frequency is required
+                  </div></td>
                 <td><input type="text" formControlName="gymDuration" [disabled]="!gymSelectedyes"
                     class="underline-input" />
-                  years</td>
+                  years<div  style="color: red;" *ngIf="sleepForm.get('gymDuration')?.invalid && sleepForm.get('gymDuration')?.touched">
+                    Duration is required
+                  </div></td>
               </tr>
               <tr>
                 <td>Yoga</td>
                 <td>
-                  <label><input type="radio" formControlName="yoga" value="yes"> Yes</label>
-                  <label><input type="radio" formControlName="yoga" value="no"> No</label>
+                  <label><input type="radio" formControlName="yoga" value="Yes"> Yes</label>
+                  <label><input type="radio" formControlName="yoga" value="No"> No</label>
                 </td>
                 <td><input type="text" formControlName="yogaFrequency" [disabled]="isViewMode"
-                    class="underline-input" /> hr/week</td>
+                    class="underline-input" /> hr/week
+                  <div  style="color: red;" *ngIf="sleepForm.get('yogaFrequency')?.invalid && sleepForm.get('yogaFrequency')?.touched">
+                    Frequency is required
+                  </div></td>
                 <td><input type="text" formControlName="yogaDuration" [disabled]="isViewMode" class="underline-input" />
-                  years</td>
+                  years
+                <div  style="color: red;" *ngIf="sleepForm.get('yogaDuration')?.invalid && sleepForm.get('yogaDuration')?.touched">
+                    Duration is required
+                  </div></td>
               </tr>
               <tr>
                 <td>Walking</td>
                 <td>
-                  <label><input type="radio" formControlName="walking" value="yes"> Yes</label>
-                  <label><input type="radio" formControlName="walking" value="no"> No</label>
+                  <label><input type="radio" formControlName="walking" value="Yes"> Yes</label>
+                  <label><input type="radio" formControlName="walking" value="No"> No</label>
                 </td>
                 <td><input type="text" formControlName="walkingFrequency" [disabled]="isViewMode"
-                    class="underline-input" /> hr/week</td>
+                    class="underline-input" /> hr/week
+                  <div  style="color: red;" *ngIf="sleepForm.get('walkingFrequency')?.invalid && sleepForm.get('walkingFrequency')?.touched">
+                    Frequency is required
+                  </div></td>
                 <td><input type="text" formControlName="walkingDuration" [disabled]="isViewMode"
-                    class="underline-input" /> years</td>
+                    class="underline-input" /> years
+                  <div  style="color: red;" *ngIf="sleepForm.get('walkingDuration')?.invalid && sleepForm.get('walkingDuration')?.touched">
+                    Duration is required
+                  </div></td>
               </tr>
               <tr>
                 <td>Aerobics</td>
                 <td>
-                  <label><input type="radio" formControlName="aerobics" value="yes" [disabled]="isViewMode">
+                  <label><input type="radio" formControlName="aerobics" value="Yes" [disabled]="isViewMode">
                     Yes</label>
-                  <label><input type="radio" formControlName="aerobics" value="no" [disabled]="isViewMode">
+                  <label><input type="radio" formControlName="aerobics" value="No" [disabled]="isViewMode">
                     No</label>
                 </td>
                 <td><input type="text" formControlName="aerobicsFrequency" [disabled]="isViewMode"
-                    class="underline-input" /> hr/week</td>
+                    class="underline-input" /> hr/week
+                  <div  style="color: red;" *ngIf="sleepForm.get('aerobicsFrequency')?.invalid && sleepForm.get('aerobicsFrequency')?.touched">
+                    Frequency is required
+                  </div></td>
                 <td><input type="text" formControlName="aerobicsDuration" [disabled]="isViewMode"
-                    class="underline-input" /> years</td>
+                    class="underline-input" /> years
+                  <div  style="color: red;" *ngIf="sleepForm.get('aerobicsDuration')?.invalid && sleepForm.get('aerobicsDuration')?.touched">
+                    Duration is required
+                  </div></td>
               </tr>
               <tr>
                 <td>Zumba</td>
                 <td>
-                  <label><input type="radio" formControlName="zumba" value="yes" [disabled]="isViewMode">
+                  <label><input type="radio" formControlName="zumba" value="Yes" [disabled]="isViewMode">
                     Yes</label>
-                  <label><input type="radio" formControlName="zumba" value="no" [disabled]="isViewMode">
+                  <label><input type="radio" formControlName="zumba" value="No" [disabled]="isViewMode">
                     No</label>
                 </td>
                 <td><input type="text" formControlName="zumbaFrequency" [disabled]="isViewMode"
-                    class="underline-input" /> hr/week</td>
+                    class="underline-input" /> hr/week
+                  <div  style="color: red;" *ngIf="sleepForm.get('zumbaFrequency')?.invalid && sleepForm.get('zumbaFrequency')?.touched">
+                    Frequency is required
+                  </div></td>
                 <td><input type="text" formControlName="zumbaDuration" [disabled]="isViewMode"
-                    class="underline-input" /> years</td>
+                    class="underline-input" /> years
+                  <div  style="color: red;" *ngIf="sleepForm.get('zumbaDuration')?.invalid && sleepForm.get('zumbaDuration')?.touched">
+                    Duration is required
+                  </div></td>
               </tr>
               <tr>
                 <td class="other">Others
                   <input type="text" formControlName="othersText" [disabled]="isViewMode">
                 </td>
                 <td>
-                  <label><input type="radio" formControlName="others" value="yes" [disabled]="isViewMode">
+                  <label><input type="radio" formControlName="others" value="Yes" [disabled]="isViewMode">
                     Yes</label>
-                  <label><input type="radio" formControlName="others" value="no" [disabled]="isViewMode">
+                  <label><input type="radio" formControlName="others" value="No" [disabled]="isViewMode">
                     No</label>
                 </td>
                 <td><input type="text" formControlName="othersFrequency" [disabled]="isViewMode"
-                    class="underline-input" /> hr/week</td>
+                    class="underline-input" /> hr/week
+                  <div  style="color: red;" *ngIf="sleepForm.get('othersFrequency')?.invalid && sleepForm.get('othersFrequency')?.touched">
+                    Frequency is required
+                  </div>
+                </td>
                 <td><input type="text" formControlName="othersDuration" [disabled]="isViewMode"
-                    class="underline-input" /> years</td>
+                    class="underline-input" /> years
+                   <div  style="color: red;" *ngIf="sleepForm.get('othersDuration')?.invalid && sleepForm.get('othersDuration')?.touched">
+                    Duration is required
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>

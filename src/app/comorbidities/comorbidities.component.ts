@@ -5,7 +5,7 @@ import { PatientService } from '../Services/patient.service';
 import { HttpserviceService } from '../httpservice.service';
 import { API_URLS } from '../shared/API-URLs';
 import { ComorbiditiesService } from '../Services/comorbidities.service';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { FormvalidationService } from '../formvalidation.service';
 // Define interface for comorbidity item
 interface ComorbidityItem {
@@ -30,12 +30,12 @@ export class ComorbiditiesComponent {
   isViewMode = false;
   isFollowUp: boolean = false;
   PatientHistoryID: number | null = null;
-   stage: number = 0;
+  stage: number = 0;
   isSaved: boolean = false;
   comorbiditiesID: number = 0;
-  @Input() data: any;  
+  @Input() data: any;
   // patientId: any;
-    @Input() isPrintMode: boolean = false;
+  @Input() isPrintMode: boolean = false;
   comorbidities: Comorbidities = {
     hypertension: { present: null, remarks: '', },
     diabetes: { present: null, remarks: '' },
@@ -56,7 +56,7 @@ export class ComorbiditiesComponent {
   };
 
 
- ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges) {
     if (changes['data'] && this.data) {
       this.patchComorbidities(this.data);
     }
@@ -87,106 +87,83 @@ export class ComorbiditiesComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private fb: FormBuilder,
     private patientService: PatientService,
     private http: HttpserviceService, private comorbiditiesService: ComorbiditiesService, private formValidation: FormvalidationService
   ) {
     const path = this.router.url;
-    const isFollowUp1 = path.includes('follow-up-1');
-    const isFollowUp2 = path.includes('follow-up-2');
-    this.route.queryParams.subscribe((params: Params) => {
-      this.patientId = +params['patientId'] || null;
-      this.doctorId = +params['doctorId'] || null;
 
-      if (this.patientId) this.patientService.setPatientId(this.patientId);
-      if (this.doctorId) this.patientService.setDoctorId(this.doctorId);
-    });
+    // this.comorbiditiesForm = this.fb.group({
+    //       heartburnDuration: [null, Validators.required],
+    //       heartburnFrequency: [null, Validators.required],
+    //       postural_heartburn: [null, Validators.required],
+    //       nocturnal_heartburn: [null, Validators.required],
+    
+    //       regurgitationDuration: [null, Validators.required],
+    //       regurgitationFrequency: [null, Validators.required],
+    //       postural_regurgitation: [null, Validators.required],
+    //       nocturnal_regurgitation: [null, Validators.required],
+    
+    //       painDuration: [null, Validators.required],
+    //       painFrequency: [null, Validators.required],
+    //       postural_pain: [null, Validators.required],
+    //       nocturnal_pain: [null, Validators.required],
+    
+    //       acidTasteDuration: [null, Validators.required],
+    //       acidTasteFrequency: [null, Validators.required],
+    //       postural_AT: [null, Validators.required],
+    //       nocturnal_AT: [null, Validators.required]
+    //     });
+
   }
   ptnstage: number = 0;
   ngOnInit(): void {
+
+    this.patientId = Number(this.route.snapshot.params['patientId'] || null);
     this.stage = Number(this.route.snapshot.params['stage'] || 0);
-    console.log('Comorbidities patientId:', this.patientId);
-    console.log('Comorbidities stage:', this.stage);
-    this.route.params.subscribe(params => {
-      const routeStage = +params['stage'];
-      if (routeStage) this.stage = routeStage;
-    });
-    // Read route params if present
-    this.route.params.subscribe(params => {
-       const allowedWithoutSave = [1, 3, 5];
-  if (allowedWithoutSave.includes(this.stage)) {
-    this.isSaved = true;
-  }
-      const routePatientId = +params['patientId'] || null;
-      const routeStage = +params['stage'] || 0;
 
-      if (routePatientId) {
-        this.patientId = routePatientId;
-        this.stage = routeStage;
+    const allowedWithoutSave = [1, 3, 5];
+    if (allowedWithoutSave.includes(this.stage)) {
+      this.isSaved = true;
+    }
+   
+    this.isViewMode = this.isViewMode ?? false;
+    // this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
 
-        this.patientService.setPatientId(this.patientId);
-      }
+    this.fetchComorbiditiesData(this.patientId);
 
-      // Then do the rest of your existing logic
-      const state = history.state;
-      const currentUrl = this.router.url;
-      this.tabId = state?.tabId ?? 1;
-
-      // Only override patientId from state if route param is NOT present
-      this.patientId = this.patientId ?? state?.patientId ?? null;
-      this.isViewMode = state?.isViewMode ?? false;
-      this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
-
-      console.log('📌 tabId:', this.tabId);
-      console.log('📌 patientId:', this.patientId);
-      console.log('📌 isViewMode:', this.isViewMode);
-
-      if (this.isViewMode && this.patientService.getPatientId()) {
-        this.fetchComorbiditiesData(this.patientService.getPatientId());
-      }
-
-      const cachedData = this.patientService.getfamalyhistoryData();
-      if (cachedData) {
-        Object.keys(cachedData).forEach((key) => {
-          if (this.comorbidities[key]) {
-            this.comorbidities[key].present = cachedData[key].present;
-            this.comorbidities[key].remarks = cachedData[key].remarks;
-          }
-        });
-      } else {
-        this.fetchComorbiditiesData(this.patientService.getPatientId());
-      }
-    });
   }
 
-comorbidityKeys: string[] = [
-  'hypertension', 'diabetes', 'dyslipidemia', 'liver', 'neuro',
-  'cardio', 'hypo', 'hyper', 'behavioural', 'kidney',
-  'asthma', 'osteo', 'rheumatoid', 'sclerosis', 'cancer', 'others'
-];
+  comorbidityKeys: string[] = [
+    'hypertension', 'diabetes', 'dyslipidemia', 'liver', 'neuro',
+    'cardio', 'hypo', 'hyper', 'behavioural', 'kidney',
+    'asthma', 'osteo', 'rheumatoid', 'sclerosis', 'cancer', 'others'
+  ];
 
-comorbidityLabels: { [key: string]: string } = {
-  hypertension: 'Hypertension',
-  diabetes: 'Diabetes',
-  dyslipidemia: 'Dyslipidemia',
-  liver: 'Chronic liver disease',
-  neuro: 'Neurological Disorder',
-  cardio: 'Cardiovascular disorders',
-  hypo: 'Hypothyroidism',
-  hyper: 'Hyperthyroidism',
-  behavioural: 'Behavioural disorders',
-  kidney: 'Chronic kidney disease',
-  asthma: 'Asthma',
-  osteo: 'Osteoarthritis',
-  rheumatoid: 'Rheumatoid arthritis',
-  sclerosis: 'Systemic Sclerosis',
-  cancer: 'Cancer',
-  others: 'Others (Specify)'
-};
+  comorbidityLabels: { [key: string]: string } = {
+    hypertension: 'Hypertension',
+    diabetes: 'Diabetes',
+    dyslipidemia: 'Dyslipidemia',
+    liver: 'Chronic liver disease',
+    neuro: 'Neurological Disorder',
+    cardio: 'Cardiovascular disorders',
+    hypo: 'Hypothyroidism',
+    hyper: 'Hyperthyroidism',
+    behavioural: 'Behavioural disorders',
+    kidney: 'Chronic kidney disease',
+    asthma: 'Asthma',
+    osteo: 'Osteoarthritis',
+    rheumatoid: 'Rheumatoid arthritis',
+    sclerosis: 'Systemic Sclerosis',
+    cancer: 'Cancer',
+    others: 'Others (Specify)'
+  };
 
-
+  stageval: number = 0;
   fetchComorbiditiesData(patientId: number): void {
-    this.comorbiditiesService.getComorbiditiesById(patientId,this.stage).subscribe({
+    this.comorbiditiesService.getComorbiditiesById(patientId, this.stage).subscribe({
       next: (res: any) => {
+        if (this.stage === 2 || this.stage === 4) this.stageval = this.stage;
         if (res.type === 'S' && res.data) {
           const data = res.data;
           this.stage = data.stage;
@@ -210,7 +187,17 @@ comorbidityLabels: { [key: string]: string } = {
             others: { present: data.cmoPresent === 'true', remarks: data.cmoRemark || '' }
           };
         }
-        console.log('Data', res.data)
+        else {
+          if (this.stageval === 2) this.stage = 1
+          if (this.stageval === 4) this.stage = 3
+          //console.log('this.stageval', this.stageval, this.stage)
+          this.fetchComorbiditiesData(Number(this.patientId));
+          setTimeout(() => {
+
+            this.stage = this.stageval;
+          }, 1000);
+        }
+        //console.log('Data', res.data)
       },
       error: err => console.error('Failed to fetch comorbidities:', err)
     });
@@ -227,26 +214,40 @@ comorbidityLabels: { [key: string]: string } = {
 
   Submit() {
     const missingRemarks: string[] = [];
-
-  this.comorbidityKeys.forEach(key => {
-    const entry = this.comorbidities[key];
-    if (entry.present && (!entry.remarks || entry.remarks.trim() === '')) {
-      missingRemarks.push(this.comorbidityLabels[key]);
+    const missingInput: string[] = [];
+    this.comorbidityKeys.forEach(key => {
+ 
+      const entry = this.comorbidities[key];
+      
+      if (entry.present && (!entry.remarks || entry.remarks.trim() === '')) {
+        missingRemarks.push(this.comorbidityLabels[key]);
+      }else{
+        
+        if (this.comorbidities[key].present===null){
+          missingInput.push(this.comorbidityLabels[key]);
+        }
+      }
+    });
+    if (missingInput.length>0)
+    {
+      alert(
+        'Please fill in comorbidities :\n\n' +
+        missingInput.join('\n')
+      );
+      return;
     }
-  });
 
-  if (missingRemarks.length > 0) {
-    alert(
-      'Please fill in remarks for the following comorbidities marked as "Present":\n\n' +
-      missingRemarks.join('\n')
-    );
-    return;
-  }
-    const patientId = this.patientService.getPatientId();
+    if (missingRemarks.length > 0) {
+      alert(
+        'Please fill in remarks for the following comorbidities marked as "Present":\n\n' +
+        missingRemarks.join('\n')
+      );
+      return;
+    }
+    //const patientId = this.patientService.getPatientId();
     const doctorId = this.patientService.getDoctorId() || 0;
 
-    console.log('Comorbidities Submit triggered');
-    console.log('Patient ID:', patientId, 'Doctor ID:', doctorId);
+   
 
     if (this.stage === 1) this.ptnstage = 2;
     else if (this.stage === 3) this.ptnstage = 4;
@@ -257,7 +258,7 @@ comorbidityLabels: { [key: string]: string } = {
     const payload = {
       comorbiditiesID: isUpdate ? this.comorbiditiesID : 0,
       stage: this.ptnstage,
-      patientID: patientId,
+      patientID: this.patientId,
       doctorID: doctorId,
       flag: isUpdate ? 'U' : 'I',
       createdBy: doctorId,
@@ -322,19 +323,7 @@ comorbidityLabels: { [key: string]: string } = {
             if (getRes.type === 'S' && getRes.data?.length > 0) {
               this.formValidation.showAlert('Saved Successfully', 'success');
               alert('Saved Successfully');
-              const latest = getRes.data[getRes.data.length - 1];
-              const updatedPatientId = latest.patientID;
-              const updatedDoctorId = doctorId;
-
-              this.patientService.setPatientId(updatedPatientId);
-              this.patientService.setDoctorId(updatedDoctorId);
-
-              this.router.navigate(['/history'], {
-                queryParams: {
-                  patientId: updatedPatientId,
-                  doctorId: updatedDoctorId
-                }
-              });
+            
             } else {
               this.formValidation.showAlert('Please complete all fields before submitting', 'danger');
             }
@@ -352,10 +341,9 @@ comorbidityLabels: { [key: string]: string } = {
 
   }
 
-  goToHistory() {
-    console.log('Comorbidities data:', this.comorbidities);
-    this.router.navigate(['/history/${this.patientId}/${this.stage}']);
-  }
+  // goToHistory() {
+  //    this.router.navigate(['/history/${this.patientId}/${this.stage}']);
+  // }
 
   OnNext() {
     if (this.stage > 1) {
@@ -366,6 +354,7 @@ comorbidityLabels: { [key: string]: string } = {
             fromNavigation: true,
             tabId: this.tabId,
             patientId: this.patientId,
+            stage:this.stage,
             isViewMode: this.isViewMode
           }
         });
@@ -375,9 +364,10 @@ comorbidityLabels: { [key: string]: string } = {
 
         , {
           state: {
-            
+
             tabId: this.tabId,
             patientId: this.patientId,
+            stage:this.stage,
             isViewMode: this.isViewMode,
             fromNavigation: true,
           }
@@ -387,13 +377,13 @@ comorbidityLabels: { [key: string]: string } = {
 
   }
   back() {
-    
+
     this.router.navigate([`/chiefComplaint/${this.patientId}/${this.stage}`], {
 
       state: {
         tabId: this.tabId,
         patientId: this.patientId,
-            isViewMode: true
+        isViewMode: true
       }
     });
 

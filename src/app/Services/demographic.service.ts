@@ -14,4 +14,10 @@ export class DemographicService {
   getDemographicDetailsByPatientId(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/${id}`);
   }
+
+  // getDemographicDetailsByPatientId(patientId: number): Observable<any> {
+  //   return this.http.get<any>(`${this.apiUrl}/PatientReg/GetPatient/${patientId}`);
+  //}
+
+ 
 }

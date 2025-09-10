@@ -86,4 +86,6 @@ public partial class Sleep
     public DateTime CreatedAt { get; set; }
 
     public DateTime? ModifiedDt { get; set; }
+
+    public virtual Patient Patient { get; set; } = null!;
 }

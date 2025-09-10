@@ -1,26 +1,5 @@
 <div class="flex" style="min-height: 100vh;">
-  <!-- Static Sidebar -->
-  <!-- <div style="width: 212px; background-color: #027082; padding: 1rem; color: white;">
-    <h5 class="mb-3">👨‍⚕️ Dr. Krishna Kumar</h5>
-    <p class="mb-4">kumar&#64;gmail.com</p>
-
-    <hr class="bg-white" />
-
-    <ul class="list-unstyled mb-4">
-      <li><a routerLink="/dashboard" class="text-white text-decoration-none d-block py-2">Dashboard</a></li>
-      <li><a routerLink="/methodology" class="text-white text-decoration-none d-block py-2">Methodology</a></li>
-      <li><a routerLink="/case-form" class="text-white text-decoration-none d-block py-2">Protocol and Case Form</a>
-      </li>
-      <li><a routerLink="/instructions" class="text-white text-decoration-none d-block py-2">Instructions</a></li>
-    </ul>
-
-    <hr class="bg-white" />
-
-    <a routerLink="/login" class="btn w-100 mt-3" style="background-color: white; color: #027082; font-weight: 600;">
-      Already registered? Login
-    </a>
-  </div> -->
-  <!-- Diagnosis Form Area -->
+  
 
   <div class="rrr">
     <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
@@ -46,7 +25,7 @@
             <i *ngIf="tabId === 3"></i>
           </div>
         </div>
-        <form [formGroup]="diagnosisForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="diagnosisForm">
           <div class="mb-3">
             <label class="form-label fw-bold">Newly Diagnosed:</label><br />
             <div class="form-check form-check-inline">

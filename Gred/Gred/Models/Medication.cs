@@ -28,4 +28,6 @@ public partial class Medication
     public int? PatientId { get; set; }
 
     public int? Stage { get; set; }
+
+    public virtual Patient? Patient { get; set; }
 }

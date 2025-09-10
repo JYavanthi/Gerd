@@ -8,13 +8,12 @@ import { API_URLS } from '../shared/API-URLs';
 })
 export class CurrentMedicationsService {
 
- 
-   private baseUrl = API_URLS.BASE_URL; // 🔁 Use this private baseUrl = API_URLS.BASE_URL.
-   constructor(private http: HttpClient) { }
+  private baseUrl = API_URLS.BASE_URL; // 🔁 Use this private baseUrl = API_URLS.BASE_URL.
+  constructor(private http: HttpClient) { }
 
-    // ✅ Get Current Medications by Patient ID
-    getCurrentMedicationById(patientId: number): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/CurrentMedication/GetCurrentMedicationById/${patientId}`);
-        
-    }
+  // ✅ Get Current Medications by Patient ID
+  getCurrentMedicationById(patientId: number, stage: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/CurrentMedication/GetCurrentMedicationById/${patientId}/${stage}`);
+
+  }
 }

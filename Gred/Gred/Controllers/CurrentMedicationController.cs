@@ -34,10 +34,10 @@ namespace Gred.Controllers
       return await _currentMedication.SaveCurrentMedication(eCurrentMedication);
     }
 
-    [HttpGet("GetCurrentMedicationById/{patientId}")]
-    public async Task<CommonRsult> GetCurrentMedicationById(int patientId)
+    [HttpGet("GetCurrentMedicationById/{patientId}/{stage}")]
+    public async Task<CommonRsult> GetCurrentMedicationById(int patientId,int stage)
     {
-      return await _currentMedication.GetCurrentMedicationById(patientId);
+      return await _currentMedication.GetCurrentMedicationById(patientId,stage);
     }
   }
 }

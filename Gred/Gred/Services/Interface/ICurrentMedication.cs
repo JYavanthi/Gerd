@@ -9,6 +9,6 @@ namespace Gred.Services.Interface
 
     Task<CommonRsult> GetCurrentMedication();
 
-    Task<CommonRsult> GetCurrentMedicationById(int patientId);
+    Task<CommonRsult> GetCurrentMedicationById(int patientId,int stage);
   }
 }

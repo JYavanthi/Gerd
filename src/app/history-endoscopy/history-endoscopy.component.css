@@ -52,7 +52,7 @@
 .main-content {
     flex: 1;
     padding: 40px;
-    background-color: #027082;
+    /* background-color: #027082; */
 }
 
 .form-card {
@@ -215,4 +215,14 @@ input[type="date"].form-input {
 .col-12{
     display: flex;
     gap: 10px;
+}
+
+.fa-eye {
+  padding: 5px;
+  font-size: 10px;
+}
+
+.fa-trash {
+  padding: 5px;
+  font-size: 10px;
 }

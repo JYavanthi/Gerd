@@ -41,8 +41,10 @@
             <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
                 <div class="card orange">Total No. of Doctors</div>
                 <div class="value green" style="background-color: #326978">
-                    {{ dashboardStats.doctors }}
-                    <i class="fas fa-download excel-icon fa-lg " (click)="downloadDoctorsExcel()" aria-hidden="true"
+                    {{ doctorsReportList?.length ?? '0'}}
+
+            
+                    <i class="fas fa-download excel-icon fa-lg " (click)="downLoadDoctor()" aria-hidden="true"
                         style="color: rgb(220, 165, 76);"></i>
                 </div>
             </div>
@@ -69,7 +71,7 @@
             <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
                 <div class="card orange">Incomplete Cases</div>
                 <div class="value green" style="background-color: #326978">
-                    {{this.inCompletedList?.length ?? '0'}}
+                    {{inCompletedList?.length ?? '0'}}
                     <i class="fas fa-download excel-icon fa-lg" style="color: rgb(220, 165, 76);"
                         (click)="downloadInCompletedList()"></i>
                 </div>
@@ -84,7 +86,6 @@
                         style="color: rgb(220, 165, 76);"></i>
                 </div>
             </div>
-
             <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
                 <div class="card orange">Completed Baseline visit Cases</div>
                 <div class="value green" style="background-color: #326978">{{ baslineReportList?.length ?? '0'}}
@@ -92,7 +93,6 @@
                         style="color: rgb(220, 165, 76);"></i>
                 </div>
             </div>
-
             <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
                 <div class="card orange">Completed Follow 1 visit Cases</div>
                 <div class="value green" style="background-color: #326978">

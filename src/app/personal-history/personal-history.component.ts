@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { FormvalidationService } from '../formvalidation.service';
 import { HttpserviceService } from '../httpservice.service';
@@ -7,7 +7,7 @@ import { HistoryService } from '../Services/history.servie';
 import { error } from 'node:console';
 import { PatientService } from '../Services/patient.service';
 import { FormGroup, FormControl } from '@angular/forms';
-import { Validators } from '@angular/forms'; 
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-personal-history',
@@ -23,18 +23,19 @@ export class PersonalHistoryComponent {
   tabId = 1;
   @Input() stage: number = 0;
   isSaved: boolean = false;
-  @Input() isPrintMode = false;
-  userData:any;
+  @Input() data: any;
+  @Input() isPrintMode: boolean = false;
+  userData: any;
 
-  intakeStates: { [key: string]: boolean | null } = {
-    aerated: null,
-    coffee: null,
-    tea: null,
-    spicy: null,
-    alcohol: null,
-    sweets: null,
-    smoking: null,
-    tobacco: null
+  intakeStates: { [key: string]: boolean | undefined } = {
+    aerated: undefined,
+    coffee: undefined,
+    tea: undefined,
+    spicy: undefined,
+    alcohol: undefined,
+    sweets: undefined,
+    smoking: undefined,
+    tobacco: undefined
   };
 
 
@@ -88,55 +89,85 @@ export class PersonalHistoryComponent {
     private router: Router,
     private route: ActivatedRoute,
     private historyService: HistoryService, private patientService: PatientService,
-  ) { }
+  ) { 
+    
+  }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['data'] && this.data) {
+      this.patchPersonalHistory(this.data);
+    }
+  }
 
+  private patchPersonalHistory(data: any) {
+    // update intake states
+    this.intakeStates['aerated'] = data.aeratedIntake;
+    this.intakeStates['coffee'] = data.coffeeIntake;
+    this.intakeStates['tea'] = data.teaIntake;
+    this.intakeStates['spicy'] = data.spicyIntake;
+    this.intakeStates['alcohol'] = data.alcoholIntake;
+    this.intakeStates['sweets'] = data.sweetsIntake;
+    this.intakeStates['smoking'] = data.smokingIntake;
+    this.intakeStates['tobacco'] = data.tobaccoIntake;
 
+    // patch only frequency/quantity/duration
+    this.formData.patchValue({
+      aerated: {
+        frequency: data.aeratedFrequency,
+        quantity: data.aeratedQuantity,
+        duration: data.aeratedDuration
+      },
+      coffee: {
+        frequency: data.coffeeFrequency,
+        quantity: data.coffeeQuantity,
+        duration: data.coffeeDuration
+      },
+      tea: {
+        frequency: data.teaFrequency,
+        quantity: data.teaQuantity,
+        duration: data.teaDuration
+      },
+      spicy: {
+        frequency: data.spicyFrequency,
+        quantity: data.spicyQuantity,
+        duration: data.spicyDuration
+      },
+      alcohol: {
+        frequency: data.alcoholFrequency,
+        quantity: data.alcoholQuantity,
+        duration: data.alcoholDuration
+      },
+      sweets: {
+        frequency: data.sweetsFrequency,
+        quantity: data.sweetsQuantity,
+        duration: data.sweetsDuration
+      },
+      smoking: {
+        frequency: data.smokingFrequency,
+        quantity: data.smokingQuantity,
+        duration: data.smokingDuration
+      },
+      tobacco: {
+        frequency: data.tobaccoFrequency,
+        quantity: data.tobaccoQuantity,
+        duration: data.tobaccoDuration
+      }
+    });
+  }
+
+  
   ngOnInit(): void {
-    // 1. Get values from route parameters (path)
+
+    this.patientId = Number(this.route.snapshot.params['patientId'] || this.patientService.getPatientId());
     this.stage = Number(this.route.snapshot.params['stage'] || 0);
     this.route.paramMap.subscribe(params => {
       const allowedWithoutSave = [1, 3, 5];
       if (allowedWithoutSave.includes(this.stage)) {
         this.isSaved = true;
       }
-
-      const pid = params.get('patientId');
-      const stageVal = params.get('stage');
-
-      this.patientId = pid ? parseInt(pid, 10) : null;
-      this.stage = stageVal ? parseInt(stageVal, 10) : 0;
-
-      if (!this.patientId) {
-        console.warn('Missing patientId in route.');
-        return;
-      }
-
-      this.loadExistingData(this.patientId, this.stage);
-
-      const state = history.state;
-      this.isViewMode = state?.isViewMode ?? false;
-      this.tabId = state?.tabId ?? 1;
-      //this.isFollowUp = this.router.url.includes('follow-up-1') || this.router.url.includes('follow-up-2');
-
-      const cachedForm = this.patientService.getPersonalHistoryData();
-      const cachedIntake = this.patientService.getPersonalHistoryIntakeStates();
-
-      if (cachedForm && cachedIntake) {
-        this.formData.patchValue(cachedForm);
-        this.intakeStates = cachedIntake;
-
-        // Enable or disable fields based on intake state
-        Object.keys(this.intakeStates).forEach(key => {
-          const controlGroup = this.formData.get(key);
-          this.intakeStates[key] ? controlGroup?.enable() : controlGroup?.disable();
-        });
-
-        console.log('Restored from cache:', cachedForm, cachedIntake);
-      } else {
-        // 4. Fallback to API call
-        //this.loadExistingData(this.patientService.getPatientId(), this.stage);
-      }
+      this.loadExistingData(Number(this.patientId), this.stage);
+      this.isViewMode = this.isViewMode ?? false;
+      
     });
 
   }
@@ -146,17 +177,17 @@ export class PersonalHistoryComponent {
         if (!res || !res.data) return;
 
         const data = res.data;
-        
+
         console.log("data", data);
         // Update intakeStates (now using `data`)
-        this.intakeStates['aerated'] = data.aeratedIntake === true;
-        this.intakeStates['coffee'] = data.coffeeIntake === true;
-        this.intakeStates['tea'] = data.teaIntake === true;
-        this.intakeStates['spicy'] = data.spicyIntake === true;
-        this.intakeStates['alcohol'] = data.alcoholIntake === true;
-        this.intakeStates['sweets'] = data.sweetsIntake === true;
-        this.intakeStates['smoking'] = data.smokingIntake === true;
-        this.intakeStates['tobacco'] = data.tobaccoIntake === true;
+        this.intakeStates['aerated'] = data.aeratedIntake===true;
+        this.intakeStates['coffee'] = data.coffeeIntake===true;
+        this.intakeStates['tea'] = data.teaIntake===true;
+        this.intakeStates['spicy'] = data.spicyIntake===true;
+        this.intakeStates['alcohol'] = data.alcoholIntake===true;
+        this.intakeStates['sweets'] = data.sweetsIntake===true;
+        this.intakeStates['smoking'] = data.smokingIntake===true;
+        this.intakeStates['tobacco'] = data.tobaccoIntake===true;
 
         this.formData.patchValue({
           aerated: {
@@ -211,12 +242,12 @@ export class PersonalHistoryComponent {
         });
 
         // ✅ Store in cache
-        this.patientService.setPersonalHistoryData(this.formData.value);
-        this.patientService.setPersonalHistoryIntakeStates(this.intakeStates);
+        //this.patientService.setPersonalHistoryData(this.formData.value);
+        //this.patientService.setPersonalHistoryIntakeStates(this.intakeStates);
 
 
-        console.log('Patched form values:', this.formData.value);
-        console.log('Intake states updated:', this.intakeStates);
+        // console.log('Patched form values:', this.formData.value);
+        // console.log('Intake states updated:', this.intakeStates);
       },
       error: (err) => {
         this.formValidation.showAlert('Failed to load personal history data.', 'danger');
@@ -224,18 +255,56 @@ export class PersonalHistoryComponent {
       }
     });
   }
+
+  
+  validateFlds(): boolean {
+  const missingVal: string[] = [];
+
+  for (const key of Object.keys(this.intakeStates)) {
+    const state = this.intakeStates[key];
+
+   
+    if (state === null || state === undefined) {
+      alert('Please select Yes/No for ' + key);
+      return false;  
+    }
+
+   if (state === true) {
+      const group = this.formData.get(key) as FormGroup;
+
+      if (!group) {
+        continue;
+      }
+
+      const { frequency, quantity, duration } = group.value;
+
+      if (!frequency || !quantity || !duration) {
+        missingVal.push(key);
+      }
+    }
+  }
+
+  if (missingVal.length > 0) {
+    alert("Please fill frequency, quantity and duration fields for: " + missingVal.join(", "));
+    return false;
+  }
+
+  return true;
+}
+
+
   Submit(): void {
-    const patientHistoryId = this.historyService.getPatientHistoryID();
-    let user: any = localStorage.getItem('doctor')
-    this.userData = JSON.parse(user);
-    
+    this.doctorId = this.patientService.getDoctorId();
+    if (this.validateFlds()) {
+      
+
     const payload = {
       flag: 'I',
       stage: this.stage,
       personalHistoryId: 0,
-      doctorId: this.userData?.doctorId,
-      patientId: this.patientService.getPatientId(),
-      createdBy: this.userData?.doctorId,
+      doctorId: this.doctorId,
+      patientId: this.patientId,
+      createdBy: this.doctorId,
       aeratedIntake: this.intakeStates['aerated'],
       aeratedFrequency: this.formData.get('aerated.frequency')?.value || '',
       aeratedQuantity: this.formData.get('aerated.quantity')?.value || '',
@@ -276,16 +345,13 @@ export class PersonalHistoryComponent {
       tobaccoQuantity: this.formData.get('tobacco.quantity')?.value || '',
       tobaccoDuration: this.formData.get('tobacco.duration')?.value || ''
     };
+    
+
     this.http.httpPost('/PersonalHistory/SavePersonalHistory', payload).subscribe({
       next: () => {
         alert('Saved Successfully'); // ← Test this
         this.formValidation.showAlert('Saved Successfully', 'success');
         this.isSaved = true;
-
-        this.formValidation.showAlert('Personal history saved successfully.', 'success');
-        this.patientService.setPersonalHistoryData(this.formData.value); // Store form
-        this.patientService.setPersonalHistoryIntakeStates(this.intakeStates);
-
       },
 
       error: (err) => {
@@ -293,11 +359,18 @@ export class PersonalHistoryComponent {
         this.formValidation.showAlert('Failed to save personal history.', 'danger');
       }
     });
-  }
+    }
+    else{
+      return;
+    }
+    } 
+
+   
+  
   onNext(): void {
     const patientHistoryId = this.historyService.getPatientHistoryID();
     this.router.navigate([`sleep/${this.patientId}/${this.stage}`], {
-     
+
       state: {
         tabId: this.tabId,
         stage: this.stage,
@@ -309,7 +382,7 @@ export class PersonalHistoryComponent {
   OnNext(): void {
     const patientHistoryId = this.historyService.getPatientHistoryID();
     this.router.navigate([`/sleep/${this.patientId}/${this.stage}`], {
-     
+
       state: {
         tabId: this.tabId,
         stage: this.stage,
@@ -346,15 +419,26 @@ export class PersonalHistoryComponent {
   // Update this method in your component:
 
   onSelect(item: string, isYes: boolean): void {
+
     this.intakeStates[item] = isYes;
     const group = this.formData.get(item) as FormGroup;
 
     if (!isYes) {
       group.patchValue({ frequency: '', quantity: '', duration: '' });
+      group.get('frequency')?.clearValidators();
+      group.get('quantity')?.clearValidators();
+      group.get('duration')?.clearValidators();
+      group.reset();
       group.disable();
     } else {
+
+      group.get('frequency')?.setValidators([Validators.required]);
+      group.get('quantity')?.setValidators([Validators.required]);
+      group.get('duration')?.setValidators([Validators.required]);
       group.enable();
     }
+    group.updateValueAndValidity();
+
   }
 
 

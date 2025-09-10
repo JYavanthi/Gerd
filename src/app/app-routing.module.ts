@@ -6,8 +6,6 @@ import { DoctorsRegistrationComponent } from './doctors-registration/doctors-reg
 import { LoginFormComponent } from './login-form/login-form.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DemographicComponent } from './demographic/demographic.component';
-import { FollowUpComponent } from './follow-up/follow-up.component';
-import { CaseDetailsComponent } from './case-details/case-details.component';
 import { HistoryComponent } from './history/history.component';
 import { ChiefComplaintComponent } from './chief-complaint/chief-complaint.component';
 import { ComorbiditiesComponent } from './comorbidities/comorbidities.component';
@@ -28,16 +26,9 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { GenderReportComponent } from './gender-report/gender-report.component';
 import { TreatmentReportComponent } from './treatment-report/treatment-report.component';
 import { CoMorbiditiesReportComponent } from './co-morbidities-report/co-morbidities-report.component';
-import { ChiefComplaintComponent2 } from './followUpOne/chief-complaint/chief-complaint.component';
-import { ComorbiditiesComponent2 } from './followUpOne/comorbidities/comorbidities.component';
-import { AssessmentComponent2 } from './followUpOne/assessment/assessment.component';
-import { ManagamentComponent2 } from './followUpOne/management/management.component';
-import { ChiefComplaint3Component } from './followUpTwo/chief-complaint3/chief-complaint3.component';
-import { Assessment3Component } from './followUpTwo/assessment3/assessment3.component';
-import { Comorbidities3Component } from './followUpTwo/comorbidities3/comorbidities3.component';
-import { Managament3Component } from './followUpTwo/management3/management3.component';
 import { CaseStageViewComponent } from './case-stage-view/case-stage-view.component';
 import { DoctorListComponent } from './doctor-list/doctor-list.component';
+import { StageProgressComponent } from './stage-progress/stage-progress.component';
 
 
 const routes: Routes = [
@@ -47,8 +38,8 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   // { path: 'contact', component: ContactComponent },
   { path: 'demographic', component: DemographicComponent },
-  { path: 'follow-up', component: FollowUpComponent },
-  { path: 'case-details/:id/:stage', component: CaseDetailsComponent },
+   { path: 'demographic/:patientId/:stage', component: DemographicComponent },
+    {path:'stageProgress',component:StageProgressComponent},
   { path: 'history', component: HistoryComponent },
   { path: 'Personal-history', component: PersonalHistoryComponent },
   { path: 'Personal-history/:patientId/:stage', component: PersonalHistoryComponent },
@@ -59,6 +50,7 @@ const routes: Routes = [
   { path: 'family-history', component: FamilyHistoryComponent },
   { path: 'history-endoscopy', component: HistoryEndoscopyComponent },
   { path: 'current-medicaton', component: CurrentMedicationsComponent },
+    { path: 'current-medicaton/:patientId/:stage', component: CurrentMedicationsComponent },
   // { path: 'medical-examination', component: MedicalExaminationComponent },
 
   { path: 'medical-examination/:patientId/:stage', component: MedicalExaminationComponent },
@@ -86,10 +78,6 @@ const routes: Routes = [
   { path: 'assessment/:patientId/:stage', component: AssessmentComponent },
   { path: 'diagnosis/:patientId/:stage', component: DiagnosisComponent },
   { path: 'managament/:patientId/:stage', component: ManagamentComponent },
-  { path: 'chiefComplaint/:patientId/:stage', component: ChiefComplaintComponent2 },
-  { path: 'followUpOne/comorbidities/:patientId', component: ComorbiditiesComponent2 },
-  { path: 'followUpOne/assessment/:patientId', component: AssessmentComponent2 },
-  { path: 'followUpOne/management/:patientId', component: ManagamentComponent2 },
   {
     path: 'case-stage-view/:patientId', component: CaseStageViewComponent
   },
@@ -102,10 +90,6 @@ const routes: Routes = [
   { path: 'follow-up-2/comorbidities', component: ComorbiditiesComponent },
   { path: 'follow-up-2/assessment', component: AssessmentComponent },
   { path: 'follow-up-2/managament', component: ManagamentComponent },
-  { path: 'followUpTwo/chiefComplaint/:patientId', component: ChiefComplaint3Component },
-  { path: 'followUpTwo/comorbidities/:patientId', component: Comorbidities3Component },
-  { path: 'followUpTwo/assessment/:patientId', component: Assessment3Component },
-  { path: 'followUpTwo/management/:patientId', component: Managament3Component },
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

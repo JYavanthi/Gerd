@@ -26,4 +26,6 @@ public partial class History
     public DateTime? CreatedDate { get; set; }
 
     public DateTime? ModifiedDate { get; set; }
+
+    public virtual Patient Patient { get; set; } = null!;
 }

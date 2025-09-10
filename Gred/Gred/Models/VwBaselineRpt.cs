@@ -19,9 +19,9 @@ public partial class VwBaselineRpt
 
     public string? Occupation { get; set; }
 
-    public string? StateName { get; set; }
+    public string StateName { get; set; } = null!;
 
-    public string? CityName { get; set; }
+    public string CityName { get; set; } = null!;
 
     public int? Pincode { get; set; }
 
@@ -31,251 +31,247 @@ public partial class VwBaselineRpt
 
     public string? FamilyIncome { get; set; }
 
-    public int? RDuration { get; set; }
+    public int? HeartburnDurationYrs { get; set; }
 
-    public int? RFrequency { get; set; }
+    public int? HeartburnFrequencyWk { get; set; }
 
-    public string? RPostural { get; set; }
+    public string? HeartburnPostural { get; set; }
 
-    public string? RNocturnal { get; set; }
+    public string? HeartburnNocturnal { get; set; }
 
-    public int? RpDuration { get; set; }
+    public int? RegurgitationDurationYrs { get; set; }
 
-    public int? RpFrequency { get; set; }
+    public int? RegurgitationFrequencyWk { get; set; }
 
-    public string? RpPostural { get; set; }
+    public string? RegurgitationPostural { get; set; }
 
-    public string? RpNocturnal { get; set; }
+    public string? RegurgitationNocturnal { get; set; }
 
-    public int? AtDuration { get; set; }
+    public int? RetrosternalPainDurationYrs { get; set; }
 
-    public int? AtFrequency { get; set; }
+    public int? RetrosternalPainFrequencyWk { get; set; }
 
-    public string? AtPostural { get; set; }
+    public string? RetrosternalPostural { get; set; }
 
-    public string? AtNocturnal { get; set; }
+    public string? RetrosternalNocturnal { get; set; }
 
-    public string? HtPresent { get; set; }
+    public int? AcidTasteDurationYrs { get; set; }
 
-    public string? HtRemark { get; set; }
+    public int? AcidTasteFrequencyWk { get; set; }
 
-    public string? DbPresent { get; set; }
+    public string? AcidTastePostural { get; set; }
 
-    public string? DbRemark { get; set; }
+    public string? AcidTasteNocturnal { get; set; }
 
-    public string? DdPresent { get; set; }
+    public string Hypertension { get; set; } = null!;
 
-    public string? DdRemark { get; set; }
+    public string? HypertensionRemarks { get; set; }
 
-    public string? CldPresent { get; set; }
+    public string Diabetes { get; set; } = null!;
 
-    public string? CldRemark { get; set; }
+    public string? DiabetesRemarks { get; set; }
 
-    public string? NdPresent { get; set; }
+    public string Dyslipidemia { get; set; } = null!;
 
-    public string? NdRemark { get; set; }
+    public string? DyslipidemiaRemarks { get; set; }
 
-    public string? CdPresent { get; set; }
+    public string ChronicLiverDisease { get; set; } = null!;
 
-    public string? CdRemark { get; set; }
+    public string? ChronicLiverDiseaseRemarks { get; set; }
 
-    public string? HtdPresent { get; set; }
+    public string NeurologicalDisorder { get; set; } = null!;
 
-    public string? HtdRemark { get; set; }
+    public string? NeurologicalDisorderRemarks { get; set; }
 
-    public string? BdPresent { get; set; }
+    public string CardiovascularDisorders { get; set; } = null!;
 
-    public string? BdRemark { get; set; }
+    public string? CardiovascularDisordersRemarks { get; set; }
 
-    public string? CkdPresent { get; set; }
+    public string Hypothyroidism { get; set; } = null!;
 
-    public string? CkdRemark { get; set; }
+    public string? HypothyroidismRemarks { get; set; }
 
-    public string? APresent { get; set; }
+    public string Hyperthyroidism { get; set; } = null!;
 
-    public string? ARemark { get; set; }
+    public string? HyperthyroidismRemarks { get; set; }
 
-    public string? OPresent { get; set; }
+    public string BehaviouralDisorders { get; set; } = null!;
 
-    public string? ORemark { get; set; }
+    public string? BehaviouralDisorderRemarks { get; set; }
 
-    public string? RaPresent { get; set; }
+    public string ChronicKidneyDisease { get; set; } = null!;
 
-    public string? RaRemark { get; set; }
+    public string? ChronicKidneyDiseaseRemarks { get; set; }
 
-    public string? SsPresent { get; set; }
+    public string Asthma { get; set; } = null!;
 
-    public string? SsRemark { get; set; }
+    public string? AsthmaRemarks { get; set; }
 
-    public string? CPresent { get; set; }
+    public string Osteoarthritis { get; set; } = null!;
 
-    public string? CRemark { get; set; }
+    public string? OsteoarthritisRemarks { get; set; }
 
-    public string? CmoPresent { get; set; }
+    public string RheumatoidArthritis { get; set; } = null!;
 
-    public string? CmoRemark { get; set; }
+    public string? RheumatoidArthritisRemrks { get; set; }
+
+    public string SystemicSclerosis { get; set; } = null!;
+
+    public string? SystemicSclerosisRemarks { get; set; }
+
+    public string Cancer { get; set; } = null!;
+
+    public string? CancerRemarks { get; set; }
+
+    public string OtherComorbidity { get; set; } = null!;
+
+    public string? OtherComorbiditySpecify { get; set; }
 
     public string? PastHistory { get; set; }
 
-    public bool? DietVegetarian { get; set; }
+    public string Diet { get; set; } = null!;
 
-    public bool? AeratedIntake { get; set; }
+    public string AeratedDrinks { get; set; } = null!;
 
-    public string? AeratedQuantity { get; set; }
+    public string? AeratedDrinksFrequencyDay { get; set; }
 
-    public string? AeratedFrequency { get; set; }
+    public string? AeratedDrinksQuantityMl { get; set; }
 
-    public string? AeratedDuration { get; set; }
+    public string? AeratedDrinksDurationYrs { get; set; }
 
-    public bool? CoffeeIntake { get; set; }
+    public string Coffee { get; set; } = null!;
 
-    public string? CoffeeFrequency { get; set; }
+    public string? CoffeeFrequencyDay { get; set; }
 
-    public string? CoffeeQuantity { get; set; }
+    public string? CoffeeQuantityMl { get; set; }
 
-    public string? CoffeeDuration { get; set; }
+    public string? CoffeeDurationYrs { get; set; }
 
-    public bool? TeaIntake { get; set; }
+    public string Tea { get; set; } = null!;
 
-    public string? TeaFrequency { get; set; }
+    public string? TeaFrequencyDay { get; set; }
 
-    public string? TeaDuration { get; set; }
+    public string? TeaQuantityMl { get; set; }
 
-    public bool? SpicyIntake { get; set; }
+    public string? TeaDurationYrs { get; set; }
 
-    public string? SpicyFrequency { get; set; }
+    public string SpicyFood { get; set; } = null!;
 
-    public string? SpicyQuantity { get; set; }
+    public string? SpicyFoodFrequencyWeek { get; set; }
 
-    public string? SpicyDuration { get; set; }
+    public string? SpicyFoodQuantity { get; set; }
 
-    public bool? AlcoholIntake { get; set; }
+    public string? SpicyFoodDurationYrs { get; set; }
 
-    public string? AlcoholFrequency { get; set; }
+    public string Alcohol { get; set; } = null!;
 
-    public string? AlcoholQuantity { get; set; }
+    public string? AlcoholFrequencyWeek { get; set; }
 
-    public string? AlcoholDuration { get; set; }
+    public string? AlcoholQuantityMl { get; set; }
 
-    public bool? SweetsIntake { get; set; }
+    public string? AlcoholDurationYrs { get; set; }
 
-    public string? SweetsFrequency { get; set; }
+    public string ChocolatesSweets { get; set; } = null!;
 
-    public string? SweetsQuantity { get; set; }
+    public string? ChocolatesSweetsFrequencyWeek { get; set; }
 
-    public string? SweetsDuration { get; set; }
+    public string? ChocolatesSweetsQuantityG { get; set; }
 
-    public bool? SmokingIntake { get; set; }
+    public string? ChocolatesSweetsDurationYrs { get; set; }
 
-    public string? SmokingFrequency { get; set; }
+    public string Smoking { get; set; } = null!;
 
-    public string? SmokingQuantity { get; set; }
+    public string? SmokingFrequencyDay { get; set; }
 
-    public string? SmokingDuration { get; set; }
+    public string? SmokingQuantityPacks { get; set; }
 
-    public bool? TobaccoIntake { get; set; }
+    public string? SmokingDurationYrs { get; set; }
 
-    public string? TobaccoFrequency { get; set; }
+    public string TobaccoInOtherForms { get; set; } = null!;
 
-    public string? TobaccoQuantity { get; set; }
+    public string? TobaccoInOtherFormsFrequencyDay { get; set; }
 
-    public string? TobaccoDuration { get; set; }
+    public string? TobaccoInOtherFormsQuantity { get; set; }
 
-    public string? SleepApneano { get; set; }
+    public string? TobaccoInOtherFormsDurationYrs { get; set; }
 
-    public string? SleepApneayes { get; set; }
+    public string SleepApnea { get; set; } = null!;
 
-    public string? SleepApneaFrequency { get; set; }
+    public string? SleepApneaFrequencyWeek { get; set; }
 
-    public string? SleepApneaDuration { get; set; }
+    public string? SleepApneaDurationYears { get; set; }
 
-    public string? ExerciseIntakeno { get; set; }
+    public string Exercise { get; set; } = null!;
 
-    public string? ExerciseIntakeyes { get; set; }
+    public string Walking { get; set; } = null!;
 
-    public string? WalkingSelectedyes { get; set; }
+    public string? WalkingFrequencyHrsWeek { get; set; }
 
-    public string? WalkingSelectedno { get; set; }
+    public string? WalkingDurationYrs { get; set; }
 
-    public string? WalkingFrequency { get; set; }
+    public string Jogging { get; set; } = null!;
 
-    public string? WalkingDuration { get; set; }
+    public string? JoggingFrequencyHrsWeek { get; set; }
 
-    public string? JoggingSelectedyes { get; set; }
+    public string? JoggingDurationYrs { get; set; }
 
-    public string? JoggingSelectedno { get; set; }
+    public string Gym { get; set; } = null!;
 
-    public string? JoggingFrequency { get; set; }
+    public string? GymFrequencyHrsWeek { get; set; }
 
-    public string? JoggingDuration { get; set; }
+    public string? GymDurationYrs { get; set; }
 
-    public string? GymSelectedyes { get; set; }
+    public string Yoga { get; set; } = null!;
 
-    public string? GymSelectedno { get; set; }
+    public string? YogaFrequencyHrsWeek { get; set; }
 
-    public string? GymFrequency { get; set; }
+    public string? YogaDurationYrs { get; set; }
 
-    public string? GymDuration { get; set; }
+    public string Aerobics { get; set; } = null!;
 
-    public string? YogaSelectedyes { get; set; }
+    public string? AerobicsFrequencyHrsWeek { get; set; }
 
-    public string? YogaSelectedno { get; set; }
+    public string? AerobicsDurationYrs { get; set; }
 
-    public string? YogaFrequency { get; set; }
+    public string Zumba { get; set; } = null!;
 
-    public string? YogaDuration { get; set; }
+    public string? ZumbaFrequencyHrsWeek { get; set; }
 
-    public string? Aerobicsyes { get; set; }
+    public string? ZumbaDurationYrs { get; set; }
 
-    public string? Aerobicsno { get; set; }
+    public string OtherExercise { get; set; } = null!;
 
-    public string? AerobicsFrequency { get; set; }
+    public string? OtherExerciseFrequencyHrsWeek { get; set; }
 
-    public string? AerobicsDuration { get; set; }
+    public string? OtherExerciseDurationYrs { get; set; }
 
-    public string? Zumbayes { get; set; }
+    public string ComputerUse { get; set; } = null!;
 
-    public string? Zumbano { get; set; }
+    public string? ComputerUsageHrsDay { get; set; }
 
-    public string? ZumbaFrequency { get; set; }
+    public int? ComputerUsageDurationYears { get; set; }
 
-    public string? ZumbaDuration { get; set; }
+    public string SmartphoneUse { get; set; } = null!;
 
-    public string? Othersyes { get; set; }
+    public string? SmartphoneUsageHrsDay { get; set; }
 
-    public string? Othersno { get; set; }
+    public int? SmartphoneUsageDurationYears { get; set; }
 
-    public string? OthersFrequency { get; set; }
+    public string? WorkingHoursOccupation { get; set; }
 
-    public string? OthersDuration { get; set; }
+    public string? JobOccupationType { get; set; }
 
-    public bool? ComputerUsed { get; set; }
+    public int? DurationNoOfYearsInTheAboveWorkingHours { get; set; }
 
-    public string? ComputerFrequency { get; set; }
+    public string? FamilyHistoryOfGerd { get; set; }
 
-    public int? ComputerDurationYears { get; set; }
+    public string? GerdRemarks { get; set; }
 
-    public bool? SmartphoneUsed { get; set; }
+    public string? FamilyHistoryOfEsophagoGastricCancer { get; set; }
 
-    public string? SmartphoneFrequency { get; set; }
+    public string? EsophagoGastricCancerRemarks { get; set; }
 
-    public int? SmartphoneDurationYears { get; set; }
-
-    public string? WorkingHours { get; set; }
-
-    public string? JobType { get; set; }
-
-    public int? TotalWorkingYears { get; set; }
-
-    public string? FhGred { get; set; }
-
-    public string? FhRemark { get; set; }
-
-    public string? FhEgc { get; set; }
-
-    public string? FhEgcremark { get; set; }
-
-    public string? UsageOfPpi { get; set; }
+    public string? PpiUsage { get; set; }
 
     public string? MedicationName { get; set; }
 
@@ -283,161 +279,165 @@ public partial class VwBaselineRpt
 
     public string Frequency { get; set; } = null!;
 
-    public string? HistoryofEndoscopy { get; set; }
+    public string? HistoryOfEndoscopy { get; set; }
 
     public DateTime? EndoscopyDate { get; set; }
 
-    public bool? EndoscopyAttached { get; set; }
+    public string ReportAttached { get; set; } = null!;
 
-    public string? EndoscopyRemark { get; set; }
+    public string? EndoscopyRemarks { get; set; }
 
-    public bool? HistoryofGs { get; set; }
+    public string HistoryOfGastroSurgery { get; set; } = null!;
 
-    public bool? GsBariatricSurgery { get; set; }
+    public string BariatricSurgery { get; set; } = null!;
 
-    public string? GsBsremark { get; set; }
+    public string? BariatricSurgeryRemarks { get; set; }
 
-    public bool? GsFundoplicationSurgery { get; set; }
+    public string FundoplicationSurgery { get; set; } = null!;
 
-    public string? GsFsremark { get; set; }
+    public string? FundoplicationRemarks { get; set; }
 
-    public bool? GsGastricPoemsurgery { get; set; }
+    public string GastricPoemSurgery { get; set; } = null!;
 
-    public string? GsGpsremark { get; set; }
+    public string? GastricPoemRemarks { get; set; }
 
-    public bool? GsGastrojejunostomy { get; set; }
+    public string Gastrojejunostomy { get; set; } = null!;
 
-    public string? GsGjremark { get; set; }
+    public string? GastrojejunostomyRemarks { get; set; }
 
-    public bool? GsOther { get; set; }
+    public string OtherGastroSurgery { get; set; } = null!;
 
-    public string? GsOtherRemark { get; set; }
+    public string? OtherGastroSurgeryRemarks { get; set; }
 
-    public string? NsaidsMolecule { get; set; }
+    public string? NsaidsMoleculeName { get; set; }
 
     public string? NsaidsDose { get; set; }
 
     public string? NsaidsFrequency { get; set; }
 
-    public string? BisphosphonatesMolecule { get; set; }
+    public string? BisphosphonatesMoleculeName { get; set; }
 
     public string? BisphosphonatesDose { get; set; }
 
     public string? BisphosphonatesFrequency { get; set; }
 
-    public string? SteroidsMolecule { get; set; }
+    public string? SteroidsMoleculeName { get; set; }
 
     public string? SteroidsDose { get; set; }
 
     public string? SteroidsFrequency { get; set; }
 
-    public string? AntiplateletMolecule { get; set; }
+    public string? AntiPlateletAgentsMoleculeName { get; set; }
 
-    public string? AntiplateletDose { get; set; }
+    public string? AntiPlateletDose { get; set; }
 
-    public string? AntiplateletFrequency { get; set; }
+    public string? AntiPlateletFrequency { get; set; }
 
-    public string? OthersMolecule { get; set; }
+    public string? OtherDrugMoleculeName { get; set; }
 
-    public string? OthersDose { get; set; }
+    public string? OtherDose { get; set; }
 
-    public string? OthersFrequency1 { get; set; }
+    public string? OtherFrequency { get; set; }
 
-    public string? PeHeight { get; set; }
+    public string? HeightInCms { get; set; }
 
-    public string? PeWeight { get; set; }
+    public string? WeightInKg { get; set; }
 
-    public string? PeBmi { get; set; }
+    public string? Bmi { get; set; }
 
-    public string? SeGanormal { get; set; }
+    public string? GeneralAppearance { get; set; }
 
-    public string? SeGaabNormalRemark { get; set; }
+    public string? GeneralAppearanceComments { get; set; }
 
-    public string? SeRsnormal { get; set; }
+    public string? RespiratorySystem { get; set; }
 
-    public string? SeRsabNormalRemark { get; set; }
+    public string? RespiratorySystemComments { get; set; }
 
-    public string? OthersNormal { get; set; }
+    public string? OtherExamAreaSpecify { get; set; }
 
-    public string? OthersAbNormalCs { get; set; }
+    public string? OtherExamStatus { get; set; }
 
-    public string? OthersAbNormalRemark { get; set; }
+    public string? OtherExamComments { get; set; }
 
-    public string? PaeFindings { get; set; }
+    public string? PerAbdomenExaminationFindings { get; set; }
 
-    public int? Q1 { get; set; }
+    public int? DoYouGetHeartburn { get; set; }
 
-    public int? Q2 { get; set; }
+    public int? DoesYourStomachGetBloated { get; set; }
 
-    public int? Q3 { get; set; }
+    public int? DoesYourStomachEverFeelHeavyAfterMeals { get; set; }
 
-    public int? Q4 { get; set; }
+    public int? DoYouSometimesSubconsciouslyRubYourChestWithYourHand { get; set; }
 
-    public int? Q5 { get; set; }
+    public int? DoYouEverFeelSickAfterMeals { get; set; }
 
-    public int? Q6 { get; set; }
+    public int? DoYouGetHeartburnAfterMeals { get; set; }
 
-    public int? Q7 { get; set; }
+    public int? DoYouHaveAnUnusualSymptomEGBurningSensationInYourThroat { get; set; }
 
-    public int? Q8 { get; set; }
+    public int? DoYouFeelFullWhileEatingMeals { get; set; }
 
-    public int? Q9 { get; set; }
+    public int? DoSomeThingsGetStuckWhenYouSwallow { get; set; }
 
-    public int? Q10 { get; set; }
+    public int? DoYouGetBitterLiquidAcidComingUpIntoYourThroat { get; set; }
 
-    public int? Q11 { get; set; }
+    public int? DoYouBurpALot { get; set; }
 
-    public int? Q12 { get; set; }
+    public int? DoYouGetHeartburnIfYouBendOver { get; set; }
 
     public string? TotalPoints { get; set; }
 
-    public string? AcidRefluxSymptom { get; set; }
+    public string? AcidRefluxRelatedSymptom { get; set; }
 
-    public string? Dysmotity { get; set; }
+    public string? DyspepticDysmotilitySymptom { get; set; }
 
-    public bool? HeartburnHeartburn { get; set; }
+    public bool? Heartburn { get; set; }
 
-    public bool? RegurgitationHeartburn { get; set; }
+    public bool? Regurgitation { get; set; }
 
-    public bool? RetrosternalPainHeartburn { get; set; }
+    public bool? RetrosternalPain { get; set; }
 
-    public bool? AcidTasteMouthHeartburn { get; set; }
+    public bool? AcidTasteInMouth { get; set; }
+
+    public int? TotalSymptomScoreTssInGerdPatients { get; set; }
 
     public string SymtopmScore { get; set; } = null!;
 
-    public bool? EeLaxlesClassification { get; set; }
+    public string LaxLesClassification { get; set; } = null!;
 
-    public string? EeAngelesGrade { get; set; }
+    public string? LosAngelesGrade { get; set; }
 
-    public string? EeAgremarks { get; set; }
+    public string? LosAngelesGradeRemarks { get; set; }
 
-    public string? EeBarrettRemark { get; set; }
+    public string? BarrettSRemarks { get; set; }
 
-    public string? EeHillRemarks { get; set; }
+    public string HillSClassification { get; set; } = null!;
 
-    public string? EeHillClassificationGrade { get; set; }
+    public string? HillSClassificationRemarks { get; set; }
 
-    public bool? PHimpedanceMonitoring { get; set; }
+    public string? HillSClassificationGrade { get; set; }
 
-    public DateTime? PHimDate { get; set; }
+    public string PHImpedanceMonitoring { get; set; } = null!;
 
-    public bool? PHimAttached { get; set; }
+    public DateTime? PHImpedanceMonitoringDate { get; set; }
 
-    public string? PHimRemark { get; set; }
+    public string PHimReportAttached { get; set; } = null!;
 
-    public bool? ManometryTest { get; set; }
+    public string? PHImpedanceMonitoringRemarks { get; set; }
+
+    public string ManometryTest { get; set; } = null!;
 
     public DateTime? MtDate { get; set; }
 
-    public bool? MtAttached { get; set; }
+    public string ManometryTestAttached { get; set; } = null!;
 
     public string? MtRemark { get; set; }
 
-    public bool? Biopsy { get; set; }
+    public string BiopsyAttached { get; set; } = null!;
 
     public DateTime? BiopsyDate { get; set; }
 
-    public bool? BiopsyAttached { get; set; }
+    public string BiopsyAttached1 { get; set; } = null!;
 
     public string? BiopsyRemark { get; set; }
 
@@ -507,7 +507,7 @@ public partial class VwBaselineRpt
 
     public string? OthersMedicationName { get; set; }
 
-    public string? Otherdose { get; set; }
+    public string? Otherdose1 { get; set; }
 
-    public string? Otherfrequency { get; set; }
+    public string? Otherfrequency1 { get; set; }
 }

@@ -1,29 +1,40 @@
-<div *ngIf="baselineData && Object.keys(baselineData).length">
-  <app-chief-complaint [data]="baselineData" [isPrintMode]="true"></app-chief-complaint>
-  <app-comorbidities [data]="baselineComorbidities" [isPrintMode]="true"></app-comorbidities>
-  <app-history [isPrintMode]="true" [data]="baselineHistory" ></app-history>
-  <app-personal-history [isPrintMode]="true"></app-personal-history>
-  <app-sleep [isPrintMode]="true" [data]="baselineSleep" ></app-sleep>
-  <app-gadget [isPrintMode]="true"></app-gadget>
-  <app-history-endoscopy [isPrintMode]="true"></app-history-endoscopy>
-  <app-assessment [isPrintMode]="true"></app-assessment>
-  <app-diagnosis [isPrintMode]="true"></app-diagnosis>
-  <app-managament [isPrintMode]="true"></app-managament>
-</div>
 
-
-<div *ngIf="followUp1Data">
+<div id="caseStageContent">
+  <h2>Baseline</h2>
+  <div *ngIf="baselineData && Object.keys(baselineData).length" class="baseline-stage">
+    <app-demographic [isPrintMode]="true"></app-demographic>
+    <app-chief-complaint [data]="baselineData" [isPrintMode]="true"></app-chief-complaint>
+    <app-comorbidities [data]="baselineComorbidities" [isPrintMode]="true"></app-comorbidities>
+    <app-history [isPrintMode]="true" [data]="baselineHistory"></app-history>
+    <app-personal-history [isPrintMode]="true" [data]="baselinepersonalHistory"></app-personal-history>
+    <app-current-medications [isPrintMode]="true" [data]="baselineCurrentMedication"></app-current-medications>
+    <app-sleep [isPrintMode]="true" [data]="baselineSleep"></app-sleep>
+    <app-gadget [isPrintMode]="true" [data]="baselinegadge"></app-gadget>
+    <app-history-endoscopy [isPrintMode]="true"></app-history-endoscopy>
+    <app-assessment [isPrintMode]="true" [data]="baselineAssessment"></app-assessment>
+    <app-diagnosis [isPrintMode]="true"></app-diagnosis>
+    <app-managament [isPrintMode]="true" [data]="baselinemanagement"></app-managament>
+  </div>
+  
+  <div *ngIf="followUp1Data" class="baseline-stage">
   <h2>Follow Up 1</h2>
-  <app-chief-complaint [data]="followUp1Data" [isPrintMode]="true"></app-chief-complaint>
-  <app-comorbidities [data]="baselineComorbidities"  [isPrintMode]="true"></app-comorbidities>
-  <app-assessment [isPrintMode]="true" ></app-assessment>
-  <app-managament [isPrintMode]="true"></app-managament>
+  
+    <app-chief-complaint [data]="followUp1Data" [isPrintMode]="true"></app-chief-complaint>
+    <app-comorbidities [data]="followUp1Comorbidities" [isPrintMode]="true"></app-comorbidities>
+    <app-assessment [isPrintMode]="true" [data]="followUp1Assessment"></app-assessment>
+    <app-managament [isPrintMode]="true" [data]="followUp1management"></app-managament>
+  </div>
+
+  <div *ngIf="followUp2Data" class="baseline-stage">
+  <h2>Follow Up 2</h2> 
+  
+    <app-chief-complaint [data]="followUp2Data" [isPrintMode]="true"></app-chief-complaint>
+    <app-comorbidities [data]="followUp2Comorbidities" [isPrintMode]="true"></app-comorbidities>
+    <app-assessment [isPrintMode]="true" [data]="followUp2Assessment"></app-assessment>
+    <app-managament [isPrintMode]="true" [data]="followUp2management"></app-managament>
+  </div>
 </div>
 
-<div *ngIf="followUp2Data">
-  <h2>Follow Up 2</h2>
-  <app-chief-complaint [data]="followUp2Data" [isPrintMode]="true"></app-chief-complaint>
-  <app-comorbidities [data]="followUp2Comorbidities" [isPrintMode]="true"></app-comorbidities>
-  <app-assessment [isPrintMode]="true"></app-assessment>
-  <app-managament [isPrintMode]="true"></app-managament>
-</div>
+<div class="btn"> <button class="view-btn" (click)="downloadAllStages(patientId)" title="Download All Stages">
+    <i class="fa-solid fa-download"></i> Download pdf 
+  </button></div>

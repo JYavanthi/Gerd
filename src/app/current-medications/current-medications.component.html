@@ -1,6 +1,6 @@
 <form [formGroup]="medicationsForm">
-    <div class="container">
-        <div class="sidebar text-white p-4 pt-5" style="width: 212px; flex-shrink: 0; overflow-y: auto;">
+    <div class="container d-flex" >
+        <!-- <div class="sidebar text-white p-4 pt-5" style="width: 212px; flex-shrink: 0; overflow-y: auto;">
             <h5 class="mb-3">👨‍⚕️ Dr. Krishna Kumar</h5>
             <p class="mb-4">kumar&#64;gmail.com</p>
 
@@ -16,10 +16,14 @@
             <hr class="bg-white" />
 
             <a href="/login" class="btn w-100 mt-3" style="background-color: white; color: #027082; font-weight: 600;">
-                Already registered? Login
+                Logout
             </a>
-        </div>
+        </div>  -->
 
+   <div class="sidebar-container" >
+      <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
+    </div>
+ 
         <div class="main-content">
             <div class="form-card">
                 <div class="form-header">CURRENT MEDICATION</div>
@@ -71,11 +75,20 @@
 
                 </div>
 
-                <div  class="d-flex mt-4">
-  <button type="button" class="btn px-4 register-btn me-2" (click)="onSubmit()">Save</button>
-  <button type="button" class="btn px-4 register-btn me-2" (click)="OnNext()">Next</button>
-  <button type="button" class="btn px-4 register-btn" (click)="goback()">Back</button>
-</div>
+                <div class="d-flex mt-4">
+                    <!-- Save button -->
+                    <button type="button" class="btn px-4 register-btn me-2" (click)="onSave()"
+                       *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode">Save</button>
+
+                    <!-- Next button -->
+                    <button type="button" class="btn px-4 register-btn me-2" (click)="onNext()" [disabled]="!isSaved"
+                        [ngClass]="{'btn-light': !isSaved, 'btn-primary': isSaved}" *ngIf="!isPrintMode && !isFollowUp">
+                        Next
+                    </button>  
+
+                    <!-- Back button -->  
+                    <button type="button" class="btn px-4 register-btn" (click)="back()" *ngIf="!isPrintMode && !isFollowUp">Back</button>
+                </div>
 
             </div>
         </div>

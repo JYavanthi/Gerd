@@ -39,6 +39,7 @@ export class SidebarComponent {
         this.doctor = response.userData;
         localStorage.setItem('token', response.token); 
         localStorage.setItem('DoctorID',response.data.doctorID);
+        
       },
       error: (error) => {
         console.error('Failed to fetch doctor data:', error);

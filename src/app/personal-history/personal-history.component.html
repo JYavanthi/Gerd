@@ -1,6 +1,4 @@
-
-
-<div class="d-flex flex-column" style="background-color: #027082; min-height: 100vh;">
+<div class="d-flex flex-column" style="min-height: 100vh;">
 
   <!-- Content Section -->
   <div class="d-flex flex-grow-1">
@@ -49,7 +47,7 @@
               <tr formGroupName="aerated">
                 <td>Aerated Drinks (ml/day)</td>
                 <td class="redioButton">
-                
+
                   <label>
                     <input type="radio" name="aerated_intake" (change)="onSelect('aerated', true)"
                       [checked]="intakeStates['aerated'] === true" [disabled]="isViewMode" />
@@ -65,17 +63,26 @@
                 <td>
                   <input type="text" placeholder="/day" formControlName="frequency"
                     [disabled]="!intakeStates['aerated'] || isViewMode" />
+                  <div style="color: red;" *ngIf="formData.get('aerated.frequency')?.invalid && formData.get('aerated.frequency')?.touched">
+                    Frequency is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="ml" formControlName="quantity"
                     [disabled]="!intakeStates['aerated'] || isViewMode" />
+                  <div style="color: red;" *ngIf="formData.get('aerated.quantity')?.invalid && formData.get('aerated.quantity')?.touched">
+                    Quantity is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="years" formControlName="duration"
                     [disabled]="!intakeStates['aerated'] || isViewMode" />
+                  <div style="color: red;" *ngIf="formData.get('aerated.duration')?.invalid && formData.get('aerated.duration')?.touched">
+                    Duration is required
+                  </div>
                 </td>
               </tr>
-            
+
               <tr formGroupName="coffee">
                 <td>Coffee (ml/day)</td>
 
@@ -94,14 +101,23 @@
                 <td>
                   <input type="text" placeholder="/day" formControlName="frequency"
                     [disabled]="!intakeStates['coffee'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('coffee.frequency')?.invalid && formData.get('coffee.fequency')?.touched">
+                    Frequency is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="ml" formControlName="quantity"
                     [disabled]="!intakeStates['coffee'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('coffee.quantity')?.invalid && formData.get('coffee.quantity')?.touched">
+                    Quantity is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="years" formControlName="duration"
                     [disabled]="!intakeStates['coffee'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('coffee.duration')?.invalid && formData.get('coffee.suration')?.touched">
+                    Duration is required
+                  </div>
                 </td>
               </tr>
 
@@ -121,14 +137,23 @@
                 <td>
                   <input type="text" placeholder="/day" formControlName="frequency"
                     [disabled]="!intakeStates['tea'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('tea.frequency')?.invalid && formData.get('tea.frequency')?.touched">
+                    Frequency is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="ml" formControlName="quantity"
                     [disabled]="!intakeStates['tea'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('tea.quantity')?.invalid && formData.get('tea.quantity')?.touched">
+                    Quantity is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="years" formControlName="duration"
                     [disabled]="!intakeStates['tea'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('tea.duration')?.invalid && formData.get('tea.duration')?.touched">
+                    Duration is required
+                  </div>
                 </td>
               </tr>
 
@@ -143,14 +168,23 @@
                 <td>
                   <input type="text" placeholder="/week" formControlName="frequency"
                     [disabled]="!intakeStates['spicy'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('spicy.frequency')?.invalid && formData.get('spicy.frequency')?.touched">
+                    Frequency is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="quantity" formControlName="quantity"
                     [disabled]="!intakeStates['spicy'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('spicy.quantity')?.invalid && formData.get('spicy.quantity')?.touched">
+                    Quantity is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="years" formControlName="duration"
                     [disabled]="!intakeStates['spicy'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('spicy.duration')?.invalid && formData.get('spicy.duration')?.touched">
+                    Duration is required
+                  </div>
                 </td>
               </tr>
 
@@ -165,14 +199,23 @@
                 <td>
                   <input type="text" placeholder="/week" formControlName="frequency"
                     [disabled]="!intakeStates['alcohol'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('alcohol.frequency')?.invalid && formData.get('alcohol.frequency')?.touched">
+                    Frequency is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="ml" formControlName="quantity"
                     [disabled]="!intakeStates['alcohol'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('alcohol.quantity')?.invalid && formData.get('alcohol.quantity')?.touched">
+                    Quantity is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="years" formControlName="duration"
                     [disabled]="!intakeStates['alcohol'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('alcohol.duration')?.invalid && formData.get('alcohol.duration')?.touched">
+                    Duration is required
+                  </div>
                 </td>
               </tr>
 
@@ -187,14 +230,23 @@
                 <td>
                   <input type="text" placeholder="/week" formControlName="frequency"
                     [disabled]="!intakeStates['sweets'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('sweets.frequency')?.invalid && formData.get('sweets.frequency')?.touched">
+                    Frequency is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="g" formControlName="quantity"
                     [disabled]="!intakeStates['sweets'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('sweets.quantity')?.invalid && formData.get('sweets.quantity')?.touched">
+                    Quantity is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="years" formControlName="duration"
                     [disabled]="!intakeStates['sweets'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('sweets.duration')?.invalid && formData.get('sweets.duration')?.touched">
+                    Duration is required
+                  </div>
                 </td>
               </tr>
 
@@ -209,14 +261,23 @@
                 <td>
                   <input type="text" placeholder="/day" formControlName="frequency"
                     [disabled]="!intakeStates['smoking'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('smoking.frequency')?.invalid && formData.get('smoking.frequency')?.touched">
+                    Frequency is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="packs" formControlName="quantity"
                     [disabled]="!intakeStates['smoking'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('smoking.quantity')?.invalid && formData.get('smoking.quantity')?.touched">
+                    Quantity is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="years" formControlName="duration"
                     [disabled]="!intakeStates['smoking'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('smoking.duration')?.invalid && formData.get('smoking.duration')?.touched">
+                    Duration is required
+                  </div>
                 </td>
               </tr>
 
@@ -231,14 +292,23 @@
                 <td>
                   <input type="text" placeholder="/day" formControlName="frequency"
                     [disabled]="!intakeStates['tobacco'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('tobacco.frequency')?.invalid && formData.get('tobacco.frequency')?.touched">
+                    Frequency is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="quantity" formControlName="quantity"
                     [disabled]="!intakeStates['tobacco'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('tobacco.quantity')?.invalid && formData.get('tobacco.quantity')?.touched">
+                    Quantity is required
+                  </div>
                 </td>
                 <td>
                   <input type="text" placeholder="years" formControlName="duration"
                     [disabled]="!intakeStates['tobacco'] || isViewMode" />
+                  <div  style="color: red;" *ngIf="formData.get('tobacco.duration')?.invalid && formData.get('tobacco.duration')?.touched">
+                    Duration is required
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -247,12 +317,12 @@
         </div>
 
         <div class="d-flex mt-4">
-          <button type="button" class="btn px-4 register-btn me-2" *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode"
-            (click)="Submit()">Save</button>
+          <button type="button" class="btn px-4 register-btn me-2"
+            *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode" (click)="Submit()">Save</button>
           <button type="button" class="btformData['tobacco']['duration']n px-4 register-btn me-2" (click)="OnNext()"
             *ngIf="!isPrintMode && !isFollowUp" [disabled]="!isSaved">Next</button> <button type="button"
             class="btn px-4 register-btn" (click)="back()" *ngIf="!isPrintMode && !isFollowUp">Back</button>
-        
+
         </div>
       </div>
 

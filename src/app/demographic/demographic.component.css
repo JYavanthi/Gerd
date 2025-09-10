@@ -20,7 +20,19 @@
   padding: 8px 0;
   outline: none;
 }
-
+.subjectinput{
+width: 377px;
+border: none;
+  border-bottom: 1px solid lightgray;
+  background-color: transparent;
+  font-size: 16px;
+  padding: 8px 0;
+  outline: none;
+}
+.subnumbar{
+  font-size: 13px;
+  color:#38768f;
+}
 .form-label {
   position: absolute;
   top: 8px;
@@ -31,6 +43,13 @@
   transition: 0.2s ease all;
 }
 
+
+.subjectinput:focus~.form-label,
+.custom-next-btn:not(:placeholder-shown)~.form-label {
+  top: -14px;
+  font-size: 12px;
+  color: #027082;
+}
 .form-input:focus~.form-label,
 .form-input:not(:placeholder-shown)~.form-label {
   top: -14px;

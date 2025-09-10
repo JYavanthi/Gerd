@@ -1,0 +1,28 @@
+<div class="stepper">
+  <!-- Baseline -->
+  <div class="step"
+       [ngClass]="{
+         'in-progress': stage === 0,
+         'completed': stage >= 1
+       }">
+    Baseline
+  </div>
+
+  <!-- Follow-up 1 -->
+  <div class="step"
+       [ngClass]="{         'in-progress': stage === 2,
+         'completed': stage >= 3
+       }">
+    Follow-up 1
+  </div>
+
+  <!-- Follow-up 2 -->
+  <div class="step"
+       [ngClass]="{
+        
+         'in-progress': stage === 4,
+         'completed': stage >= 5
+       }">
+    Follow-up 2
+  </div>
+</div>

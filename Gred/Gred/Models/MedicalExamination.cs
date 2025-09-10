@@ -52,4 +52,6 @@ public partial class MedicalExamination
     public string? OthersAbNormalRemark { get; set; }
 
     public int? Stage { get; set; }
+
+    public virtual Patient? Patient { get; set; }
 }

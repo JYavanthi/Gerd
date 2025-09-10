@@ -1,11 +1,14 @@
-<div class="d-flex flex-column" style="background-color: #027082; min-height: 100vh;">
+<div class="d-flex flex-column" style="background-color:  min-height 100vh;">
   <div class="d-flex flex-grow-1 gap-3">  
     <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
         <div class="flex-grow-1 d-flex align-items-start justify-content-start"
       style="margin-top: 2rem; margin-bottom: 2rem;">
       <div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+        
         <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
+            
           CHIEF COMPLAINT
+          <h3>{{cctext}}</h3>
           <div (click)="onNext()" *ngIf="isFollowUp"><i class="fa-solid fa-arrow-right right-icon"></i></div>
         </h2>
 
@@ -144,40 +147,14 @@
               </tr>
             </tbody>
           </table>
-          <!-- <div class="col-12">
-            <button (click)="Submit()" *ngIf="(isFollowUp || stage === 0) && !isPrintMode"
- class="btn px-4 register-btn"
-              type="button">
-              Save
-            </button>
-           
-            <button (click)="onNext()" *ngIf="!isPrintMode && isFollowUp" class="btn btn-dark custom-next-btn" [disabled]="!isSaved" >
-              Next
-            </button>
-
-            <button (click)="OnNext()" *ngIf="!isPrintMode && !isFollowUp" class="btn btn-dark custom-next-btn" [disabled]="!isSaved">
-              Next
-            </button>
-
-            <button (click)="goback()" *ngIf="!isPrintMode && !isFollowUp" class="btn px-4 register-btn" type="button">
-              Back
-            </button>
-            <button (click)="back()" *ngIf="!isPrintMode && isFollowUp" class="btn px-4 register-btn" type="button">
-              Back
-            </button>
-          </div> -->
-
+         
           <div class="col-12">
-            <button (click)="Submit()" *ngIf="(stage === 0 || stage === 2 || stage === 4) !isPrintMode"
+            <button (click)="Submit()" *ngIf="(stage === 0 || stage === 2 || stage === 4) && !isPrintMode"
               class="btn px-4 register-btn" type="button">
               Save
             </button>
-            <!-- <button (click)="onNext()" *ngIf="!isPrintMode" class="btn btn-dark custom-next-btn" [disabled]="!isSaved"
-              type="button">
-              Next
-            </button> -->
-
-            <button class="btn btn-dark custom-next-btn" type="button" [disabled]="!isSaved" (click)="onNext()" *ngIf="!isPrintMode && !isFollowUp">
+            
+            <button class="btn btn-dark custom-next-btn" type="button" [disabled]="!isSaved" (click)="OnNext()" *ngIf="!isPrintMode && !isFollowUp">
               Next
             </button>
 

@@ -1,14 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router, } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { HttpserviceService } from '../httpservice.service';
 import { FormvalidationService } from '../formvalidation.service';
 import { HistoryService } from '../Services/history.servie';
-import { PatientHistoryService } from '../Services/patient-history.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { API_URLS } from '../shared/API-URLs';
 import { PatientService } from '../Services/patient.service';
 import { gadgetService } from '../Services/gadget.service';
+
+
 
 @Component({
   selector: 'app-gadget',
@@ -23,14 +23,14 @@ export class GadgetComponent implements OnInit {
   gadgetForm!: FormGroup
 
   isSaved: boolean = false;
-@Input() isPrintMode = false;
-
+  @Input() data: any;
+  @Input() isPrintMode: boolean = false;
   @Input() patientId: number | null = null;
   doctorId: number | null = null;
   isViewMode = false;
   isFollowUp: boolean = false;
   id: any;
-  userData:any;
+  userData: any;
   gadgetUsage = {
     computers: {
       used: '',
@@ -53,145 +53,125 @@ export class GadgetComponent implements OnInit {
     private http: HttpserviceService,
     private route: ActivatedRoute,
     private historyService: HistoryService,
-    private patientHistoryService: PatientHistoryService,
     private fb: FormBuilder, private patientService: PatientService,
     private gadgetService: gadgetService
 
   ) {
 
     this.gadgetForm = this.fb.group({
-      flag: ['I'],
       id: [0],
-      patientId: [this.patientService.getPatientId()],
-      computerUsed: [false],
-      computerUsedhrs: [''],
-      computerUsedyears: [''],
-      computerFrequency: ['' ],
-      smartphoneUsedhrs: [''],
-      smartphoneUsedyears: ['' ],
-      computerDurationYears: ['' ],
-      smartphoneUsed: [false],
+      gadget: ['', Validators.required],
+      computerUsed: ['', Validators.required],
+      computerUsedhrs: ['', Validators.required],
+      computerUsedyears: ['', Validators.required],
+
+      smartphoneUsed: ['', Validators.required],
+      smartphoneUsedhrs: ['', Validators.required],
+      smartphoneUsedyears: ['', Validators.required],
+
+      workingHours: ['', Validators.required],
+      jobType: ['', Validators.required],
+      totalWorkingYears: ['', Validators.required],
+    });
+
+  }
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data'] && this.data) {
+      this.patchGadget(this.data);   // ✅ call patch when data changes
+    }
+  }
+
+
+
+  patchGadget(data: any): void {
+    if (!data) return;
+
+    this.gadgetForm.patchValue({
+      id: data.id ?? 0,
+      gadget: data.gadget ?? '',
+
+      computerUsed: data.computerUsed ?? false,
+      computerUsedhrs: data.computerUsedhrs ?? '',
+      computerUsedyears: data.computerUsedyears ?? '',
+      computerFrequency: data.computerFrequency ?? '',
+      computerDurationYears: data.computerDurationYears ?? '',
+
+      smartphoneUsed: data.smartphoneUsed ?? false,
+      smartphoneUsedhrs: data.smartphoneUsedhrs ?? '',
+      smartphoneUsedyears: data.smartphoneUsedyears ?? '',
+      smartphoneFrequency: data.smartphoneFrequency ?? '',
+      smartphoneDurationYears: data.smartphoneDurationYears ?? '',
+
+      workingHours: data.workingHours ?? '',
+      jobType: data.jobType ?? '',
+      totalWorkingYears: data.totalWorkingYears ?? '',
+      createdBy: data.createdBy ?? ''
+    });
+  }
+
+  ngOnInit(): void {
+    this.stage = Number(this.route.snapshot.params['stage'] || 0);
+    this.patientId = Number(this.route.snapshot.params['patientId']);
+
+
+    const allowedWithoutSave = [1, 3, 5];
+    if (allowedWithoutSave.includes(this.stage)) {
+      this.isSaved = true;
+    }
+
+    this.gadgetForm = this.fb.group({
+      computerUsed: ['',],
+      computerUsedhrs: [{ value: '', disabled: true }],
+      computerUsedyears: [{ value: '', disabled: true }],
+      smartphoneUsed: ['',],
+      smartphoneUsedhrs: [{ value: '', disabled: true }],
+      smartphoneUsedyears: [{ value: '', disabled: true }],
+      patientId: [null],
+      computerFrequency: [''],
+      computerDurationYears: [''],
       smartphoneFrequency: [''],
       smartphoneDurationYears: [''],
       workingHours: [''],
-
       jobType: [''],
       totalWorkingYears: [''],
       createdBy: ['']
     });
 
-  }
 
+    this.isViewMode = this.isViewMode ?? false;
+    this.fetchGadgetData(this.patientId);
 
-ngOnInit(): void {
-   this.stage = Number(this.route.snapshot.params['stage']|| 0);
-   this.patientId =Number(this.route.snapshot.params['patientId']);
-   
-  const currentUrl = this.router.url;
-  console.log("this.stage:", this.stage );
- const allowedWithoutSave = [1, 3, 5];
-  if (allowedWithoutSave.includes(this.stage)) {
-    this.isSaved = true;
-  }
-  this.gadgetForm = this.fb.group({
-    computerUsed: ['',],
-    computerUsedhrs: [{ value: '', disabled: true }],
-    computerUsedyears: [{ value: '', disabled: true }],
-    smartphoneUsed: ['',],
-    smartphoneUsedhrs: [{ value: '', disabled: true }],
-    smartphoneUsedyears: [{ value: '', disabled: true }],
-    patientId: [null],
-    computerFrequency: [''],
-    computerDurationYears: [''],
-    smartphoneFrequency: [''],
-    smartphoneDurationYears: [''],
-    workingHours: [''],
-    jobType: [''],
-    totalWorkingYears: [''],
-    createdBy: ['']
-  });
-
-  // ✅ Read navigation state (no queryParams)
-  const state = history.state;
-  //this.patientId = state?.patientId ?? null;
-  this.tabId = state?.tabId ?? 1;
-  //this.stage = state?.stage ?? 0;
-  this.isViewMode = state?.isViewMode ?? false;
-
-  // ✅ Handle follow-up route detection
-  this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
-
-  // ✅ Auto fetch gadget data
-  if ((currentUrl === '/follow-up-1/gadget' || currentUrl === '/gadget') && this.patientService.getPatientId()) {
-    this.fetchGadgetData(this.patientService.getPatientId());
-  }
-
-  // ✅ Conditional field enable/disable
-  this.gadgetForm.get('computerUsed')?.valueChanges.subscribe(value => {
-    if (value === true || value === 'true') {
-      this.gadgetForm.get('computerUsedhrs')?.enable();
-      this.gadgetForm.get('computerUsedyears')?.enable();
-    } else {
-      this.gadgetForm.get('computerUsedhrs')?.disable();
-      this.gadgetForm.get('computerUsedyears')?.disable();
-      this.gadgetForm.patchValue({ computerUsedhrs: '', computerUsedyears: '' });
-    }
-  });
-
-  this.gadgetForm.get('smartphoneUsed')?.valueChanges.subscribe(value => {
-    if (value === true || value === 'true') {
-      this.gadgetForm.get('smartphoneUsedhrs')?.enable();
-      this.gadgetForm.get('smartphoneUsedyears')?.enable();
-    } else {
-      this.gadgetForm.get('smartphoneUsedhrs')?.disable();
-      this.gadgetForm.get('smartphoneUsedyears')?.disable();
-      this.gadgetForm.patchValue({ smartphoneUsedhrs: '', smartphoneUsedyears: '' });
-    }
-  });
-
-  // ✅ Load from local cache or fetch again
-  const cachedData = this.patientService.getfamalyhistoryData();
-  if (cachedData) {
-    this.gadgetForm.patchValue(cachedData);
-  } else {
-    this.fetchGadgetData(this.patientService.getPatientId());
-  }
-
-  // ✅ Load history data if patient history exists
-  const patientHistoryId = this.historyService.getPatientHistoryID();
-  if (patientHistoryId && patientHistoryId > 0) {
-    this.loadExistingData(patientHistoryId);
-  }
-}
-
-
-  private loadExistingData(id: number): void {
-    this.http.httpGet(`/PatientHistory/GetPatientHistory?patientHistoryID=${id}`).subscribe({
-      next: (res: any) => {
-        this.gadgetUsage.computers.used = res.g_Usage || '';
-        this.gadgetUsage.computers.frequency = res.g_Frequency || '';
-        this.gadgetUsage.computers.duration = res.g_YearOfUsage || '';
-
-        this.gadgetUsage.smartphones.used = res.smartphone_Usage || '';
-        this.gadgetUsage.smartphones.frequency = res.smartphone_Frequency || '';
-        this.gadgetUsage.smartphones.duration = res.smartphone_Duration || '';
-
-        this.gadgetUsage.workingHours = res.workingHours || '';
-        this.gadgetUsage.jobType = res.jobType || '';
-        this.gadgetUsage.duration = res.duration || '';
-      },
-      error: () => {
-        this.formValidation.showAlert('Failed to load gadget data.', 'danger');
+    this.gadgetForm.get('computerUsed')?.valueChanges.subscribe(value => {
+      if (value === true || value === 'true') {
+        this.gadgetForm.get('computerUsedhrs')?.enable();
+        this.gadgetForm.get('computerUsedyears')?.enable();
+      } else {
+        this.gadgetForm.get('computerUsedhrs')?.disable();
+        this.gadgetForm.get('computerUsedyears')?.disable();
+        this.gadgetForm.patchValue({ computerUsedhrs: '', computerUsedyears: '' });
       }
     });
-  }
 
+    this.gadgetForm.get('smartphoneUsed')?.valueChanges.subscribe(value => {
+      if (value === true || value === 'true') {
+        this.gadgetForm.get('smartphoneUsedhrs')?.enable();
+        this.gadgetForm.get('smartphoneUsedyears')?.enable();
+      } else {
+        this.gadgetForm.get('smartphoneUsedhrs')?.disable();
+        this.gadgetForm.get('smartphoneUsedyears')?.disable();
+        this.gadgetForm.patchValue({ smartphoneUsedhrs: '', smartphoneUsedyears: '' });
+      }
+    });
+
+  }
   fetchGadgetData(patientId: number): void {
-    this.gadgetService.GetGadgetById(patientId ,this.stage).subscribe({
+    this.gadgetService.GetGadgetById(patientId, this.stage).subscribe({
       next: (res: any) => {
         if (res.type === 'S' && res.data) {
           const data = res.data;
-          if(data){
+          if (data) {
             this.isSaved = true
           }
           this.gadgetForm.patchValue({
@@ -202,7 +182,7 @@ ngOnInit(): void {
             computerUsedyears: data.computerDurationYears ?? '',
             smartphoneUsed: data.smartphoneUsed,
             smartphoneUsedhrs: data.smartphoneFrequency ?? '',
-            smartphoneUsedyears: data. smartphoneDurationYears ?? '',
+            smartphoneUsedyears: data.smartphoneDurationYears ?? '',
             workingHours: data.workingHours ?? '',
             jobType: data.jobType ?? '',
             totalWorkingYears: data.totalWorkingYears ?? '',
@@ -212,9 +192,9 @@ ngOnInit(): void {
           this.toggleConditionalControls('computerUsed', data.computerUsed);
           this.toggleConditionalControls('smartphoneUsed', data.smartphoneUsed);
 
-          if (this.isViewMode) {
-            this.gadgetForm.disable();
-          }
+          // if (this.isViewMode) {
+          //   this.gadgetForm.disable();
+          // }
 
         } else {
           console.warn('⚠️ No gadget data found in response.');
@@ -232,66 +212,124 @@ ngOnInit(): void {
     const hrsControl = this.gadgetForm.get(`${controlName}hrs`);
     const yearsControl = this.gadgetForm.get(`${controlName}years`);
 
+
+  }
+   
+  validateFld() :boolean {
+
+    if (this.gadgetForm.get('computerUsed')?.value === '' || this.gadgetForm.get('computerUsed')?.value === null) {
+      alert("Select Computer usage")
+      return false;
+    }
+    if (this.gadgetForm.get('computerUsed')?.value) {
+      if (this.gadgetForm.get('computerUsedhrs')?.value === '') {
+        alert("Enter Computer used hour(s)");
+        return false;
+      }
+      if (this.gadgetForm.get('computerUsedyears')?.value === '') {
+        alert("Select Computer used year(s)");
+        return false;
+      }
+    }
     
+    if (this.gadgetForm.get('smartphoneUsed')?.value === '' || this.gadgetForm.get('smartphoneUsed')?.value === null) {
+      alert("Select Smartphone usage")
+      return false;
+    }
+    if (this.gadgetForm.get('smartphoneUsed')?.value) {
+      if (this.gadgetForm.get('smartphoneUsedhrs')?.value === '') {
+        alert("Enter Smartphone used hour(s)");
+        return false;
+      }
+      if (this.gadgetForm.get('smartphoneUsedyears')?.value === '') {
+        alert("Select Smartphone used year(s)");
+        return false;
+      }
+    }
+    if (this.gadgetForm.get('workingHours')?.value === '' || this.gadgetForm.get('workingHours')?.value=== null) {
+        alert("Select working hours");
+        return false;
+      }
+    
+      if (this.gadgetForm.get('jobType')?.value === '' || this.gadgetForm.get('jobType')?.value=== null) {
+        alert("Select job type");
+        return false;
+      }
+      
+      if (this.gadgetForm.get('totalWorkingYears')?.value === '' ) {
+        alert("Select Durtion");
+        return false;
+      }
+      
+    return true;
+  }
+
+  Submit(): void {
+
+    if(!this.validateFld()){
+      return;
+    }
+
+    if (!this.gadgetForm.valid) {
+      this.gadgetForm.markAllAsTouched();
+
+      for (const controlName in this.gadgetForm.controls) {
+        const control = this.gadgetForm.get(controlName);
+        if (control && control.invalid) {
+          alert(`Field "${this.getFieldLabel(controlName)}" is required.`);
+          break;
+        }
+      }
+      return;
+    }
+
+    //let user: any = localStorage.getItem('doctor');
+  //  this.userData = JSON.parse(user);
+   // const gadgetFormValues = this.gadgetForm.getRawValue();
+   this.doctorId=this.patientService.getDoctorId();
+
+  const formValue = this.gadgetForm.value;
+
+const payload= {
+      flag: 'I',
+      id: this.gadgetForm.get('id')?.value,
+      patientId: this.patientId,
+     
+      stage: this.stage,
+      computerUsed: this.gadgetForm.get('computerUsed')?.value,
+      computerFrequency: this.gadgetForm.get('computerUsedhrs')?.value ?? null,
+      computerDurationYears: formValue.computerUsedyears? Number(formValue.computerUsedyears): null, 
+
+
+      smartphoneUsed: !!this.gadgetForm.get('smartphoneUsed')?.value,
+      smartphoneFrequency: this.gadgetForm.get('smartphoneUsedhrs')?.value ?? null,
+      smartphoneDurationYears: formValue.smartphoneUsedyears? Number(formValue.smartphoneUsedyears): null,
+
+
+      workingHours: this.gadgetForm.get('workingHours')?.value ?? '',
+      jobType: this.gadgetForm.get('jobType')?.value ?? '',
+      totalWorkingYears: this.gadgetForm.get('totalWorkingYears')?.value,
+      createdBy: this.doctorId.toString()
+    };
+
+    this.http.httpPost(API_URLS.GADGET_SAVE, payload).subscribe({
+      next: (res: any) => {
+        if (res.type === 'S') {
+          alert('Saved Successfully');
+          this.formValidation.showAlert('Saved Successfully', 'success');
+          this.isSaved = true;
+        } else {
+          this.formValidation.showAlert('Error saving data', 'danger');
+        }
+      },
+      error: (err) => {
+        this.formValidation.showAlert('Server error while saving data', 'danger');
+        console.error('Save error:', err);
+      }
+    });
   }
 
 
-Submit(): void {
-  if (!this.gadgetForm.valid) {
-    this.gadgetForm.markAllAsTouched();
-
-    // ✅ Loop over controls and show alert for the first invalid one
-    for (const controlName in this.gadgetForm.controls) {
-      const control = this.gadgetForm.get(controlName);
-      if (control && control.invalid) {
-        alert(`Field "${this.getFieldLabel(controlName)}" is required.`);
-        break;
-      }
-    }
-    return;
-  }
-
-  let user: any = localStorage.getItem('doctor');
-  this.userData = JSON.parse(user);
-  const gadgetFormValues = this.gadgetForm.getRawValue();
-
-  const gadget = {
-    flag: 'I',
-    id: this.gadgetForm.get('id')?.value,
-    patientId: this.patientId,
-    gadget: this.gadgetForm.get('gadget')?.value ?? '',
-    stage: this.stage,
-    computerUsed: this.gadgetForm.get('computerUsed')?.value,
-    computerFrequency: this.gadgetForm.get('computerUsedhrs')?.value,
-    computerDurationYears: this.gadgetForm.get('computerUsedyears')?.value,
-
-    smartphoneUsed: !!this.gadgetForm.get('smartphoneUsed')?.value,
-    smartphoneFrequency: this.gadgetForm.get('smartphoneUsedhrs')?.value,
-    smartphoneDurationYears: this.gadgetForm.get('smartphoneUsedyears')?.value,
-
-    workingHours: this.gadgetForm.get('workingHours')?.value ?? '',
-    jobType: this.gadgetForm.get('jobType')?.value ?? '',
-    totalWorkingYears: this.gadgetForm.get('totalWorkingYears')?.value,
-    createdBy: this.userData.doctorId.toString()
-  };
-
-
-  this.http.httpPost(API_URLS.GADGET_SAVE, gadget).subscribe({
-    next: (res: any) => {
-      if (res.type === 'S') {
-        alert('Saved Successfully');
-        this.formValidation.showAlert('Saved Successfully', 'success');
-        this.isSaved = true;
-      } else {
-        this.formValidation.showAlert('Error saving data', 'danger');
-      }
-    },
-    error: (err) => {
-      this.formValidation.showAlert('Server error while saving data', 'danger');
-      console.error('Save error:', err);
-    }
-  });
-}
 
   convertToNullableNumber(value: any): number | null {
     const n = Number(value);
@@ -313,7 +351,7 @@ Submit(): void {
       }
     });
   }
-  
+
   OnNext(): void {
     const patientHistoryId = this.historyService.getPatientHistoryID();
     this.router.navigate([`/family-history/${this.patientId}/${this.stage}`], {
@@ -334,7 +372,7 @@ Submit(): void {
   goback(): void {
     const patientHistoryId = this.historyService.getPatientHistoryID();
     this.router.navigate([`/sleep/${this.patientId}/${this.stage}`], {
-      
+
       state: {
         patientId: this.patientId,
         tabId: this.tabId,
@@ -364,31 +402,31 @@ Submit(): void {
 
     return 'inactive-tab';
   }
-login(){
+  login() {
     this.router.navigate(['/login']);
   }
 
 
   getFieldLabel(fieldName: string): string {
-  const fieldLabels: { [key: string]: string } = {
-    computerUsed: 'Computer Used',
-    computerUsedhrs: 'Computer Use (Hours)',
-    computerUsedyears: 'Computer Use (Years)',
-    smartphoneUsed: 'Smartphone Used',
-    smartphoneUsedhrs: 'Smartphone Use (Hours)',
-    smartphoneUsedyears: 'Smartphone Use (Years)',
-    computerFrequency: 'Computer Frequency',
-    computerDurationYears: 'Computer Duration (Years)',
-    smartphoneFrequency: 'Smartphone Frequency',
-    smartphoneDurationYears: 'Smartphone Duration (Years)',
-    workingHours: 'Working Hours',
-    jobType: 'Job Type',
-    totalWorkingYears: 'Total Working Years',
-    createdBy: 'Created By',
-    patientId: 'Patient ID'
-  };
+    const fieldLabels: { [key: string]: string } = {
+      computerUsed: 'Computer Used',
+      computerUsedhrs: 'Computer Use (Hours)',
+      computerUsedyears: 'Computer Use (Years)',
+      smartphoneUsed: 'Smartphone Used',
+      smartphoneUsedhrs: 'Smartphone Use (Hours)',
+      smartphoneUsedyears: 'Smartphone Use (Years)',
+      computerFrequency: 'Computer Frequency',
+      computerDurationYears: 'Computer Duration (Years)',
+      smartphoneFrequency: 'Smartphone Frequency',
+      smartphoneDurationYears: 'Smartphone Duration (Years)',
+      workingHours: 'Working Hours',
+      jobType: 'Job Type',
+      totalWorkingYears: 'Total Working Years',
+      createdBy: 'Created By',
+      patientId: 'Patient ID'
+    };
 
-  return fieldLabels[fieldName] || fieldName;
-}
+    return fieldLabels[fieldName] || fieldName;
+  }
 
 }

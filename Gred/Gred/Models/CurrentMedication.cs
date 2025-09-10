@@ -48,4 +48,6 @@ public partial class CurrentMedication
     public int? ModifiedBy { get; set; }
 
     public int? Stage { get; set; }
+
+    public virtual Patient Patient { get; set; } = null!;
 }

@@ -1,80 +1,3 @@
-// import { Component } from '@angular/core';
-// import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import { ActivatedRoute, Router } from '@angular/router';
-// import { FormvalidationService } from '../formvalidation.service';
-// import { HttpserviceService } from '../httpservice.service';
-
-// @Component({
-//   selector: 'app-diagnosis',
-//   templateUrl: './diagnosis.component.html',
-//   styleUrls: ['./diagnosis.component.css']
-// })
-// export class DiagnosisComponent {
-//   diagnosisForm!: FormGroup;
-
-//   constructor(
-//     private fb: FormBuilder,
-//     private formValidation: FormvalidationService,
-//     private http: HttpserviceService,
-//     private router: Router,
-//     public route: ActivatedRoute
-//   ) {
-//     this.diagnosisForm = this.fb.group({
-//       newlyDiagnosed: ['', Validators.required],
-//       knownCase: ['', Validators.required],
-//       yearsKnown: ['', Validators.required],
-//       gerdType: ['', Validators.required],
-//       refractory: ['', Validators.required],
-//       adherence: ['', Validators.required]
-//     });
-//   }
-
-//   ngOnInit(): void {}
-
-//   onSubmit(): void {
-//     if (this.diagnosisForm.valid) {
-//       this.Submit(); // ✅ Call actual save function
-//     } else {
-//       console.warn('Form is invalid');
-//       this.diagnosisForm.markAllAsTouched();
-//     }
-//   }
-
-//   Submit(): void {
-//     if (!this.formValidation.validateForm(this.diagnosisForm)) {
-//       this.diagnosisForm.markAllAsTouched();
-//       return;
-//     }
-
-//     const param = {
-//       flag: 'I',
-//       diagnosisID: 0,
-//       patientID: 0,
-//       doctorID: 0,
-//       newlyDiagnosed: this.diagnosisForm.controls['newlyDiagnosed'].value === 'Yes',
-//       knownCaseOfGERD: this.diagnosisForm.controls['knownCase'].value === 'Yes',
-//       greD_NoOfYear: Number(this.diagnosisForm.controls['yearsKnown'].value) || 0,
-//       gerdType: this.diagnosisForm.controls['gerdType'].value,
-//       refractoryToPPI: this.diagnosisForm.controls['refractory'].value === 'Yes',
-//       adherenceToTherapy: this.diagnosisForm.controls['adherence'].value === 'Yes',
-//       stage: 0,
-//       createdBy: 0
-//     };
-
-//     this.http.httpPost('/Diagnosis/SaveDiagnosis', param).subscribe((res: any) => {
-//       if (res.type === 'S') {
-//         this.formValidation.showAlert('Successfully Submitted', 'success');
-//         alert('Successfully Submitted');
-//         this.diagnosisForm.reset();
-//         // this.router.navigate(['/managament']); // Optional
-//       } else {
-//         this.formValidation.showAlert('Error!!', 'danger');
-//       }
-//     });
-//   }
-// }
-
-
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -93,7 +16,8 @@ import { DiagnosisService } from '../Services/diagnosis.service';
 export class DiagnosisComponent implements OnInit {
   diagnosisForm!: FormGroup;
   @Input() patientId: number | null = null;
-  doctorId: number | null = null;
+  // doctorId: number | null = null;
+  thdoctorId = this.patientService.getPatientId()
   isViewMode = false;
   isFollowUp: boolean = false;
   tabId = 1;
@@ -101,6 +25,7 @@ export class DiagnosisComponent implements OnInit {
   isSaved: boolean = false;
   formData: any;
   @Input() isPrintMode = false;
+  userData: any;
 
 
   constructor(
@@ -123,39 +48,22 @@ export class DiagnosisComponent implements OnInit {
     });
   }
   ngOnInit(): void {
-    this.stage = Number(this.route.snapshot.params['stage']);
-    console.log("Tabid", this.tabId);
-    const state = history.state;
-  const allowedWithoutSave = [1, 3, 5];
-  if (allowedWithoutSave.includes(this.stage)) {
-    this.isSaved = true;
-  }
-    this.tabId = state?.tabId ?? 1;
-    this.isViewMode = state?.isViewMode ?? false;
-    this.formData = state?.data;
-   
-
-    this.patientId = this.patientId || this.patientService.getPatientId();
-    if (!this.patientId) {
-      console.warn('⚠️ No valid patient ID found.');
-      return;
+    this.patientId = Number(this.route.snapshot.params['patientId'])||null;
+    this.stage = Number(this.route.snapshot.params['stage'])||0;
+    
+    
+    const allowedWithoutSave = [1, 3, 5];
+    if (allowedWithoutSave.includes(this.stage)) {
+      this.isSaved = true;
     }
+     
+  this.isViewMode = this.isViewMode ?? false;
 
-    this.route.params.subscribe(params => {
-      const idFromRoute = +params['patientId'];
-      if (idFromRoute && idFromRoute !== this.patientId) {
-        this.patientId = idFromRoute;
-        this.patientService.setPatientId(this.patientId);
-      }
-      //this.showDiag();
-      const cachedData = this.patientService.getDiagnosisData();
-      if (cachedData) {
-        this.diagnosisForm.patchValue(cachedData);
-      } else {
-        this.fetchAndStorePatientId(this.patientService.getPatientId());
-      }
-    });
 
+   if (this.patientId) {
+    this.fetchAndStorePatientId(this.patientId);
+  }
+    this.showDiag();
     this.diagnosisForm.get('knownCase')?.valueChanges.subscribe((value: string) => {
       const yearsControl = this.diagnosisForm.get('yearsKnown');
       if (value === 'Yes') {
@@ -173,15 +81,16 @@ export class DiagnosisComponent implements OnInit {
     }
 
   }
-  
+
   fetchAndStorePatientId(patientId: number): void {
     this.diagnosisService.getdiagnosisId(patientId).subscribe({
       next: (res: any) => {
         if (res.type === 'S' && res.data) {
           const data = res.data;
-          console.log('✅ Chief Complaint data:', data);
-          this.stage = data.stage;
+         
+          //this.stage = data.stage;
           this.diagnosisForm.patchValue({
+            patientID: data.patientId,
             newlyDiagnosed: data.newlyDiagnosed ? 'Yes' : 'No',
             knownCase: data.knownCaseOfGerd ? 'Yes' : 'No',
             yearsKnown: data.gredNoOfYear,
@@ -190,85 +99,37 @@ export class DiagnosisComponent implements OnInit {
             adherence: data.adherenceToTherapy ? 'Yes' : 'No'
           });
 
-          this.stage = data.stage;
+        
 
-
-
-
-          // fetchAndStorePatientId(): void {
-          //   this.httpClient.get<any[]>('/PatientReg/GetPatient').subscribe({
-          //     next: (res) => {
-          //       const patient = res[0]; 
-          //       if (patient?.patientId) {
-          //         this.patientService.setPatientId(patient.patientId);
-          //         console.log('Patient ID stored:', patient.patientId);
-          //       }
-          //     },
-          //     error: (err) => {
-          //       console.error('Failed to fetch patient data:', err);
-          //     }
-          //   });
-          // }
-          // fetchAndStorePatientId(): void {
-          //   const existingId = this.patientService.getPatientId();
-          //   if (existingId && existingId !== 0) {
-          //     console.log('✅ Patient ID already stored:', existingId);
-          //     this.patientId = existingId;
-          //     return;
-          //   }
-
-          //   this.patientService.getAllPatientData().subscribe({
-          //     next: (res) => {
-          //       const patient = res[0]; // or however you determine the active patient
-          //       if (patient?.patientID) {
-          //         this.patientService.setPatientId(patient.patientID);
-          //         this.patientId = patient.patientID;
-          //         console.log('✅ Patient ID fetched & stored:', patient.patientID);
-          //       } else {
-          //         console.warn('⚠️ No patientID found in response');
-          //       }
-          //     },
-          //     error: (err) => {
-          //       console.error('❌ Failed to fetch patient data:', err);
-          //     }
-          //   });
-          // }
 
         } else {
-          console.warn('⚠️ No chief complaint data found in response.');
+          console.warn('⚠️ No Diagonsis data found in response.');
         }
       },
       error: (err) => {
-        console.error('❌ Error fetching chief complaint data:', err);
+        console.error('❌ Error fetching Diagonsis data:', err);
       }
     });
   }
 
-  // showDiag(){
-   
-  //   if (this.diagnosisForm.controls['NewlyDig'].value === 'yes'){
-  //     this.diagnosisForm.controls['knownCase'].disable;
-  //     this.diagnosisForm.controls['yearsKnown'].disable;
-  //   }
-  //   else{
-  //     this.diagnosisForm.controls['knownCase'].enabled;
-  //     this.diagnosisForm.controls['yearsKnown'].enabled;
-  //   }
 
-  // }
-  
+   showDiag() {
+    const newlyDiagnosed = this.diagnosisForm.get('newlyDiagnosed')?.value;
 
-  showDiag() {
-  const newlyDiagnosed = this.diagnosisForm.get('newlyDiagnosed')?.value;
-
-  if (newlyDiagnosed === 'No') {
-    this.diagnosisForm.get('knownCase')?.disable();
-    this.diagnosisForm.get('yearsKnown')?.disable();
-  } else {
-    this.diagnosisForm.get('knownCase')?.enable();
-    this.diagnosisForm.get('yearsKnown')?.enable();
+    if (newlyDiagnosed === 'No') {
+      this.diagnosisForm.get('knownCase')?.setValue('');
+      this.diagnosisForm.get('yearsKnown')?.setValue('');
+      this.diagnosisForm.get('knownCase')?.disable();
+      this.diagnosisForm.get('yearsKnown')?.disable();
+    } else if (newlyDiagnosed === 'Yes') {
+      this.diagnosisForm.get('knownCase')?.enable();
+      this.diagnosisForm.get('yearsKnown')?.enable();
+    }else{
+     
+      this.diagnosisForm.get('knownCase')?.disable();
+      this.diagnosisForm.get('yearsKnown')?.disable();
+    }
   }
-}
 
   onSubmit(): void {
     if (this.diagnosisForm.valid) {
@@ -285,28 +146,30 @@ export class DiagnosisComponent implements OnInit {
       return;
     }
 
-    const patientID = this.patientService.getPatientId();
+    // const patientID = this.patientService.getPatientId();
     const doctorID = this.patientService.getDoctorId();
+   // let user: any = localStorage.getItem('doctor')
+   // this.userData = JSON.parse(user);
 
     const param = {
       flag: 'I',
       diagnosisID: 0,
-      patientID: this.patientService.getPatientId(),
-      doctorID: doctorID || 0,
+      patientID: this.patientId,
+      doctorID: doctorID,
       newlyDiagnosed: this.diagnosisForm.controls['newlyDiagnosed'].value === 'Yes',
       knownCaseOfGERD: this.diagnosisForm.controls['knownCase'].value === 'Yes',
       greD_NoOfYear: Number(this.diagnosisForm.controls['yearsKnown'].value) || 0,
       gerdType: this.diagnosisForm.controls['gerdType'].value,
       refractoryToPPI: this.diagnosisForm.controls['refractory'].value === 'Yes',
       adherenceToTherapy: this.diagnosisForm.controls['adherence'].value === 'Yes',
-      stage: 0,
-      createdBy: 0
+      stage: this.stage,
+      createdBy: doctorID,
     };
 
     this.http.httpPost(API_URLS.DIAGNOSIS_SAVE, param).subscribe((res: any) => {
       if (res.type === 'S') {
         alert('Saved Successfully'); // ← Test this
-       // this.formValidation.showAlert('Saved Successfully', 'success');
+        // this.formValidation.showAlert('Saved Successfully', 'success');
         this.isSaved = true;
 
 
@@ -320,25 +183,16 @@ export class DiagnosisComponent implements OnInit {
     const currentUrl = this.router.url;
     const patientId = this.patientId;
 
-    if (currentUrl.includes('follow-up-1')) {
-      this.router.navigate([`/managament/${this.patientId}/${this.stage}`], {
-        state: {
-          tabId: this.tabId,
-          patientId: this.patientId,
-          isViewMode: this.isViewMode,
-          stage: this.stage
-        }
-      });
-    } else {
-      // Optional: route to next section or back to dashboard
-      this.router.navigate([`/managament/${this.patientId}/${this.stage}`], {
-        state: {
-          tabId: this.tabId,
-          patientId: this.patientId,
-          isViewMode: this.isViewMode
-        }
-      });
-    }
+
+    // Optional: route to next section or back to dashboard
+    this.router.navigate([`/managament/${this.patientId}/${this.stage}`], {
+      state: {
+        tabId: this.tabId,
+        patientId: this.patientId,
+        isViewMode: this.isViewMode
+      }
+    });
+
   }
 
   OnNext() {
@@ -362,13 +216,13 @@ export class DiagnosisComponent implements OnInit {
 
   }
   back() {
-    
+
     this.router.navigate([`/assessment/${this.patientId}/${this.stage}`], {
       state: {
-        tabId: this.tabId,  
+        tabId: this.tabId,
         patientId: this.patientId,
         isViewMode: this.isViewMode,
-     fromNavigation: true
+        fromNavigation: true
       }
     });
   }
@@ -384,6 +238,8 @@ export class DiagnosisComponent implements OnInit {
     if (this.stage === 5 && step === 3) return 'baseline-green';
 
     return 'inactive-tab';
-  }
+  }   
+
+  
 }
 

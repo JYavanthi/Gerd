@@ -77,6 +77,121 @@
     ]
   },
   {
+    "ContainingType": "gred.Controllers.AttachmentController",
+    "Method": "DeleteFile",
+    "RelativePath": "api/Attachment/Delete/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "gred.Controllers.AttachmentController",
+    "Method": "DownloadFile",
+    "RelativePath": "api/Attachment/Download/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "gred.Controllers.AttachmentController",
+    "Method": "GetFiles",
+    "RelativePath": "api/Attachment/GetByPatient/{patientId}/{stage}/{filesection}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "filesection",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "gred.Controllers.AttachmentController",
+    "Method": "UploadFile",
+    "RelativePath": "api/Attachment/Upload",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "doctorId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "section",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "createdBy",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "gred.Controllers.AttachmentController",
+    "Method": "ViewFile",
+    "RelativePath": "api/Attachment/View/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Gred.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/Auth/login",
@@ -355,13 +470,18 @@
   {
     "ContainingType": "Gred.Controllers.CurrentMedicationController",
     "Method": "GetCurrentMedicationById",
-    "RelativePath": "api/CurrentMedication/GetCurrentMedicationById/{patientId}",
+    "RelativePath": "api/CurrentMedication/GetCurrentMedicationById/{patientId}/{stage}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -557,6 +677,16 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.DoctorReportController",
+    "Method": "DownloadDoctorReport",
+    "RelativePath": "api/DoctorReport/DownloadDoctorReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "Gred.Controllers.EmailController",
@@ -965,7 +1095,7 @@
   },
   {
     "ContainingType": "Gred.Controllers.InCompletedReportController",
-    "Method": "GetCompletedReportCount",
+    "Method": "GetInCompletedReportCount",
     "RelativePath": "api/InCompletedReport/GetInCompletedReportData",
     "HttpMethod": "GET",
     "IsController": true,

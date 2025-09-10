@@ -74,7 +74,7 @@
 .main-content {
     flex: 1;
     padding: 30px;
-    background-color: #027082;
+    /* background-color: #027082; */
 }
 
 .label-heading {

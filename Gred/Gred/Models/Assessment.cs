@@ -126,4 +126,6 @@ public partial class Assessment
     public int? TotalSymptomScore { get; set; }
 
     public int? SymptomScore { get; set; }
+
+    public virtual Patient PidNavigation { get; set; } = null!;
 }

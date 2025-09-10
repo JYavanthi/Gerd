@@ -52,4 +52,6 @@ public partial class ChiefComplaint
     public int CheifCompliantId { get; set; }
 
     public int? Stage { get; set; }
+
+    public virtual Patient? Patient { get; set; }
 }

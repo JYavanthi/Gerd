@@ -38,10 +38,11 @@ export class DoctorsRegistrationComponent {
       city: ['', Validators.required],
       codeNumber: [''],
       password: ['', Validators.required],
-      reenterPassword: [''],
+      reenterPassword: ['',Validators.required],
     });
   }
   ngOnInit(): void {
+   
     this.loadStates();
     this.doctorForm.get('status')?.valueChanges.subscribe((value) => {
       const reenterCtrl = this.doctorForm.get('reenterPassword');
@@ -59,12 +60,13 @@ export class DoctorsRegistrationComponent {
 
   onSubmit(): void {
     if (this.doctorForm.valid) {
-      console.log(this.doctorForm.value);
+      //console.log(this.doctorForm.value);
       alert('Form submitted successfully!');
     } else {
       alert('Please fill all required fields.');
     }
   }
+
   Submit() {
     if (!this.formValidation.validateForm(this.doctorForm)) {
       this.doctorForm.markAllAsTouched();
@@ -96,7 +98,8 @@ export class DoctorsRegistrationComponent {
     this.http.httpPost(API_URLS.DOCTOR_REG_SAVE, param).subscribe((res: any) => {
       if (res.type === 'S') {
         this.formValidation.showAlert('Doctor registered successfully!', 'success');
-        this.doctorForm.reset();
+        //this.doctorForm.reset();
+        alert('Doctor registered successfully!');
         this.router.navigate(['/login']);
       } else {
         this.formValidation.showAlert('Error during registration', 'danger');

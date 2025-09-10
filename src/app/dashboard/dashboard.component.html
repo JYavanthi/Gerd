@@ -1,6 +1,6 @@
 <div class="dashboard-container">
- 
-  
+
+
   <app-sidebar></app-sidebar>
   <!-- Main Content -->
   <main class="main-content">
@@ -31,30 +31,27 @@
     <div class="charts">
       <!-- Pie Chart -->
       <div class="chart-box">
-        <h2 class="chart-title">Purchase Cases</h2>
+        <h2 class="chart-title">Cases Status</h2>
         <div class="chart-fixed">
           <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" [type]="'pie'">
           </canvas>
         </div>
-        
+
       </div>
 
-      <!-- Bar Chart -->
       <div class="chart-box">
         <h2 class="chart-title">Cases By Month</h2>
         <div class="chart-bar">
           <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
           </canvas>
         </div>
-        
+
 
       </div>
     </div>
-    <!-- Case Table Section -->
-    <!-- Case Table Section -->
-    <!-- Case Table Section -->
+  
     <div class="case-table">
-      <!-- Add New Case Button -->
+      
       <div class="case-table-header">
         <button class="add-case-btn" (click)="navigateToAddCase()">Add New Case</button>
       </div>
@@ -101,11 +98,13 @@
               </td> -->
 
               <td class="download">
-  <button class="view-btn" (click)="downloadAllStages(row.patientId)" title="Download All Stages">
-    <i class="fa-solid fa-download"></i>
-  </button>
-</td>
-             
+                <button class="view-btn" (click)="downloadAllStages(row.patientId)" *ngIf="row.stage>0" title="Download All Stages">
+                  <i class="fa-solid fa-download"></i>
+                </button>
+              </td>
+
+
+
             </tr>
           </tbody>
         </table>

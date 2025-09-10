@@ -1,240 +1,6 @@
-// import { HttpClient } from '@angular/common/http';
-// import { Component, OnInit } from '@angular/core';
-// import { ActivatedRoute, Router } from '@angular/router';
-// import { FormvalidationService } from '../formvalidation.service';
-// import { HttpserviceService } from '../httpservice.service';
-// import { API_URLS } from '../shared/API-URLs';
-// import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import { PatientService } from '../Services/patient.service';
-// import { CurrentMedicationsService } from '../Services/current-medications.service';
-
-// @Component({
-//   selector: 'app-current-medications',
-//   templateUrl: './current-medications.component.html',
-//   styleUrls: ['./current-medications.component.css']
-// })
-// export class CurrentMedicationsComponent implements OnInit {
-//   medicationsForm: FormGroup;
-//   patientId: number | null = null;
-//    doctorId: number | null = null;
-//   tabId: number = 1;
-//   stage: number = 0;
-//   isViewMode = false;
-//     isFollowUp = false;
 
 
-//   constructor(
-//     private fb: FormBuilder,
-//     private formValidation: FormvalidationService,
-//     private http: HttpserviceService,
-//     private router: Router,
-//     private route: ActivatedRoute,
-//     private patientService: PatientService,
-//     private currentMedicationsService: CurrentMedicationsService
-//   ) {
-//     this.medicationsForm = this.fb.group({
-//       patientId: [''],
-//       nsaidsMolecule: [''],
-//       nsaidsDose: [''],
-//       nsaidsFrequency: [''],
-//       bisphosphonatesMolecule: [''],
-//       bisphosphonatesDose: [''],
-//       bisphosphonatesFrequency: [''],
-//       steroidsMolecule: [''],
-//       steroidsDose: [''],
-//       steroidsFrequency: [''],
-//       antiplateletMolecule: [''],
-//       antiplateletDose: [''],
-//       antiplateletFrequency: [''],
-//       othersMolecule: [''],
-//       othersDose: [''],
-//       othersFrequency: [''],
-//       createdBy: [0]
-//     });
-//   }
-
-//   // ngOnInit(): void {
-//   //   const state = history.state;
-//   //   this.patientId = state?.patientId ?? null;
-//   //   this.tabId = state?.tabId ?? 1;
-//   //   this.stage = state?.stage ?? 0;
-
-//   //   if (this.patientService.getPatientId()) {
-//   //     this.medicationsForm.patchValue({ patientId: this.patientId });
-//   //     this.fetchCurrentMedicationsData(this.patientService.getPatientId());
-//   //     // this.myFetch();
-//   //   }
-//   // }
-//   ngOnInit(): void {
-//     this.tabId = history.state?.tabId ?? 1;
-//     this.isViewMode = history.state?.isViewMode ?? false;
-
-//     // First check for patientId in queryParams
-//     this.route.queryParams.subscribe(params => {
-//       if (params['patientId']) {
-//         this.patientId = +params['patientId'];
-//         this.patientService.setPatientId(this.patientId); // update service
-//       } else {
-//         this.patientId = this.patientService.getPatientId();
-//       }
-
-//       if (params['doctorId']) {
-//         this.doctorId = +params['doctorId'];
-//         this.patientService.setDoctorId(this.doctorId);
-//       } else {
-//         this.doctorId = this.patientService.getDoctorId();
-//       }
-
-//       const currentUrl = this.router.url;
-//       console.log("url",currentUrl)
-//       this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
-
-
-// if (currentUrl === '/follow-up-1/current-medicaton' && this.patientService.getPatientId()) {        
-//   this.fetchCurrentMedicationsData(this.patientService.getPatientId());
-//       } else {
-//         console.error('Patient ID not found');
-//       }
-//     });
-//   }
-
-//   // private baseUrl = 'http://localhost:5058';
-//   // myFetch = () => {
-//   //   fetch("https://gerdregistryofindia.com/GERD/api/CurrentMedication/GetCurrentMedicationById/"+(this.patientId)).then(response=>response.json()).then(info=>{
-//   //     if(info.patientId == null || info.patientId === ""){
-//   //       alert("No data fetched");
-//   //     }
-//   //     else{
-//   //       nsaidsMolecule: info.NSAIDs_Molecule
-//   //       this.medicationsForm.patchValue({
-//   //     }
-//   //   })
-//   // }
-
-//   fetchCurrentMedicationsData(patientId: number): void {
-//     this.currentMedicationsService.getCurrentMedicationById(patientId).subscribe({
-//       next: (res: any) => {
-//         if (res.type === 'S' && res.data) {
-//           const data = res.data;
-//           console.log('✅ Current Medications data:', data);
-
-//           this.medicationsForm.patchValue({
-//             nsaidsMolecule: data.NSAIDs_Molecule,
-//             nsaidsDose: data.NSAIDs_Dose,
-//             nsaidsFrequency: data.NSAIDs_Frequency,
-//             bisphosphonatesMolecule: data.Bisphosphonates_Molecule,
-//             bisphosphonatesDose: data.Bisphosphonates_Dose,
-//             bisphosphonatesFrequency: data.Bisphosphonates_Frequency,
-//             steroidsMolecule: data.Steroids_Molecule,
-//             steroidsDose: data.Steroids_Dose,
-//             steroidsFrequency: data.Steroids_Frequency,
-//             antiplateletMolecule: data.Antiplatelet_Molecule,
-//             antiplateletDose: data.Antiplatelet_Dose,
-//             antiplateletFrequency: data.Antiplatelet_Frequency,
-//             othersMolecule: data.Others_Molecule,
-//             othersDose: data.Others_Dose,
-//             othersFrequency: data.Others_Frequency,
-//             createdBy: data.CreatedBy
-//           });
-
-//           this.patientId = data.PatientId;
-//         } else {
-//           console.warn('⚠️ No Current Medications data found.');
-//         }
-//       },
-//       error: (err: any) => {
-//         console.error('❌ Error fetching Current Medications data:', err);
-//       }
-//     });
-//   }
-
-//   onSubmit(): void {
-//     if (!this.formValidation.validateForm(this.medicationsForm)) {
-//       this.medicationsForm.markAllAsTouched();
-//       return;
-//     }
-
-//     const param = {
-//       flag: "I",
-//       stage: this.stage,
-//       id: 0,
-//       PatientId: this.patientService.getPatientId(),
-//       NSAIDs_Molecule: this.medicationsForm.controls['nsaidsMolecule'].value,
-//       NSAIDs_Dose: this.medicationsForm.controls['nsaidsDose'].value,
-//       NSAIDs_Frequency: this.medicationsForm.controls['nsaidsFrequency'].value,
-//       Bisphosphonates_Molecule: this.medicationsForm.controls['bisphosphonatesMolecule'].value,
-//       Bisphosphonates_Dose: this.medicationsForm.controls['bisphosphonatesDose'].value,
-//       Bisphosphonates_Frequency: this.medicationsForm.controls['bisphosphonatesFrequency'].value,
-//       Steroids_Molecule: this.medicationsForm.controls['steroidsMolecule'].value,
-//       Steroids_Dose: this.medicationsForm.controls['steroidsDose'].value,
-//       Steroids_Frequency: this.medicationsForm.controls['steroidsFrequency'].value,
-//       Antiplatelet_Molecule: this.medicationsForm.controls['antiplateletMolecule'].value,
-//       Antiplatelet_Dose: this.medicationsForm.controls['antiplateletDose'].value,
-//       Antiplatelet_Frequency: this.medicationsForm.controls['antiplateletFrequency'].value,
-//       Others_Molecule: this.medicationsForm.controls['othersMolecule'].value,
-//       Others_Dose: this.medicationsForm.controls['othersDose'].value,
-//       Others_Frequency: this.medicationsForm.controls['othersFrequency'].value,
-//       CreatedBy: this.medicationsForm.controls['createdBy'].value
-//     };
-
-//     this.http.httpPost(API_URLS.CURRENT_MEDICATION_SAVE, param).subscribe({
-//       next: (res: any) => {
-//         if (res.type === 'S') {
-
-//                     this.http.httpGet('/PatientReg/GetPatient').subscribe((getRes: any) => {
-//             if (getRes.type === 'S' && getRes.data?.length > 0) {
-//               const latestPatient = getRes.data[getRes.data.length - 1];
-//               const updatedPatientId = latestPatient.patientId;
-
-//               this.patientService.setPatientId(updatedPatientId);
-//               this.patientService.setDoctorId(param.CreatedBy);
-
-//               this.formValidation.showAlert('Chief complaint saved successfully', 'success');
-//               this.router.navigate([], {
-//                 queryParams: {
-//                   patientId: updatedPatientId,
-//                   doctorId: param.CreatedBy
-//                 }
-//               });
-//             } else {
-//               this.formValidation.showAlert('Unable to fetch Patient ID after save', 'danger');
-//             }
-//           });
-
-//           alert('Successfully Submitted');
-//           this.medicationsForm.reset();
-//         } else {
-//           this.formValidation.showAlert('Error!!', 'danger');
-//         }
-//       },
-//       error: () => {
-//         this.formValidation.showAlert('Error saving data.', 'danger');
-//       }
-//     });
-//   }
-
-//   OnNext(): void {
-//     this.router.navigate(['/medical-examination'], {
-//       state: {
-//         patientId: this.patientService.getPatientId(),
-//         tabId: this.tabId,
-//         stage: this.stage
-//       }
-//     });
-//   }
-
-//   goback(): void {
-//     this.router.navigate(['/history-endoscopy'], {
-//       state: {
-//         patientId: this.patientId,
-//         tabId: this.tabId,
-//         stage: this.stage
-//       }
-//     });
-//   }
-// }
-
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpserviceService } from '../httpservice.service';
@@ -256,6 +22,11 @@ export class CurrentMedicationsComponent implements OnInit {
   stage: number = 0;
   isViewMode = false;
   isFollowUp = false;
+    isSaved: boolean = false;
+    @Input() isPrintMode = false;
+      @Input() data: any;
+
+
 
   constructor(
     private fb: FormBuilder,
@@ -288,42 +59,63 @@ export class CurrentMedicationsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tabId = history.state?.tabId ?? 1;
-    this.stage = history.state?.stage ?? 0;
-    this.isViewMode = history.state?.isViewMode ?? false;
 
-    this.route.queryParams.subscribe(params => {
-      this.patientId = params['patientId'] ? +params['patientId'] : this.patientService.getPatientId();
-      this.doctorId = params['doctorId'] ? +params['doctorId'] : this.patientService.getDoctorId();
+    this.patientId = Number(this.route.snapshot.params['patientId']);
+    this.stage = Number(this.route.snapshot.params['stage'])||0;
+    this.doctorId=this.patientService.getDoctorId();
+    const allowedWithoutSave = [1, 3, 5];
+    if (allowedWithoutSave.includes(this.stage)) {
+      this.isSaved = true;
+    }    
+    
+    this.isViewMode = this.isViewMode ?? false;
 
-      if (this.patientId) this.patientService.setPatientId(this.patientId);
-      if (this.doctorId) this.patientService.setDoctorId(this.doctorId);
+        
+    //this.doctorId =  this.patientService.getDoctorId();
+    this.fetchCurrentMedicationsData(Number(this.patientId));
 
-    const currentUrl = this.router.url;
-      console.log("url",currentUrl)
-      this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
+    // const cachedData = this.patientService.getfamalyhistoryData();
+    // if (cachedData) {
+    //   this.medicationsForm.patchValue(cachedData);
+    // } else {
+    //   this.fetchCurrentMedicationsData(this.patientService.getPatientId());
 
+    // }
+  }
 
-if (currentUrl === '/follow-up-1/current-medicaton' && this.patientService.getPatientId()) {         
-        this.fetchCurrentMedicationsData(this.patientId);
-      } else {
-        console.warn('⚠️ Patient ID missing.');
-      }
-    });
-
-    const cachedData = this.patientService.getfamalyhistoryData();
-    if (cachedData) {
-      this.medicationsForm.patchValue(cachedData);
-    } else {
-      this.fetchCurrentMedicationsData(this.patientService.getPatientId());
-
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data'] && this.data) {
+      this.patchForm(this.data);
     }
   }
 
+  // Patch only the fields used in the form
+  private patchForm(data: any): void {
+    this.medicationsForm.patchValue({
+      nsaidsMolecule: data.nsaidsMolecule,
+      nsaidsDose: data.nsaidsDose,
+      nsaidsFrequency: data.nsaidsFrequency,
+      bisphosphonatesMolecule: data.bisphosphonatesMolecule,
+      bisphosphonatesDose: data.bisphosphonatesDose,
+      bisphosphonatesFrequency: data.bisphosphonatesFrequency,
+      steroidsMolecule: data.steroidsMolecule,
+      steroidsDose: data.steroidsDose,
+      steroidsFrequency: data.steroidsFrequency,
+      antiplateletMolecule: data.antiplateletMolecule,
+      antiplateletDose: data.antiplateletDose,
+      antiplateletFrequency: data.antiplateletFrequency,
+      othersMolecule: data.othersMolecule,
+      othersDose: data.othersDose,
+      othersFrequency: data.othersFrequency,
+      createdBy: this.doctorId
+    });
+  }
+
   fetchCurrentMedicationsData(patientId: number): void {
-  this.currentMedicationsService.getCurrentMedicationById(patientId).subscribe({
+  this.currentMedicationsService.getCurrentMedicationById(patientId, this.stage).subscribe({
     next: (res: any) => {
-      console.log('Medication response:', res); // Debugging
+    //   this.isSaved = true;
+    //  console.log('Medication response:', res); // Debugging
 
       const med = Array.isArray(res.data) ? res.data[0] : res.data;
 
@@ -344,7 +136,7 @@ if (currentUrl === '/follow-up-1/current-medicaton' && this.patientService.getPa
           othersMolecule: med.othersMolecule,
           othersDose: med.othersDose,
           othersFrequency: med.othersFrequency,
-          createdBy: med.createdBy
+          createdBy: this.doctorId
         });
       }
     },
@@ -355,7 +147,7 @@ if (currentUrl === '/follow-up-1/current-medicaton' && this.patientService.getPa
 }
 
 
-  onSubmit(): void {
+  onSave(): void {
     if (!this.formValidation.validateForm(this.medicationsForm)) {
       this.medicationsForm.markAllAsTouched();
       return;
@@ -365,7 +157,7 @@ if (currentUrl === '/follow-up-1/current-medicaton' && this.patientService.getPa
       flag: 'I',
       stage: this.stage,
       id: 0,
-      PatientId: this.patientService.getPatientId(),
+      PatientId: this.patientId,
       NSAIDs_Molecule: this.medicationsForm.value.nsaidsMolecule,
       NSAIDs_Dose: this.medicationsForm.value.nsaidsDose,
       NSAIDs_Frequency: this.medicationsForm.value.nsaidsFrequency,
@@ -381,30 +173,33 @@ if (currentUrl === '/follow-up-1/current-medicaton' && this.patientService.getPa
       Others_Molecule: this.medicationsForm.value.othersMolecule,
       Others_Dose: this.medicationsForm.value.othersDose,
       Others_Frequency: this.medicationsForm.value.othersFrequency,
-      CreatedBy: this.medicationsForm.value.createdBy
+      createdBy: this.doctorId
     };
 
     this.http.httpPost(API_URLS.CURRENT_MEDICATION_SAVE, param).subscribe({
       next: (res: any) => {
         if (res.type === 'S') {
+           this.isSaved = true;
+           alert('Saved Successfully');
           this.http.httpGet('/PatientReg/GetPatient').subscribe((getRes: any) => {
+           
             if (getRes.type === 'S' && getRes.data?.length > 0) {
-              const latest = getRes.data[getRes.data.length - 1];
-              this.patientService.setPatientId(latest.patientId);
-              this.patientService.setDoctorId(param.CreatedBy);
+              // const latest = getRes.data[getRes.data.length - 1];
+              // this.patientService.setPatientId(latest.patientId);
+              // this.patientService.setDoctorId(param.CreatedBy);
 
               this.formValidation.showAlert('Medications saved successfully', 'success');
-              this.router.navigate([], {
-                queryParams: {
-                  patientId: latest.patientId,
-                  doctorId: param.CreatedBy
-                }
-              });
+              // this.router.navigate([], {
+              //   queryParams: {
+              //     patientId: latest.patientId,
+              //     doctorId: param.CreatedBy
+              //   }
+              // });
             } else {
               this.formValidation.showAlert('Patient ID fetch failed', 'danger');
             }
           });
-          this.medicationsForm.reset();
+          
         } else {
           this.formValidation.showAlert('Save failed', 'danger');
         }
@@ -415,22 +210,36 @@ if (currentUrl === '/follow-up-1/current-medicaton' && this.patientService.getPa
     });
   }
 
-  OnNext(): void {
-    this.router.navigate(['/medical-examination'], {
+  // OnNext(): void {
+  //   this.router.navigate(['/medical-examination'], {
+  //     state: {
+  //       patientId: this.patientService.getPatientId(),
+  //       tabId: this.tabId,
+  //       stage: this.stage
+  //     }
+  //   });
+  // }
+
+   onNext(){
+    this.router.navigate([`/medical-examination/${this.patientId}/${this.stage}`], {
       state: {
-        patientId: this.patientService.getPatientId(),
         tabId: this.tabId,
-        stage: this.stage
+        patientId: this.patientId,
+        stage: this.stage,
+        isViewMode: this.isViewMode
       }
     });
+
   }
 
-  goback(): void {
-    this.router.navigate(['/history-endoscopy'], {
+
+  back() {
+    this.router.navigate([`/history-endoscopy/${this.patientId}/${this.stage}`], {
       state: {
-        patientId: this.patientId,
         tabId: this.tabId,
-        stage: this.stage
+        patientId: this.patientId,
+        stage: this.stage,
+        isViewMode: this.isViewMode
       }
     });
   }

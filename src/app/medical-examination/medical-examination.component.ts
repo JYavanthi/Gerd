@@ -10,7 +10,7 @@ import { PatientService } from '../Services/patient.service';
 import { medicalExaminationService } from '../Services/medicalExam.service';
 
 @Component({
-  selector: 'c',
+  selector: 'app-medical-examination',
   templateUrl: './medical-examination.component.html',
   styleUrls: ['./medical-examination.component.css']
 })
@@ -71,41 +71,28 @@ export class MedicalExaminationComponent implements OnInit {
 
 
   ngOnInit(): void {
- this.stage = Number(this.route.snapshot.params['stage'] || 0);
+     this.patientId = Number(this.route.snapshot.params['patientId']);
+    this.stage = Number(this.route.snapshot.params['stage'])||0;
+    this.doctorId=this.patientService.getDoctorId();
+
    const allowedWithoutSave = [1, 3, 5];
   if (allowedWithoutSave.includes(this.stage)) {
     this.isSaved = true;
   }
     const currentUrl = this.router.url;
-    const state = history.state;
+    
 
-    this.tabId = state?.tabId ?? 1;
-    this.patientId = state?.patientId ?? this.patientService.getPatientId();
-    if (this.patientId) {
-      this.patientService.setPatientId(this.patientId); // ✅ Store it globally
-    } else {
-      console.warn('⚠️ Patient ID is missing in state and service');
-    }
+    this.isViewMode =this.isViewMode ?? false;
+    this.fetchMedicalExaminationData(this.patientId);
 
-    this.isViewMode = state?.isViewMode ?? false;
-    this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
-
-    if (currentUrl === '/follow-up-1/medical-examination' && this.patientService.getPatientId()) {
-      this.fetchMedicalExaminationData(this.patientService.getPatientId());
-    }
-
+    
     this.medicalExaminationForm.get('PE_Height')?.valueChanges.subscribe(() => this.calculateBMI());
     this.medicalExaminationForm.get('PE_Weight')?.valueChanges.subscribe(() => this.calculateBMI());
 
-    const cachedData = this.patientService.getfamalyhistoryData();
-    if (cachedData) {
-      this.medicalExaminationForm.patchValue(cachedData);
-    } else {
-      this.fetchMedicalExaminationData(this.patientService.getPatientId());
-
-    }
+    this.fetchMedicalExaminationData(this.patientId);
 
   }
+
   fetchMedicalExaminationData(patientId: number): void {
     this.http.httpGet(`/MedicalExamination/GetMedicalExaminationById/${patientId}`)
       .subscribe({
@@ -139,13 +126,14 @@ export class MedicalExaminationComponent implements OnInit {
                 OthersAbNormal_NCS: d.othersAbNormalNcs === '1' ? 'ncs' : d.othersAbNormalNcs === '0' ? '' : null,
                 OthersAbNormalRemark: d.othersAbNormalRemark ?? '',
 
-                CreatedBy: d.createdBy ?? 0
+                CreatedBy: this.doctorId
               });
-            if (this.isViewMode) {
-              this.medicalExaminationForm.disable();
-            }
+            // if (this.isViewMode) {
+            //   this.medicalExaminationForm.disable();
+            // }
 
-            console.log('✅ Medical Examination data patched:', this.medicalExaminationForm.value);
+            //console.log('✅ Medical Examination data patched:', this.medicalExaminationForm.value);
+          
           } else {
             console.warn('⚠️ No Medical Examination data found.');
           }
@@ -213,8 +201,8 @@ export class MedicalExaminationComponent implements OnInit {
     const medicalExaminationPayload = {
       Meid: !!formValue.MEID ? parseInt(formValue.MEID, 10) : null,
       Flag: !!formValue.MEID ? 'U' : 'I',
-      DoctorId: 0,
-      PatientId: this.patientService.getPatientId() ?? 0,
+      DoctorId: this.doctorId,
+      PatientId: this.patientId,
       Stage: this.stage,
 
       pE_Height: formValue.PE_Height !== '' ? formValue.PE_Height : null,
@@ -238,7 +226,7 @@ export class MedicalExaminationComponent implements OnInit {
 
       paE_Findings: formValue.PAE_Findings,
 
-      CreatedBy: formValue.CreatedBy || 0
+      CreatedBy: this.doctorId
     };
 
     const payload = {
@@ -317,6 +305,7 @@ export class MedicalExaminationComponent implements OnInit {
           fromNavigation: true ,
           tabId: this.tabId,
           patientId: this.patientId,
+          stage: this.stage,
           isViewMode: this.isViewMode
         }
       });
@@ -328,29 +317,32 @@ export class MedicalExaminationComponent implements OnInit {
          fromNavigation: true ,
         tabId: this.tabId,
         patientId: this.patientId,
+        stage: this.stage,
         isViewMode: this.isViewMode
       }
     });
   }
   goback() {
-    this.router.navigate([`/history-endoscopy/${this.patientId}/${this.stage}`], {
+    this.router.navigate([`/current-medicaton/${this.patientId}/${this.stage}`], {
       state: {
         tabId: this.tabId,
         patientId: this.patientId,
+        stage: this.stage,
         isViewMode: this.isViewMode
       }
     });
   }
-
-  back() {
-    this.router.navigate([`/history-endoscopy/${this.patientId}/${this.stage}`], {
+back(){
+    this.router.navigate([`/current-medicaton/${this.patientId}/${this.stage}`], {
       state: {
         tabId: this.tabId,
         patientId: this.patientId,
+        stage: this.stage,
         isViewMode: this.isViewMode
       }
     });
   }
+  
   getStatusClass(step: number): string {
     if (this.stage === 0 && step === 1) return 'baseline-blue';
 

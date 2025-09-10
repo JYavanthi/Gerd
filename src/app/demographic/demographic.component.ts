@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormvalidationService } from '../formvalidation.service';
@@ -6,12 +6,14 @@ import { HttpserviceService } from '../httpservice.service';
 import { PatientService } from '../Services/patient.service';
 import { CaseDataService } from '../Services/case-data.services';
 import { API_URLS } from '../shared/API-URLs';
+import { DemographicService } from '../Services/demographic.service';
 
 @Component({
   selector: 'app-demographic',
   templateUrl: './demographic.component.html',
   styleUrls: ['./demographic.component.css']
 })
+
 export class DemographicComponent implements OnInit {
   demographicForm: FormGroup;
   showCodeMessage = false;
@@ -20,13 +22,13 @@ export class DemographicComponent implements OnInit {
   stage: number = 0;
   tabId = 1
   patientId: number | null = null;
-  doctorId : number | null = null;
+  doctorId: number | null = null;
   isSaved: boolean = false;
   states: Array<{ id: number; name: string }> = [];
   cities: any;
-  userData:any;
-  occupation:any;
-
+  userData: any;
+    @Input() isPrintMode = false;
+  
 
   constructor(
     private fb: FormBuilder,
@@ -35,24 +37,24 @@ export class DemographicComponent implements OnInit {
     private router: Router,
     public route: ActivatedRoute,
     private patientService: PatientService,
-    private caseDataService: CaseDataService // ✅ Inject shared service
+    private demographicService: DemographicService,
   ) {
-    const state = history.state;
+    //const state = history.state;
 
     this.demographicForm = this.fb.group({
       patientName: ['', Validators.required],
       initial: [''],
-      subjectNumber: [{ value: '', disabled: true }],
       date: ['', Validators.required],
+      subjectNumber: [''],
       age: ['', Validators.required],
       dob: [''],
-      stage: state?.stage ?? 1,
+      stage: this.stage ?? 0,
       gender: ['', Validators.required],
       education: ['', Validators.required],
       occupation: ['', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
-      pincode: ['',Validators.required,Validators.pattern(/^[1-9][0-9]{5}$/)],
+      pincode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       placeType: ['', Validators.required],
       socioeconomic: ['', Validators.required],
       annualFamilyIncome: ['', Validators.required],
@@ -61,33 +63,39 @@ export class DemographicComponent implements OnInit {
     });
   }
 
+  viewFlag : Boolean=false;
+  //stateid : any;
+  cityid : any;
   ngOnInit(): void {
-this.demographicForm.get('date')?.valueChanges.subscribe((dobValue: string) => {
-  if (dobValue) {
-    const age = this.calculateAge(new Date(dobValue));
-    this.demographicForm.get('age')?.setValue(age, { emitEvent: false });
-  }
-});
+   this.route.params.subscribe(params => {
+  this.patientId = +params['patientId'] || null;
+  this.stage = +params['stage'];
+  if(this.stage===1 || this.stage===2 || this.stage===3 || this.stage===4|| this.stage===5) this.isSaved=true;
     
-    const state = history.state;
-    this.patientId = state?.patientId;
-    this.doctorId = this.patientService.getDoctorId();
-    this.tabId = state?.tabId ?? 1;
-    this.stage = state?.stage ?? 0;
+});
 
-    this.loadStates();
+ if(this.patientId!==null || this.patientId){
+  this.fetchDemographicData(Number(this.patientId));
+ }
+  
 
-
+    this.demographicForm.get('date')?.valueChanges.subscribe((dobValue: string) => {
+      if (dobValue) {
+        const age = this.calculateAge(new Date(dobValue));
+        this.demographicForm.get('age')?.setValue(age, { emitEvent: false });
+      }
+    });
     this.demographicForm.statusChanges.subscribe(status => {
       this.isSaved = false;
-      
+     if(this.stage===1 || this.stage===2 || this.stage===3 || this.stage===4|| this.stage===5) this.isSaved=true;
     });
-    // ✅ Restore form from localStorage
-    const demographicData = this.patientService.getDemographicData();
-    if (demographicData) {
-      this.demographicForm.patchValue(demographicData);
-    }
-
+   
+    // const demographicData = this.patientService.getDemographicData();
+    //  console.log('demographicData', demographicData);
+    // if (demographicData) {
+    //   this.demographicForm.patchValue(demographicData);
+    // }
+    this.loadStates();
   }
   today: string = new Date().toISOString().split('T')[0];
 
@@ -95,19 +103,89 @@ this.demographicForm.get('date')?.valueChanges.subscribe((dobValue: string) => {
     this.showCodeMessage = true;
   }
 
+subjectno: string=''
+
+fetchDemographicData(patientId: number): void {
+  if (this.stage === undefined) {
+    console.warn('⚠️ Stage not set for Demography');
+    return;
+  }
+
+  this.demographicService.getDemographicDetailsByPatientId(patientId).subscribe({
+    next: (res: any) => {
+      if (res.type === 'S' && res.data) {
+        this.isSaved = true;
+        
+        const data = res.data;
+
+        // save city id for later
+        this.cityid = data.city;
+        this.subjectno=data.subjectNo;
+        // patch form without city (yet)
+        this.demographicForm.patchValue({
+          patientName: data.initial || '',
+          initial: data.initial || '',
+          subjectNumber: data.subjectNo || '',
+          date: data.date ? data.date.split('T')[0] : '',
+          age: data.age ?? '',
+          dob: data.dob || '',
+          gender: data.gender || '',
+          education: data.education || '',
+          occupation: data.occupation || '',
+          state: data.state ?? '',
+          pincode: data.pincode ?? '',
+          placeType: data.placeType || '',
+          socioeconomic: data.socioeconomicStatus || '',
+          annualFamilyIncome: data.familyIncome || '',
+          diet: data.diet || '',
+          pastHistory: data.pastHistory || '',
+        });
+
+        this.patientService.setDemographicData(data);
+
+        // 🔑 Load cities for that state, then patch city
+        if (data.state) {
+          this.http.httpGet(API_URLS.CITY_GET, { stateId: data.state }).subscribe({
+            next: (cities: any) => {
+              this.cities = cities.sort((a: any, b: any) =>
+                a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+              );
+
+              if (this.cityid) {
+                this.demographicForm.patchValue({ city: this.cityid });
+              }
+            },
+            error: (err) => console.error('❌ Error loading cities:', err)
+          });
+        }
+
+        // auto-calc age
+        if (data.date) {
+          const age = this.calculateAge(new Date(data.date));
+          this.demographicForm.get('age')?.setValue(age, { emitEvent: false });
+        }
+      } else {
+      }
+    },
+    error: (err) => {
+    }
+  });
+}
+
   Submit() {
     if (!this.formValidation.validateForm(this.demographicForm)) {
       this.demographicForm.markAllAsTouched();
       return;
     }
-let user: any = localStorage.getItem('doctor')
+    let user: any = localStorage.getItem('doctor')
     this.userData = JSON.parse(user);
+    this.patientService.setDoctorId(this.userData?.doctorId);
     
     const param = {
       flag: 'I',
-      patientID: 0,
+      patientID: this.patientId??0,
       doctorId: this.userData?.doctorId,
-      stage: this.stage,
+      stage: 0,
       initial: this.demographicForm.controls['patientName'].value,
       subjectNo: this.demographicForm.controls['subjectNumber'].value,
       date: this.demographicForm.controls['date'].value,
@@ -117,38 +195,39 @@ let user: any = localStorage.getItem('doctor')
       occupation: this.demographicForm.controls['occupation'].value,
       state: Number(this.demographicForm.controls['state'].value),
       city: Number(this.demographicForm.controls['city'].value),
-      pincode: this.demographicForm.controls['pincode']?.value || 0,
+      pincode: this.demographicForm.controls['pincode']?.value,
       placeType: this.demographicForm.controls['placeType'].value,
       socioeconomicStatus: this.demographicForm.controls['socioeconomic'].value,
       familyIncome: this.demographicForm.controls['annualFamilyIncome'].value,
       pastHistory: this.demographicForm.controls['pastHistory'].value,
       diet: this.demographicForm.controls['diet'].value,
-      createdBy: this.userData?.doctorId
+      createdBy: this.patientService.getDoctorId()
     };
 
     this.http.httpPost('/PatientReg/SavePatient', param).subscribe((res: any) => {
       if (res.type === 'S') {
         this.isSaved = true;
-        this.occupation=this.demographicForm.controls['occupation'].value;
-        this.patientService.setOccupation(this.occupation);
         alert('Saved Successfully'); // ← Test this
         this.formValidation.showAlert('Saved Successfully', 'success');
-
-        this.http.httpGet('/PatientReg/GetPatient').subscribe((getRes: any) => {
+        if(this.patientId===null){
+         
+          this.http.httpGet('/PatientReg/GetPatient').subscribe((getRes: any) => {
           if (getRes.type === 'S' && getRes.data?.length > 0) {
-            this.isSaved = true;
-            const latestPatient = getRes.data[getRes.data.length - 1];
-            const patientId = latestPatient.patientId;
-            const doctorId = latestPatient.doctorId || latestPatient.doctorID;
-            this.patientService.setPatientId(patientId);
-            this.patientService.setDoctorId(doctorId);
+           // this.isSaved = true;
+           const latestPatient = getRes.data[getRes.data.length - 1];
+           const patientId = latestPatient.patientId;
+           this.patientId=patientId;
+           //const doctorId = latestPatient.doctorId || latestPatient.doctorID;
+           this.patientService.setPatientId(patientId);
+           //this.patientService.setDoctorId(doctorId);
             const demographicData = {
-              patientName: this.demographicForm.controls['patientName']?.value || '',
+              patientId:param.patientID,
+              patientName: param.initial,
               initial: param.initial,
-              subjectNumber: param.subjectNo || `MLL/GERD/25-26-${patientId}`,
+              subjectNumber: param.subjectNo,
               date: param.date,
               age: param.age,
-              dob: this.demographicForm.controls['dob']?.value || '',
+              dob: param.date,
               gender: param.gender,
               education: param.education,
               occupation: param.occupation,
@@ -163,43 +242,48 @@ let user: any = localStorage.getItem('doctor')
             };
 
             this.patientService.setDemographicData(demographicData); // ✅ Make sure this method exists
-            localStorage.setItem('demographicData','');
+            localStorage.setItem('demographicData', '');
             localStorage.setItem('demographicData', JSON.stringify(demographicData)); // optional fallback
 
-            const caseData = {
-              patientId: patientId,
-              doctorId: doctorId,
-              initial: this.demographicForm.controls['patientName'].value,
-              stage: this.stage,
-              tabId: this.tabId,
-              subjectNo: param.subjectNo || param.patientID,
-              gender: param.gender,
-              date: param.date,
-              status: 'Ongoing',
-
-            };
-            this.caseDataService.addCase(caseData);
-            this.formValidation.showAlert('Save Successfully', 'success');
+           
           }
         });
 
+        }
         
+
+
       }
       else {
         this.formValidation.showAlert('Submission Failed', 'danger');
       }
     });
-    
+
   }
- getCities(event: any) {
-  this.http.httpGet(API_URLS.CITY_GET, { stateId: event.target.value }).subscribe({
+
+  
+  getCities(event: any) {
+  const stateId = event?.target?.value || null;
+
+  if (!stateId) {
+    this.cities = [];
+    this.demographicForm.patchValue({ city: '' });
+    return;
+  }
+
+  this.http.httpGet(API_URLS.CITY_GET, { stateId }).subscribe({
     next: (res: any) => {
-      // Sort cities alphabetically by name
-      this.cities = res.sort((a: any, b: any) => {
-        const nameA = a.name.toLowerCase();
-        const nameB = b.name.toLowerCase();
-        return nameA.localeCompare(nameB);
-      });
+      // Sort cities alphabetically
+      this.cities = res.sort((a: any, b: any) =>
+        a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      );
+
+      
+      if (this.cityid) {
+        this.demographicForm.patchValue({
+          city: this.cityid
+        });
+      }
     },
     error: (err) => {
       this.formValidation.showAlert('Error loading cities', 'danger');
@@ -208,62 +292,48 @@ let user: any = localStorage.getItem('doctor')
   });
 }
 
- loadStates() {
-  if (this.states.length === 0) {
-    this.http.httpGet(API_URLS.STATE_GET).subscribe({
-      next: (res: any) => {
-        // Sort states alphabetically by name
-        this.states = res.sort((a: any, b: any) => {
-          const nameA = a.name.toLowerCase();
-          const nameB = b.name.toLowerCase();
-          return nameA.localeCompare(nameB);
-        });
-      },
-      error: (err) => {
-        this.formValidation.showAlert('Error loading states', 'danger');
-        console.error(err);
-      }
-    });
+
+  loadStates() {
+    if (this.states.length === 0) {
+      this.http.httpGet(API_URLS.STATE_GET).subscribe({
+        next: (res: any) => {
+          // Sort states alphabetically by name
+          this.states = res.sort((a: any, b: any) => {
+            const nameA = a.name.toLowerCase();
+            const nameB = b.name.toLowerCase();
+            return nameA.localeCompare(nameB);
+          });
+        },
+        error: (err) => {
+          this.formValidation.showAlert('Error loading states', 'danger');
+          console.error(err);
+        }
+      });
+    }
+   // this.getCities(this.states)
+    // if(this.stateid!==''){
+    //   this.demographicForm.patchValue({
+    //     city : this.cityid?? this.getCities(this.stateid)
+    //   })
+    // }
   }
-}
 calculateAge(dob: Date): number {
   const today = new Date();
   let age = today.getFullYear() - dob.getFullYear();
   const monthDiff = today.getMonth() - dob.getMonth();
-  const dayDiff = today.getDate() - dob.getDate();
 
-  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
     age--;
   }
-
-  return age;
+  return age >= 0 ? age : 0; // avoid negative age
 }
-
-  onnext() {
-    this.router.navigate(['/chiefComplaint']);
+onnext(){
+    this.router.navigate([`chiefComplaint/${this.patientId}/${this.stage}`], {
+     
+    });
   }
-  // fetchPatientIdAndNavigate() {
-  //   this.http.httpGet('/PatientReg/GetPatient').subscribe((res: any) => {
-  //     if (res.type === 'S' && res.data?.length) {
-  //       // Assuming latest patient is the last one in the list
-  //       const latestPatient = res.data[res.data.length - 1];
-  //       const patientId = latestPatient.patientID; // Adjust field name as needed
-  //       this.router.navigate(['/chiefComplaint', patientId]);
-  //     } else {
-  //       this.formValidation.showAlert('Unable to fetch Patient ID', 'danger');
-  //     }
-  //   });
-  // }
+  
 
-  // getChiefComplaint(patientId: number) {
-  //   this.http.httpGet(`/ChiefComplaint/GetComplaint?patientId=${patientId}`).subscribe((res: any) => {
-  //     if (res.type === 'S') {
-  //       this.complaintData = res.data;
-  //     } else {
-  //       this.formValidation.showAlert('No complaint found', 'danger');
-  //     }
-  //   });
-  // }
 }
 
 

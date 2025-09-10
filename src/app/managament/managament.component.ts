@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormvalidationService } from '../formvalidation.service';
@@ -20,7 +20,8 @@ export class ManagamentComponent {
   showConfirmation: boolean = false;
   tabId = 1;
   @Input() stage: number = 0;
-  @Input() isPrintMode = false;
+  @Input() data: any;  
+    @Input() isPrintMode: boolean = false;
   isSaved: boolean = false;
 
   currentStage: any;
@@ -52,6 +53,35 @@ export class ManagamentComponent {
 
     });
   }
+
+
+ ngOnChanges(changes: SimpleChanges) {
+    if (changes['data'] && this.data) {
+      this.patchManagement(this.data);
+    }
+  }
+
+private patchManagement(data: any) {
+  if (!data) return;
+
+  // Lifestyle (bitmask → checkboxes)
+  const bitmask = data.lifestyleRecommendations ?? 0;
+  this.updateLifestyleFromBitmask(bitmask);
+
+  // Drug Therapy
+  this.drugTherapy[0] = { class: 'PPI', name: data.ppiMedicationName, dose: data.ppiDose, frequency: data.ppiFrequency };
+  this.drugTherapy[1] = { class: 'Combination of PPI + Prokinetics', name: data.prokineticsMedicationName, dose: data.prokineticsDose, frequency: data.prokineticsFrequency };
+  this.drugTherapy[2] = { class: 'Sucralfate', name: data.sucralfateMedicationName, dose: data.sucralfateDose, frequency: data.sucralfateFrequency };
+  this.drugTherapy[3] = { class: 'Alginate', name: data.alginateMedicationName, dose: data.alginateDose, frequency: data.alginateFrequency };
+  this.drugTherapy[4] = { class: 'H₂ Blockers', name: data.h2blockersMedicationName, dose: data.h2blockersDose, frequency: data.h2blockersFrequency };
+  this.drugTherapy[5] = { class: 'H₂ Blockers combinations', name: data.h2blockersCMedicationName, dose: data.h2blockersCDose, frequency: data.h2blockersCFrequency };
+  this.drugTherapy[6] = { class: 'PCAB', name: data.pcabMedicationName, dose: data.pcabDose, frequency: data.pcabFrequency };
+  this.drugTherapy[7] = { class: 'Any others', name: data.othersMedicationName, dose: data.othersDose, frequency: data.othersFrequency };
+
+  console.log("✅ Patched Management data", this.drugTherapy, this.lifestyle);
+}
+
+  
   ngOnInit(): void {
 
     this.stage = Number(this.route.snapshot.params['stage'] || 0);
@@ -90,6 +120,15 @@ export class ManagamentComponent {
   ];
 
   popup() {
+     if (this.getLifestyleBitmask()===0){
+      alert ('Select atleast one Life Sytle Recomendation');
+      return;
+    }
+    this.verifyMed();
+    if(!this.valflag){
+      alert ('Enter atleast one Drug Therapy Advise');
+      return;
+    }
     this.showConfirmation = true;
 
   }
@@ -132,16 +171,39 @@ export class ManagamentComponent {
       this.lifestyle[key] = (bitmask & bitMap[key]) !== 0;
     }
   }
+
+  valflag: boolean=false;
+  verifyMed(){
+    for (let i = 0; i <= 7; i++) {
+    const drug = this.drugTherapy[i];
+    
+    if (drug) {
+      // if any field is filled, then require all three
+      if (
+        (drug.name && drug.name.trim() !== '') &&
+        (drug.dose && drug.dose.trim() !== '') &&
+        (drug.frequency && drug.frequency.trim() !== '')
+      ) {
+        this.valflag=true;
+      return;}}
+      else{
+        this.valflag=false;
+      }
+      
+      }
+    
+  }
+
   ptnstage: number = 0;
   Submit() {
     const patientId = this.patientService.getPatientId();
-    console.log('stage in submit', this.stage)
+    
     if (this.stage === 1) this.ptnstage = 2;
     else if (this.stage === 3) this.ptnstage = 4;
     else if (this.stage === 0) this.ptnstage = 0;
     else this.ptnstage = this.stage;
-    // Step 1: Get current stage from backend
-    let stageToSend = 1;
+    
+   
 
     const param = {
       stage: this.ptnstage,
@@ -247,32 +309,8 @@ export class ManagamentComponent {
     }
     return value;
   }
-  onNext() {
-    const currentUrl = this.router.url;
-    const patientId = this.patientId;
 
-    if (currentUrl.includes('follow-up-1')) {
-      this.router.navigate(['/follow-up-1/managament'], {
-        state: {
-          tabId: this.tabId,
-          patientId: this.patientId,
-          isViewMode: this.isViewMode
-        }
-      });
-    } else {
-      this.router.navigate(['/follow-up-1/managament'], {
-        state: {
-          tabId: this.tabId,
-          patientId: this.patientId,
-          isViewMode: this.isViewMode
-        }
-      });
-    }
-  }
-  onSaveClick() {
-
-  }
-
+  
   cancelSave() {
     this.showConfirmation = false;
     this.Submit();
@@ -280,6 +318,11 @@ export class ManagamentComponent {
   }
 
   confirmSave() {
+
+     if (this.getLifestyleBitmask()===0){
+      alert ('Enter Life Sytle Recomendation');
+      return;
+    }
     this.showConfirmation = false;
     this.Submit();
     this.stageUpdate();
@@ -287,30 +330,64 @@ export class ManagamentComponent {
   }
 
 
-  goback() {
-    const patientId = this.patientId;
+  // goback(){
+  //   const patientId = this.patientId;
 
-    if (this.stage > 1) {
-      this.router.navigate([`/assessment/${patientId}/${this.stage}`], {
-        state: {
-          tabId: this.tabId,
-          patientId: this.patientService.getPatientId(),
-          isViewMode: this.isViewMode,
-          fromNavigation: true
-        }
-      });
-    } else {
-      // Navigate to Diagnosis
-      this.router.navigate([`/diagnosis/${patientId}/${this.stage}`], {
-        state: {
-          tabId: this.tabId,
-          patientId: this.patientService.getPatientId(),
-          isViewMode: this.isViewMode,
-          fromNavigation: true
-        }
-      });
-    }
+  //   if (this.stage > 1) {
+  //     this.router.navigate([`/assessment/${patientId}/${this.stage}`], {
+  //       state: {
+  //         tabId: this.tabId,
+  //         patientId: this.patientService.getPatientId(),
+  //         isViewMode: this.isViewMode,
+  //         fromNavigation: true
+
+          
+  //       }
+  //     });
+  //   } else {
+  //     // Navigate to Diagnosis
+  //       this.router.navigate([`/diagnosis/${this.patientId}/${this.stage}`], {
+  //       state: {
+  //         tabId: this.tabId,
+  //         patientId: this.patientId,
+  //         isViewMode: this.isViewMode,
+  //         fromNavigation: true
+  //       }
+  //     });
+  //   }
+  // }
+
+  goback(){
+  const patientId = this.patientId || this.patientService.getPatientId();
+
+  if (!patientId) {
+    console.error("❌ No patientId found when navigating back!");
+    return;
   }
+
+  if (this.stage > 1) {
+    this.router.navigate([`/assessment/${patientId}/${this.stage}`], {
+      state: {
+        tabId: this.tabId,
+        patientId: patientId,
+        stage: this.stage,
+        isViewMode: this.isViewMode,
+        fromNavigation: true
+      }
+    });
+  } else {
+    this.router.navigate([`/diagnosis/${patientId}/${this.stage}`], {
+      state: {
+        tabId: this.tabId,
+        patientId: patientId,
+        stage: this.stage,
+        isViewMode: this.isViewMode,
+        fromNavigation: true
+      }
+    });
+  }
+}
+
 
   getStatusClass(step: number): string {
     if (this.stage === 0 && step === 1) return 'baseline-blue';

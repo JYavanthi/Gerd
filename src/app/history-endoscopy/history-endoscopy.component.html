@@ -1,20 +1,6 @@
 <form [formGroup]="endoscopyGSForm">
     <div class="container">
-        <!-- <div class="sidebar text-white p-4 pt-5" style="width: 212px; flex-shrink: 0; overflow-y: auto;">
-            <h5 class="mb-3">👨‍⚕️ Dr. Krishna Kumar</h5>
-            <p class="mb-4">kumar&#64;gmail.com</p>
-            <hr class="bg-white" />
-            <ul class="list-unstyled mb-4">
-                <li><a href="#" class="text-white text-decoration-none d-block py-2">Dashboard</a></li>
-                <li><a href="#" class="text-white text-decoration-none d-block py-2">Methodology</a></li>
-                <li><a href="#" class="text-white text-decoration-none d-block py-2">Protocol and Case Form</a></li>
-                <li><a href="#" class="text-white text-decoration-none d-block py-2">Instructions</a></li>
-            </ul>
-            <hr class="bg-white" />
-            <a href="/login" class="btn w-100 mt-3" style="background-color: white; color: #027082; font-weight: 600;">
-                Already registered? Login
-            </a>
-        </div> -->
+
         <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
         <div class="main-content">
             <div class="form-card">
@@ -73,15 +59,28 @@
                                     <label><strong>Attachment</strong></label>
                                     <div class="input-group">
                                         <input type="file" [accept]="acceptedTypes" #fileInput
-                                            (change)="onFileChange($event)" [disabled]="fileUploadDisabled" />
+                                            (change)="uploadAttachment($event,'he', files)"
+                                            [disabled]="fileUploadDisabled" />
 
                                     </div>
                                     <small class="text-muted">Only JPG, JPEG, PNG, and PDF formats allowed.</small>
 
-                                    <div *ngIf="files.length > 0" class="file-list mt-2">
+                                    <div *ngIf="attachmentList.length > 0" class="file-list mt-2">
                                         <h6>Selected Files:</h6>
                                         <ul>
-                                            <li *ngFor="let file of files">{{ file.name }}</li>
+                                            <li *ngFor="let file of attachmentList  let i = index" class="d-flex align-items-center gap-2" >
+                                                {{ file.attachmentName }}
+                                                <button type="button" class="btn btn-sm btn-success ms-2"
+                                                    (click)="viewAttachment(file)">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+
+                                                <!-- Delete -->
+                                                <button type="button" class="btn btn-sm btn-danger ms-2"  *ngIf="(stage === 0 || stage === 2 || stage === 4)"
+                                                    (click)="deleteAttachment(file, i, 'ph')">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -182,7 +181,8 @@
                         <div class="surgery-row">
                             <div class="col-surgery">
                                 Other (Please Specify)
-                                <input type="text" class="specify-input" formControlName="gs_OtherText" />
+                                <input type="text" class="specify-input" formControlName="gs_OtherText"
+                                    [disabled]="endoscopyGSForm.get('gs_OtherYesNo')?.value !== 'yes'" />
                             </div>
                             <div class="col-choice">
                                 <label><input type="radio" value="yes" formControlName="gs_OtherYesNo" />

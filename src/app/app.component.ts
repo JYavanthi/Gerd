@@ -7,7 +7,7 @@ import { NavigationEnd, Router } from '@angular/router';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'godaddysites';
+  title = 'GERDREGISTRYOFINDIA';
   showForm = false;
   toggleForm() {
     this.showForm = !this.showForm;

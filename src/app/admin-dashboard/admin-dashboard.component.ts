@@ -49,6 +49,7 @@ export class AdminDashboardComponent {
   completed2List: any;
   inCompletedList: any;
   completedFollowUp2List: any;
+  doctorsReportList:any;
 
   constructor(
     private httpClient: HttpClient,
@@ -65,13 +66,13 @@ export class AdminDashboardComponent {
 
 
   ngOnInit() {
-    this.getDoctorCount(); // fetch on load
+    // this.getDoctorCount(); // fetch on load
     this.getPatientCount();
     this.getGenderCount();
     // this.loadBaselineCaseCount();
     // this.downloadCompletedCasesReport();
     this.loadStates();
-
+this.downloadDoctorReportExcel()
     this.downloadBaselineReportExcel()
     this.getFollowUp1ReportExcel()
     this.getFollowUp2ReportExcel()
@@ -123,23 +124,41 @@ export class AdminDashboardComponent {
   }
 
   // idu all doctor's data downloading
-  downloadDoctorsExcel() {
-    this.patientService.getAllDoctorData().subscribe(
-      (res: any) => {
-        if (res.data && res.data.length > 0) {
-          this.doctors = res.data;
-          this.excelExportService.exportAsExcelFile(this.doctors, "All_Doctors_Data");
-        }
-        else {
-          alert("No Doctor's Data Found. ");
-        }
-      },
-      (error: any) => {
-        console.log("Error in Fetching Doctor Data", error);
-        alert("Failed to fetch doctor data.");
-      }
-    )
-  }
+  // downloadDoctorsExcel() {
+  //   this.patientService.getAllDoctorData().subscribe(
+  //     (res: any) => {
+  //       if (res.data && res.data.length > 0) {
+  //         this.doctors = res.data;
+  //         this.excelExportService.exportAsExcelFile(this.doctors, "All_Doctors_Data");
+  //       }
+  //       else {
+  //         alert("No Doctor's Data Found. ");
+  //       }
+  //     },
+  //     (error: any) => {
+  //       console.log("Error in Fetching Doctor Data", error);
+  //       alert("Failed to fetch doctor data.");
+  //     }
+  //   )
+  // }
+
+
+  //   getDoctorCount() {
+  //   this.patientService.getAllDoctorData().subscribe(
+  //     (res: any) => {
+  //       if (res.data && res.data.length > 0) {
+  //         this.doctors = res.data;
+  //         this.dashboardStats.doctors = res.data.length;
+  //       } else {
+  //         this.dashboardStats.doctors = 0;
+  //       }
+  //     },
+  //     (error: any) => {
+  //       console.error("Error in fetching doctor data", error);
+  //       this.dashboardStats.doctors = 0;
+  //     }
+  //   );
+  // }
 
 
 
@@ -195,22 +214,7 @@ export class AdminDashboardComponent {
   }
 
   // idu doctors's data count part
-  getDoctorCount() {
-    this.patientService.getAllDoctorData().subscribe(
-      (res: any) => {
-        if (res.data && res.data.length > 0) {
-          this.doctors = res.data;
-          this.dashboardStats.doctors = res.data.length;
-        } else {
-          this.dashboardStats.doctors = 0;
-        }
-      },
-      (error: any) => {
-        console.error("Error in fetching doctor data", error);
-        this.dashboardStats.doctors = 0;
-      }
-    );
-  }
+
 
   // idu patient's data count part
   getPatientCount() {
@@ -241,7 +245,7 @@ export class AdminDashboardComponent {
 
       const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-      saveAs(blob, 'CompletedRPT.xlsx');
+      saveAs(blob, 'PatientRPT.xlsx');
     }
     );
   }
@@ -253,8 +257,7 @@ export class AdminDashboardComponent {
     );
   }
 
-  downLoadBaseLine() {
-
+  downLoadBaseLine(){
     const worksheet = XLSX.utils.json_to_sheet(this.baslineReportList);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
@@ -263,6 +266,23 @@ export class AdminDashboardComponent {
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(blob, 'baslineReportList.xlsx');
   }
+
+downloadDoctorReportExcel(): void {
+  this.http.httpGet('/DoctorReport/DownloadDoctorReport').subscribe((res: any) => {
+    this.doctorsReportList = res; // store JSON
+  });
+}
+
+downLoadDoctor() {
+  const worksheet = XLSX.utils.json_to_sheet(this.doctorsReportList);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  saveAs(blob, 'doctorsReportList.xlsx');
+}
+
 
 
   downLoadFollowUp1() {
@@ -275,18 +295,6 @@ export class AdminDashboardComponent {
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(blob, 'downLoadFollowUp1.xlsx');
   }
-  // baseline report count
-  // loadBaselineCaseCount(): void {
-  //   this.https.get<number>(`${this.baseUrl}/BaselineReport/GetBaselineReportCount`).subscribe({
-  //     next: (count) => {
-  //       this.dashboardStats.baselineCases = count;
-  //     },
-  //     error: (err) => {
-  //       console.error('Failed to load baseline count', err);
-  //     }
-  //   });
-  // }
-
 
   getFollowUp1ReportExcel(): void {
     this.http.httpGet('/FollowUp1Report/DownloadFollowUp1Report').subscribe((res: any) => {
@@ -324,7 +332,7 @@ export class AdminDashboardComponent {
 
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(blob, 'followUp1List.xlsx');
+    saveAs(blob, 'followUp2List.xlsx');
   }
 
 
@@ -340,19 +348,20 @@ export class AdminDashboardComponent {
 
 
   downloadInCompletedList() {
+    this.inCompletedList = JSON.parse(this.inCompletedList); 
     const worksheet = XLSX.utils.json_to_sheet(this.inCompletedList);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
 
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(blob, 'CompletedRPT.xlsx');
+    saveAs(blob, 'InCompletedRPT.xlsx');
   }
+
   inCompletedReportExcel(): void {
     this.http.httpGet('/InCompletedReport/GetInCompletedReportData').subscribe((res: any) => {
       this.inCompletedList = res
-    }
-    );
+    });
   }
 
 

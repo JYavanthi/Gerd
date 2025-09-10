@@ -1,19 +1,19 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpserviceService } from '../httpservice.service';
 import { FormBuilder, FormsModule } from '@angular/forms';
-import { AppComponent } from '../app.component';
-import { PatientHistoryService } from '../Services/patient-history.service';
 import { PatientService } from '../Services/patient.service';
 import { AssessmentService } from '../Services/Assessment.service';
 import { FormvalidationService } from '../formvalidation.service';
 import { ifError } from 'node:assert';
+import { HttpParams } from '@angular/common/http';
+import { API_URLS } from '../shared/API-URLs';
 
 
 @Component({
   selector: 'app-assessment',
   templateUrl: './assessment.component.html',
-  styleUrl: './assessment.component.css'
+   styleUrls: ['./assessment.component.css']  
 })
 export class AssessmentComponent {
   symptomAnswers: number[] = [];
@@ -27,21 +27,26 @@ export class AssessmentComponent {
 
     this.fssgAnswers = Array(12).fill(null);
     this.symptomAnswers = Array(12).fill(null);
-    const pid = this.router.url.includes('id');
-    const stage = this.router.url.includes('stage');
-   // console.log("constructor patient ID for assessment:", pid, stage);
+
+
 
   }
 
   tabId = 1;
   //stage = 0
   @Input() stage: number = 0;
-  symptomScore: number = 0; 
+  symptomScore: number = 0;
   isViewMode = false;
   isFollowUp: boolean = false;
-  @Input() patientId: number | null = null;
+  @Input() patientId: any;
   isSaved: boolean = false;
   @Input() isPrintMode = false;
+  @Input() data: any;
+  doctorId: any;
+  files: File[] = [];
+
+
+
 
 
   symptoms: string[] = ['Heartburn', 'Regurgitation', 'Retrosternal pain', 'Acid taste in the mouth'];
@@ -94,22 +99,45 @@ export class AssessmentComponent {
   laGrades = ['Grade A', 'Grade B', 'Grade C', 'Grade D'];
   hillGrades = ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4'];
 
-  manometryTest: string = '';
-  manometryDate: string = '';
-  manometryReportAttached: string = '';
-  manometryFiles: File[] = [];
-  manometryRemarks: string = '';
+  
   acceptedTypes: string = '.jpg,.jpeg,.png,.pdf';
 
+  phYes: any = false;
+  phNo: boolean = false;
+  phDate: string = '';
+  phReportYes: boolean = false;
+  phReportNo: boolean = false;
+  phRemarks: string = '';
+
+manometryTest: string = '';
+  manometryDate: string = '';
+  manometryReportAttached: string = '';
+  manometryFiles: any[] = [];
+  manometryRemarks: string = '';
+
+  phReportAttached: string = '';
+  phFiles: any[] = [];
+
+  biopsyYes: boolean = false;
+  biopsyNo: boolean = false;
+  biopsyDate: string = '';
+  biopsyTest: string = '';
+  biopsyReportAttached: string = '';
+  biopsyFiles: any[] = [];
+  biopsyRemarks: string = '';
+
+
+
   ngOnInit(): void {
-     this.stage = Number(this.route.snapshot.params['stage']|| 0);
+    this.patientId = Number(this.route.snapshot.params['patientId'] || 0);
+    this.stage = Number(this.route.snapshot.params['stage'] || 0);
     const allowedWithoutSave = [1, 3, 5];
-  if (allowedWithoutSave.includes(this.stage)) {
-    this.isSaved = true;
-  }
+    if (allowedWithoutSave.includes(this.stage)) {
+      this.isSaved = true;
+    }
 
 
-    
+
     this.assessmentForm = this.fb.group({
       assessmentId: [null],
       pid: [null],
@@ -171,29 +199,116 @@ export class AssessmentComponent {
       modifiedDt: [''],
       stage: [''],
       symptomScore: [null],
-      
+
     });
-    console.log("TABID", this.tabId)
-    const state = history.state;
-    this.tabId = state?.tabId ?? 1;
-    this.patientId = state?.patientId;
+
     if (this.manometryReportAttached === 'no') {
       this.clearManometryAttachmentFields();
     }
-    const currentUrl = this.router.url;
-    this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
-    const pid = this.patientService.getPatientId();
 
-    const fromNavigation = state?.fromNavigation === true;
+    this.loadAssessment(this.patientId);
 
-    if (fromNavigation && this.patientId) {
-      console.log("Navigated back → loading assessment data...");
-      this.loadAssessment(this.patientId);
-    } else {
-      console.log("Fresh entry or direct navigation → skipping data patch");
+     if(this.patientId!==null && this.stage !== null){
+      this.getattach(Number(this.patientId),Number(this.stage),'ph');
+      this.getattach(Number(this.patientId),Number(this.stage),'manometry');
+      this.getattach(Number(this.patientId),Number(this.stage),'biopsy');
     }
 
   }
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data'] && this.data) {
+      this.patchAssessment(this.data);
+    }
+  }
+
+  private patchAssessment(data: any): void {
+    if (!data || !this.assessmentForm) return;
+
+    // Patch the form controls
+    this.assessmentForm.patchValue({
+      assessmentId: data.assessmentId,
+      pid: data.pid,
+      q1: data.q1,
+      q2: data.q2,
+      q3: data.q3,
+      q4: data.q4,
+      q5: data.q5,
+      q6: data.q6,
+      q7: data.q7,
+      q8: data.q8,
+      q9: data.q9,
+      q10: data.q10,
+      q11: data.q11,
+      q12: data.q12,
+      acidRefluxSymptom: data.acidRefluxSymptom,
+      dysmotity: data.dysmotity,
+      totalPoints: data.totalPoints,
+      heartburnNil: data.heartburnNil,
+      heartburnMinimal: data.heartburnMinimal,
+      heartburnModerate: data.heartburnModerate,
+      heartburnHeartburn: data.heartburnHeartburn,
+      regurgitationNil: data.regurgitationNil,
+      regurgitationMinimal: data.regurgitationMinimal,
+      regurgitationModerate: data.regurgitationModerate,
+      regurgitationHeartburn: data.regurgitationHeartburn,
+      retrosternalPainNil: data.retrosternalPainNil,
+      retrosternalPainMinimal: data.retrosternalPainMinimal,
+      retrosternalPainModerate: data.retrosternalPainModerate,
+      retrosternalPainHeartburn: data.retrosternalPainHeartburn,
+      acidTasteMouthNil: data.acidTasteMouthNil,
+      acidTasteMouthMinimal: data.acidTasteMouthMinimal,
+      acidTasteMouthModerate: data.acidTasteMouthModerate,
+      acidTasteMouthHeartburn: data.acidTasteMouthHeartburn,
+      eeLaxlesClassification: data.eeLaxlesClassification,
+      eeAngelesGrade: data.eeAngelesGrade,
+      eeAgremarks: data.eeAgremarks,
+      eeBarrettRemark: data.eeBarrettRemark,
+      eeHillClassificationGrade: data.eeHillClassificationGrade,
+      eeHillRemarks: data.eeHillRemarks,
+      pHimpedanceMonitoring: data.pHimpedanceMonitoring,
+      phDate: data.pHimDate ? new Date(data.pHimDate) : '',
+      pHimAttached: data.pHimAttached,
+      pHimAttachement: data.pHimAttachement,
+      pHimRemark: data.pHimRemark,
+      manometryTest: data.manometryTest,
+      mtDate: data.mtDate ? new Date(data.mtDate) : '',
+      mtAttached: data.mtAttached,
+      mtAttachement: data.mtAttachement,
+      mtRemark: data.mtRemark,
+      biopsy: data.biopsy,
+      biopsyDate: data.biopsyDate ? new Date(data.biopsyDate) : '',
+      biopsyAttached: data.biopsyAttached,
+      biopsyAttachement: data.biopsyAttachement,
+      biopsyRemark: data.biopsyRemark,
+      symptomScore: data.symptomScore
+    });
+
+    // Patch local arrays if needed
+    this.fssgAnswers = [
+      data.q1, data.q2, data.q3, data.q4, data.q5, data.q6,
+      data.q7, data.q8, data.q9, data.q10, data.q11, data.q12
+    ];
+
+    this.symptomAnswers = [
+      data.heartburnNil ? 0 : data.heartburnMinimal ? 1 : data.heartburnModerate ? 2 : 3,
+      data.regurgitationNil ? 0 : data.regurgitationMinimal ? 1 : data.regurgitationModerate ? 2 : 3,
+      data.retrosternalPainNil ? 0 : data.retrosternalPainMinimal ? 1 : data.retrosternalPainModerate ? 2 : 3,
+      data.acidTasteMouthNil ? 0 : data.acidTasteMouthMinimal ? 1 : data.acidTasteMouthModerate ? 2 : 3
+    ];
+
+    // Patch any view-model helpers
+    this.form.lax = data.eeLaxlesClassification ? 'Yes' : 'No';
+    this.form.laGrade = data.eeAngelesGrade ?? '';
+    this.form.laRemarks = data.eeAgremarks ?? '';
+    this.form.barrettsRemarks = data.eeBarrettRemark ?? '';
+    this.form.hill = data.eeHillClassificationGrade ? 'Yes' : 'No';
+    this.form.hillRemarks = data.eeHillRemarks ?? '';
+    this.phYes = data.pHimpedanceMonitoring ? 'yes' : 'no';
+    this.manometryTest = data.manometryTest ? 'yes' : 'no';
+    this.biopsyTest = data.biopsy ? 'yes' : 'no';
+  };
 
   today: string = new Date().toISOString().split('T')[0];
 
@@ -232,10 +347,12 @@ export class AssessmentComponent {
   }
 
   addManometryFile(input: HTMLInputElement): void {
+    
     if (input.files) {
       this.manometryFiles.push(...Array.from(input.files));
       input.value = '';
     }
+     this.getattach(this.patientId,this.stage,'manometry');
   }
 
   private clearManometryAttachmentFields(): void {
@@ -243,46 +360,104 @@ export class AssessmentComponent {
     this.manometryRemarks = '';
   }
 
-  biopsyYes: boolean = false;
-  biopsyNo: boolean = false;
-  biopsyDate: string = '';
-  biopsyTest: string = '';
-  biopsyReportAttached: string = '';
-  biopsyFiles: File[] = [];
-  biopsyRemarks: string = '';
-
   onBiopsyReportAttachedChange(): void {
     if (this.biopsyReportAttached !== 'yes') {
       this.biopsyFiles = [];
       this.biopsyRemarks = '';
     }
+     this.getattach(this.patientId,this.stage,'biopsy');
   }
 
-  onBiopsyFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      for (let i = 0; i < input.files.length; i++) {
-        const file = input.files[i];
-        const ext = file.name.split('.').pop()?.toLowerCase();
-        if (ext && ['jpg', 'jpeg', 'png', 'pdf'].includes(ext)) {
-          this.biopsyFiles.push(file);
+  uploadAttachment(event: any, section: string, fileList: any[]): void {
+    const selectedFiles = event.target.files;
+    if (selectedFiles) {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        const fileType = file.type;
+
+        // validate
+        if (['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'].includes(fileType)) {
+          const formData = new FormData();
+          fileList.push(file);
+          formData.append('file', file);
+
+          let params = new HttpParams()
+            .set('patientId', this.patientId)
+            .set('doctorId', this.patientService.getDoctorId(),)
+            .set('stage', this.stage)
+            .set('section', section)   // << identify which test
+            .set('createdBy', this.patientService.getDoctorId(),);
+
+          this.http.httpPostFileUPload('/Attachment/Upload', formData, params)
+            .subscribe((res: any) => {
+              console.log(`${section} file uploaded successfully`, res);
+            });
+
+            if(this.patientId!==null && this.stage !== null){
+      this.getattach(Number(this.patientId),Number(this.stage),'ph');
+      this.getattach(Number(this.patientId),Number(this.stage),'manometry');
+      this.getattach(Number(this.patientId),Number(this.stage),'biopsy');
+    }
+
+        } else {
+          alert('Invalid file type. Only JPG, JPEG, PNG, and PDF are allowed.');
         }
       }
-      input.value = '';
     }
   }
+
+  //attachmentList: any[] = [];
+  private getattach(patientId: number, stage: number, filesection: string): void {
+    this.http.httpGet(`/Attachment/GetByPatient/${patientId}/${stage}/${filesection}`).subscribe({
+      next: (res) => {
+        if (!res) return;
+
+        switch (filesection) {
+          case 'ph':
+            this.phFiles = res;
+            break;
+
+          case 'manometry':
+            this.manometryFiles = res;
+            break;
+
+          case 'biopsy':
+            this.biopsyFiles = res;
+            break;
+
+          default:
+            console.warn('Unknown filesection:', filesection);
+            break;
+        }
+       
+
+        this.assessmentForm.patchValue({
+         
+          phReportAttached: this.phFiles.length > 0 ? 'yes' : 'no',
+          phYes: this.phFiles.length > 0 ? 'yes' : 'no',
+          manometryReportAttached: this.manometryFiles.length > 0 ? 'yes' : 'no',
+          manometryTest: this.manometryFiles.length > 0 ? 'yes' : 'no',
+          biopsyYes: this.biopsyFiles.length > 0 ? 'yes' : 'no',
+          biopsyReportAttached: this.biopsyFiles.length > 0 ? 'yes' : 'no'
+        });
+
+      },
+      error: (err) => {
+        this.formValidation.showAlert('Failed to load history data.', 'danger');
+        console.error('Error loading  history data:', err);
+      }
+    });
+  }
+
   loadAssessment(pid: number): void {
-    console.log("Calling loadAssessment for patient ID:", pid);
 
-    this.assessmentService.getAssessmentById(pid ,this.stage).subscribe(response => {
+
+    this.assessmentService.getAssessmentById(pid, this.stage).subscribe(response => {
       if (response?.type === 'S' && response.data) {
-        console.log('Assessment data received:', response.data);
-
-        // Use your custom loadExistingData method to assign values
         this.loadExistingData(response.data);
 
       } else {
-        console.warn('No assessment data found for patient ID:', pid);
+        console.warn('No assessment data found for patient ID:');
       }
     }, error => {
       console.error('Error fetching assessment data:', error);
@@ -290,9 +465,10 @@ export class AssessmentComponent {
     this.isDataLoaded = true;
 
   }
+  eeHill: any;
   loadExistingData(data: any): void {
-    this.patientId = data.pid;
-
+    if (data.eeHillClassificationGrade !== '') this.eeHill = 'Yes'
+    else this.eeHill = 'No'
     this.fssgAnswers = [
       data.q1, data.q2, data.q3, data.q4, data.q5, data.q6,
       data.q7, data.q8, data.q9, data.q10, data.q11, data.q12
@@ -306,7 +482,7 @@ export class AssessmentComponent {
     ];
 
     const formatDate = (dateStr: string) => dateStr ? dateStr.split('T')[0] : '';
-    console.log('data assessment',data)
+
     this.assessmentForm.patchValue({
       assessmentId: data.assessmentId,
       pid: data.pid,
@@ -346,29 +522,30 @@ export class AssessmentComponent {
       acidTasteMouthMinimal: data.acidTasteMouthMinimal,
       acidTasteMouthModerate: data.acidTasteMouthModerate,
       acidTasteMouthHeartburn: data.acidTasteMouthHeartburn,
-      
+
 
       eeLaxlesClassification: data.eeLaxlesClassification,
       eeAngelesGrade: data.eeAngelesGrade,
       eeAgremarks: data.eeAgremarks,
       eeBarrettRemark: data.eeBarrettRemark,
+      Hill: this.eeHill,
       eeHillClassificationGrade: data.eeHillClassificationGrade,
       eeHillRemarks: data.eeHillRemarks,
 
       pHimpedanceMonitoring: data.pHimpedanceMonitoring,
-      phDate: data.pHimDate?formatDate(data.pHimDate):'',
+      phDate: data.pHimDate ? formatDate(data.pHimDate) : '',
       pHimAttached: data.pHimAttached,
       pHimAttachement: data.pHimAttachement,
       pHimRemark: data.pHimRemark,
 
       manometryTest: data.manometryTest,
-      mtDate: data.mtDate?formatDate(data.mtDate):'',
+      mtDate: data.mtDate ? formatDate(data.mtDate) : '',
       mtAttached: data.mtAttached,
       mtAttachement: data.mtAttachement,
       mtRemark: data.mtRemark,
 
       biopsy: data.biopsy,
-      biopsyDate: data.biopsyDate?formatDate(data.biopsyDate):'',
+      biopsyDate: data.biopsyDate ? formatDate(data.biopsyDate) : '',
       biopsyAttached: data.biopsyAttached,
       biopsyAttachement: data.biopsyAttachement,
       biopsyRemark: data.biopsyRemark,
@@ -378,31 +555,31 @@ export class AssessmentComponent {
       modifiedBy: data.modifiedBy,
       modifiedDt: data.modifiedDt,
       stage: data.stage,
-      
+
     });
     // View model helpers (not part of form)
     this.form.symptomScore = data.symptomScore;
     this.form.lax = data.eeLaxlesClassification ? 'Yes' : 'No';
-    this.form.laGrade = data.eeAngelesGrade?? '';
-    this.form.laRemarks = data.eeAgremarks?? '';
+    this.form.laGrade = data.eeAngelesGrade ?? '';
+    this.form.laRemarks = data.eeAgremarks ?? '';
     this.form.barrettsRemarks = data.eeBarrettRemark;
     this.form.hill = data.eeHillClassificationGrade ? 'Yes' : 'No';
     this.form.hillRemarks = data.eeHillRemarks;
-    
+
     this.phYes = data.pHimpedanceMonitoring ? 'yes' : 'no';
-    this.phDate = data.PHimDate?new Date(data.PHimDate).toISOString() : '2025-08-20T00:00:00Z';
+    this.phDate = data.PHimDate ? new Date(data.PHimDate).toISOString() : '1900-08-20T00:00:00Z';
     this.phReportAttached = data.pHimAttached ? 'yes' : 'no';
-    this.phRemarks = data.pHimRemark?? '';
+    this.phRemarks = data.pHimRemark ?? '';
 
     this.manometryTest = data.manometryTest ? 'yes' : 'no';
-    this.manometryDate = data.mtDate?new Date(data.mtDate).toISOString(): '2025-08-20T00:00:00Z';
+    this.manometryDate = data.mtDate ? new Date(data.mtDate).toISOString() : '1900-08-20T00:00:00Z';
     this.manometryReportAttached = data.mtAttached ? 'yes' : 'no';
-    this.manometryRemarks = data.mtRemark??'';
+    this.manometryRemarks = data.mtRemark ?? '';
 
     this.biopsyTest = data.biopsy ? 'yes' : 'no';
-    this.biopsyDate = data.biopsyDate?new Date(data.biopsyDate).toISOString():'2025-08-20T00:00:00Z';
+    this.biopsyDate = data.biopsyDate ? new Date(data.biopsyDate).toISOString() : '1900-08-20T00:00:00Z';
     this.biopsyReportAttached = data.biopsyAttached ? 'yes' : 'no';
-    this.biopsyRemarks = data.biopsyRemark??'';
+    this.biopsyRemarks = data.biopsyRemark ?? '';
 
     this.stage = data.stage;
   }
@@ -466,44 +643,44 @@ export class AssessmentComponent {
 
         // Endoscopy
         EeLaxlesClassification: this.form.lax === 'yes',
-        EeAngelesGrade: this.form.laGrade?? '',
-        EeAgremarks: this.form.laRemarks?? '',
-        EeBarrettRemark: this.form.barrettsRemarks?? '',
-        EeHillClassificationGrade: this.form.hillGrade?? '',
-        EeHillRemarks: this.form.hillRemarks?? '',
+        EeAngelesGrade: this.form.laGrade ?? '',
+        EeAgremarks: this.form.laRemarks ?? '',
+        EeBarrettRemark: this.form.barrettsRemarks ?? '',
+        EeHillClassificationGrade: this.form.hillGrade ?? '',
+        EeHillRemarks: this.form.hillRemarks ?? '',
 
         // PH impedance
         PHimpedanceMonitoring: this.phYes == 'yes',
-        pHimDate: this.phDate ? new Date(this.phDate).toISOString() :  '2025-08-20T00:00:00Z',
+        pHimDate: this.phDate ? new Date(this.phDate).toISOString() : '1900-08-20T00:00:00Z',
         pHimAttached: this.phReportAttached === 'yes',
-        pHimAttachement: this.phFiles.map(f => f.name).join(', ')?? '', // Adjust if actual upload needed
-        pHimRemark: this.phRemarks?? '',
+        pHimAttachement: this.phFiles.map(f => f.name).join(', ') ?? '', // Adjust if actual upload needed
+        pHimRemark: this.phRemarks ?? '',
 
         ManometryTest: this.manometryTest === 'yes',
-        MtDate: this.manometryDate ? new Date(this.manometryDate).toISOString() :  '2025-08-20T00:00:00Z',
+        MtDate: this.manometryDate ? new Date(this.manometryDate).toISOString() : '1900-08-20T00:00:00Z',
         MtAttached: this.manometryReportAttached === 'yes',
-        MtAttachement: this.manometryFiles.map(f => f.name).join(', ')?? '',
-        MtRemark: this.manometryRemarks?? '',
+        MtAttachement: this.manometryFiles.map(f => f.name).join(', ') ?? '',
+        MtRemark: this.manometryRemarks ?? '',
 
         // Biopsy
-        Biopsy: this.biopsyYes?? '',
-        BiopsyDate: this.biopsyDate ? new Date(this.biopsyDate).toISOString() :  '2025-08-20T00:00:00Z',
+        Biopsy: this.biopsyTest === 'yes',
+        BiopsyDate: this.biopsyDate ? new Date(this.biopsyDate).toISOString() : '1900-08-20T00:00:00Z',
         BiopsyAttached: this.biopsyReportAttached === 'yes',
-        BiopsyAttachement: this.biopsyFiles.map(f => f.name).join(', ')?? '',
-        BiopsyRemark: this.biopsyRemarks?? '',
+        BiopsyAttachement: this.biopsyFiles.map(f => f.name).join(', ') ?? '',
+        BiopsyRemark: this.biopsyRemarks ?? '',
 
         // Audit
         CreatedBy: this.patientService.getDoctorId(),
-        totalSymptomScore:this.getTotalSymptomScore(),
-        symptomScore:this.form.symptomScore
+        totalSymptomScore: this.getTotalSymptomScore(),
+        symptomScore: this.form.symptomScore
       };
 
       console.log('Sending param to API:', param);
       this.http.httpPost('/Assessment/SaveAssessment', param).subscribe(
         (res: any) => {
-             if (res.type === 'E') {
-             console.error('Failed to save assessment:');
-             return;
+          if (res.type === 'E') {
+            console.error('Failed to save assessment:');
+            return;
           }
           this.isSaved = true;
           alert('Saved Successfully'); // ← Test this
@@ -547,23 +724,13 @@ export class AssessmentComponent {
       }
       fileInput.value = '';
     }
+    //this.getattach(this.patientId,this.stage,'biopsy');
   }
 
   onSave() {
     this.router.navigate(['/diagnosis']);
   }
 
-  phYes: any = false;
-  phNo: boolean = false;
-  phDate: string = '';
-  phReportYes: boolean = false;
-  phReportNo: boolean = false;
-  phRemarks: string = '';
-
-
-
-  phReportAttached: string = '';
-  phFiles: File[] = [];
 
 
   onPhFileChange(event: Event): void {
@@ -578,9 +745,11 @@ export class AssessmentComponent {
       this.phFiles.push(...Array.from(input.files));
       input.value = '';
     }
+    //this.getattach(this.patientId,this.stage,'ph');
   }
 
   onPhReportChange(): void {
+    this.getattach(this.patientId,this.stage,'ph');
     if (this.phReportAttached === 'no') {
       this.phFiles = [];
       this.phRemarks = '';
@@ -610,36 +779,28 @@ export class AssessmentComponent {
     }
   }
 
-  //     OnNext(){
-  //     this.router.navigate([`/diagnosis/${this.patientId}/${this.stage}`], {
-  //     state: {
-  //       tabId: this.tabId,
-  //       patientId: this.patientId,
-  //       isViewMode: this.isViewMode
-  //     }
-  //   });
-  // }
- goBack() {
-  if (this.stage <= 1) {
-    this.router.navigate([`/medical-examination/${this.patientId}/${this.stage}`], {
-      state: {
-        tabId: this.tabId,
-        patientId: this.patientId,
-        isViewMode: this.isViewMode,
-        fromAssessment: true
-      }
-    });
-  } else {
-    this.router.navigate([`/comorbidities/${this.patientId}/${this.stage}`], {
-      state: {
-        tabId: this.tabId,
-        patientId: this.patientId,
-        isViewMode: this.isViewMode,
-        fromAssessment: true
-      }
-    });
+
+  goBack() {
+    if (this.stage <= 1) {
+      this.router.navigate([`/medical-examination/${this.patientId}/${this.stage}`], {
+        state: {
+          tabId: this.tabId,
+          patientId: this.patientId,
+          isViewMode: this.isViewMode,
+          fromAssessment: true
+        }
+      });
+    } else {
+      this.router.navigate([`/comorbidities/${this.patientId}/${this.stage}`], {
+        state: {
+          tabId: this.tabId,
+          patientId: this.patientId,
+          isViewMode: this.isViewMode,
+          fromAssessment: true
+        }
+      });
+    }
   }
-}
 
   // back() {
   //   this.router.navigate([`/medical-examination/${this.patientId}/${this.stage}`], {
@@ -667,8 +828,83 @@ export class AssessmentComponent {
   }
 
 
-
   
+
+viewAttachment(file: any) {
+  if (!file) {
+    alert('No file selected.');
+    return;
+  }
+
+  if (file.attachmentId) {
+    const url = `${API_URLS.BASE_URL}/Attachment/View/${file.attachmentId}`;
+    this.http.httpGetFile(url).subscribe({
+      next: (blob: Blob) => {
+        const fileURL = window.URL.createObjectURL(blob);
+        window.open(fileURL, '_blank');
+      },
+      error: (err) => {
+        console.error('Failed to open attachment', err);
+        alert('Failed to open attachment.');
+      }
+    });
+    return;
+  }
+
+  // Case 2: Local file object (not yet uploaded)
+  if (file instanceof File || file.fileObject) {
+    const fileObj = file instanceof File ? file : file.fileObject;
+    const fileURL = window.URL.createObjectURL(fileObj);
+    window.open(fileURL, '_blank');
+    return;
+  }
+
+  // Case 3: Already has a URL/path
+  if (file.fileUrl) {
+    window.open(file.fileUrl, '_blank');
+    return;
+  }
+
+  if (file.filePath) {
+    window.open(file.filePath, '_blank');
+    return;
+  }
+
+  alert('No preview available');
+}
+
+deleteAttachment(file: any, index: number, section: string) {
+  if (!confirm('Are you sure you want to delete this file?')) return;
+
+  if (file.attachmentId) {
+    this.http.httpDelete(`/Attachment/Delete/${file.attachmentId}`).subscribe({
+      next: () => {
+        this.formValidation.showAlert('Attachment deleted successfully', 'success');
+        this.removeFileFromList(index, section);
+      },
+      error: (err) => {
+        console.error('Delete failed:', err);
+        this.formValidation.showAlert('Failed to delete attachment', 'danger');
+      }
+    });
+  } else {
+    this.removeFileFromList(index, section);
+  }
+}
+
+removeFileFromList(index: number, section: string) {
+  if (section === 'ph') {
+    this.phFiles.splice(index, 1);
+  } else if (section === 'manometry') { 
+    this.manometryFiles.splice(index, 1);
+  } else if (section === 'biopsy') {
+    this.biopsyFiles.splice(index, 1);
+  }
+}
+
+
+
+
 }
 
 
