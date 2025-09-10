@@ -83,7 +83,6 @@ Thumbs.db
 *.db-shm
 *.cache
 *.user
-*.json
 *.v2
 *.props
 bin/
