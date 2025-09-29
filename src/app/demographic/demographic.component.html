@@ -31,23 +31,24 @@
     <app-sidebar *ngIf="!isPrintMode">
     </app-sidebar>
     <div class="flex-grow-1 d-flex align-items-start justify-content-start"
-    
       style="margin-top: 2rem; margin-bottom: 2rem;">
-     
+
       <div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
-         <!-- <app-stage-progress [stage]="stage" ></app-stage-progress> -->
+        <app-stage-progress [patientId]="patientId" *ngIf="!isPrintMode">
+        </app-stage-progress>
 
         <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
-          PATIENT INFORMATION    
-        </h2>  
+          PATIENT INFORMATION
+        </h2>
         <form [formGroup]="demographicForm" (ngSubmit)="Submit()">
-          <div  class="form-row mb-3">
-                <div class="form-group col-md-4" *ngIf="demographicForm.get('subjectNumber')?.value?.trim() !== ''"> 
-               <label  class="subnumbar">Subject Number</label>       
-              <input formControlName="subjectNumber" class="subjectinput"/>
-              <div *ngIf="demographicForm.get('Subject Number')?.touched && demographicForm.get('Subject Number')?.invalid"
+          <div class="form-row mb-3">
+            <div class="form-group col-md-4" *ngIf="demographicForm.get('subjectNumber')?.value?.trim() !== ''">
+              <label class="subnumbar">Subject Number</label>
+              <input formControlName="subjectNumber" class="subjectinput" />
+              <div
+                *ngIf="demographicForm.get('Subject Number')?.touched && demographicForm.get('Subject Number')?.invalid"
                 class="text-danger small">
-                Subject Number is required and must be at most  characters.
+                Subject Number is required and must be at most characters.
               </div>
             </div>
 
@@ -87,14 +88,16 @@
                 class="text-danger small">Gender is required.</div>
             </div>
             <div class="form-group col-md-4">
-              <select formControlName="education" class="form-select">
+              <select formControlName="education" class="form-select" (change)="onEducationChange($event)">
                 <option value="" disabled hidden selected></option>
                 <option value="10th Std & Above">10th Std & Above</option>
                 <option value="Below 10th">Below 10th</option>
               </select>
               <label class="form-label">Education</label>
               <div *ngIf="demographicForm.get('education')?.touched && demographicForm.get('education')?.invalid"
-                class="text-danger small">Education is required.</div>
+                class="text-danger small">
+                Education is required.
+              </div>
             </div>
             <div class="form-group col-md-4">
               <select formControlName="occupation" class="form-select">
@@ -122,16 +125,24 @@
                 State is required.
               </div>
             </div>
-            <div class="form-group col-md-4">
-               <!-- <select formControlName="city" class="form-select" >
-                <option value="" disabled>Select City</option>
-                <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
-              </select>  -->
-               <select formControlName="city" class="form-select" >
+            <!-- <div class="form-group col-md-4">
+              <select formControlName="city" class="form-select">
                 <option value="" disabled>Select City</option>
                 <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
               </select>
-              
+
+              <label class="form-label">City</label>
+              <div *ngIf="demographicForm.get('city')?.touched && demographicForm.get('city')?.invalid"
+                class="text-danger small">City is required.</div>
+            </div> -->
+
+            <div class="form-group col-md-4">
+
+              <select formControlName="city" class="form-select" (change)="getPincode($event)">
+                <option value="" disabled>Select City</option>
+                <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+              </select>
+
               <label class="form-label">City</label>
               <div *ngIf="demographicForm.get('city')?.touched && demographicForm.get('city')?.invalid"
                 class="text-danger small">City is required.</div>
@@ -150,17 +161,19 @@
           </div>
           <div class="form-row mb-3">
 
-            <div class="form-group col-md-4">
-              <input formControlName="pincode" class="form-input" type="text" placeholder=" " maxlength="6"
-                pattern="^[0-9]{6}$" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+<div class="form-group col-md-4">
+              <select formControlName="pincode" class="form-select">
+                <option value="" disabled> Select Pincode </option>
+                <option *ngFor="let pin of pincode" [value]="pin.pincode">
+                  {{ pin.pincode }}
+                </option>
+              </select>
               <label class="form-label">Pincode</label>
-
               <div *ngIf="demographicForm.get('pincode')?.touched && demographicForm.get('pincode')?.invalid"
                 class="text-danger small">
                 Enter valid pincode with 6 digits.
               </div>
             </div>
-
 
             <div class="form-group col-md-4">
               <select formControlName="socioeconomic" class="form-select">
@@ -195,7 +208,8 @@
                 <button type="button" class="btn px-4 register-btn" *ngIf="stage === 0" (click)="Submit()">
                   Save
                 </button>
-                <button class="btn btn-dark custom-next-btn" (click)="onnext()"  [disabled]="!isSaved" *ngIf="!isPrintMode">
+                <button class="btn btn-dark custom-next-btn" (click)="onnext()" [disabled]="!isSaved"
+                  *ngIf="!isPrintMode">
                   Next
                 </button>
               </div>

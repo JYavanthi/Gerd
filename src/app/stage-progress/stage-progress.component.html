@@ -1,28 +1,19 @@
 <div class="stepper">
-  <!-- Baseline -->
   <div class="step"
-       [ngClass]="{
-         'in-progress': stage === 0,
-         'completed': stage >= 1
-       }">
+       [ngClass]="getStageClass('baseline')"
+       (click)="handleStageClick('baseline')">
     Baseline
   </div>
 
-  <!-- Follow-up 1 -->
   <div class="step"
-       [ngClass]="{         'in-progress': stage === 2,
-         'completed': stage >= 3
-       }">
+       [ngClass]="getStageClass('fu1')"
+       (click)="handleStageClick('fu1')">
     Follow-up 1
   </div>
 
-  <!-- Follow-up 2 -->
   <div class="step"
-       [ngClass]="{
-        
-         'in-progress': stage === 4,
-         'completed': stage >= 5
-       }">
+       [ngClass]="getStageClass('fu2')"
+       (click)="handleStageClick('fu2')">
     Follow-up 2
   </div>
 </div>

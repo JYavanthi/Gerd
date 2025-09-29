@@ -50,6 +50,7 @@ namespace Gred.PersistenceService
       services.AddScoped<IVwMedicationRptRepository, VwMedicationRptRepository>();
       services.AddScoped<IPtnTrackRepository, PtnTrackRepository>();
       services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+      services.AddScoped<Ipincode, pincodeRepositories>();
 
       return services;
         }

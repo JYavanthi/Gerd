@@ -16,3 +16,22 @@ body {
   page-break-before: always;
   break-before: page;
 }
+  
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+select {
+  cursor: pointer;
+}
+
+select:hover {
+  cursor: pointer;
+}

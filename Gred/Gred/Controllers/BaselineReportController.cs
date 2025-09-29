@@ -186,7 +186,6 @@ namespace Gred.Controllers
     {
       using var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
       await connection.OpenAsync();
-
       var query = "SELECT * FROM vw_BaselineRPT";
       var data = await connection.QueryAsync<dynamic>(query);
       var dataList = data.ToList();

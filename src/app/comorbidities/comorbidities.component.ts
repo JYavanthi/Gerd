@@ -56,11 +56,11 @@ export class ComorbiditiesComponent {
   };
 
 
-  ngOnChanges(changes: SimpleChanges) {
+   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && this.data) {
-      this.patchComorbidities(this.data);
+        this.patchComorbidities(this.data);
     }
-  }
+}
 
   private patchComorbidities(data: any) {
     this.comorbidities = {
@@ -133,7 +133,6 @@ export class ComorbiditiesComponent {
     this.fetchComorbiditiesData(this.patientId);
 
   }
-
   comorbidityKeys: string[] = [
     'hypertension', 'diabetes', 'dyslipidemia', 'liver', 'neuro',
     'cardio', 'hypo', 'hyper', 'behavioural', 'kidney',
@@ -160,7 +159,10 @@ export class ComorbiditiesComponent {
   };
 
   stageval: number = 0;
+  setStage: number=0;
   fetchComorbiditiesData(patientId: number): void {
+     if (this.setStage===1) return;
+
     this.comorbiditiesService.getComorbiditiesById(patientId, this.stage).subscribe({
       next: (res: any) => {
         if (this.stage === 2 || this.stage === 4) this.stageval = this.stage;
@@ -192,6 +194,7 @@ export class ComorbiditiesComponent {
           if (this.stageval === 4) this.stage = 3
           //console.log('this.stageval', this.stageval, this.stage)
           this.fetchComorbiditiesData(Number(this.patientId));
+          this.setStage=1;
           setTimeout(() => {
 
             this.stage = this.stageval;

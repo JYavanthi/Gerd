@@ -3,6 +3,8 @@
 
   <form [formGroup]="familyhistoryForm" class="main-content">
     <div class="form-card">
+        <app-stage-progress [patientId]="patientId" >
+        </app-stage-progress>
       <div class="form-header">FAMILY HISTORY
         <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
 
@@ -66,14 +68,14 @@
 
         <div formArrayName="medications" class="table-wrapper">
 
-    <div class="table-row font-weight-bold">
-      <div class="table-col">Medication Name</div>
+    <div class="table-row font-weight-bold"> 
+      <div class="table-col">PPI Name</div>
       <div class="table-col">Dose</div>
       <div class="table-col">Frequency</div>
       <div class="table-col">Action</div>
     </div>
 
-    <div *ngFor="let group of medications.controls; let i = index" [formGroupName]="i" class="table-row">
+    <!-- <div *ngFor="let group of medications.controls; let i = index" [formGroupName]="i" class="table-row">
       <div class="table-col">
         <input type="text" formControlName="medicationName" class="underline-input" placeholder="Enter medication name" />
       </div>
@@ -87,7 +89,33 @@
         <button type="button" (click)="deleteRow(group, i)">🗑️</button>
         <button type="button" (click)="addRow()">➕</button>
       </div>
+    </div> -->
+
+
+    <div *ngFor="let group of medications.controls; let i = index" [formGroupName]="i" class="table-row">
+  <div class="table-col">
+    <input type="text" formControlName="medicationName" class="underline-input" placeholder="Enter medication name" (keypress)="allowOnlyText($event)" (input)="preventNegative($event)"/>
+    <div class="error" *ngIf="group.get('medicationName')?.invalid && group.get('medicationName')?.touched">
+      Medication name is required
     </div>
+  </div>
+  <div class="table-col">
+    <input type="text" formControlName="dose" class="underline-input" placeholder="Enter dose" (keydown)="blockInvalidKeys($event)" (input)="preventNegative($event)" />
+    <div class="error" *ngIf="group.get('dose')?.invalid && group.get('dose')?.touched">
+      Dose is required
+    </div>
+  </div>
+  <div class="table-col">
+    <input type="text" formControlName="frequency" class="underline-input" placeholder="Enter frequency"  (keydown)="blockInvalidKeys($event)" (input)="preventNegative($event)"/>
+    <div class="error" *ngIf="group.get('frequency')?.invalid && group.get('frequency')?.touched">
+      Frequency is required
+    </div>
+  </div>
+  <div class="table-col action-buttons">
+    <button type="button" (click)="deleteRow(group, i)" [disabled]="familyhistoryForm.get('ppiusage')?.value !== 'yes'">🗑️</button>
+    <button type="button" (click)="addRow()" [disabled]="familyhistoryForm.get('ppiusage')?.value !== 'yes'">➕</button>
+  </div>
+</div>
 
   </div>
       </div>

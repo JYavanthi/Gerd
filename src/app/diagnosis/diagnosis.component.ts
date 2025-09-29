@@ -47,40 +47,61 @@ export class DiagnosisComponent implements OnInit {
       adherence: [null, Validators.required]
     });
   }
+
   ngOnInit(): void {
-    this.patientId = Number(this.route.snapshot.params['patientId'])||null;
-    this.stage = Number(this.route.snapshot.params['stage'])||0;
-    
-    
-    const allowedWithoutSave = [1, 3, 5];
-    if (allowedWithoutSave.includes(this.stage)) {
-      this.isSaved = true;
-    }
-     
+  this.patientId = Number(this.route.snapshot.params['patientId']) || null;
+  this.stage = Number(this.route.snapshot.params['stage']) || 0;
+
+  const allowedWithoutSave = [1, 3, 5];
+  if (allowedWithoutSave.includes(this.stage)) {
+    this.isSaved = true;
+  }
+
   this.isViewMode = this.isViewMode ?? false;
 
-
-   if (this.patientId) {
+  if (this.patientId) {
     this.fetchAndStorePatientId(this.patientId);
   }
-    this.showDiag();
-    this.diagnosisForm.get('knownCase')?.valueChanges.subscribe((value: string) => {
-      const yearsControl = this.diagnosisForm.get('yearsKnown');
-      if (value === 'Yes') {
-        yearsControl?.enable();
-      } else {
-        yearsControl?.disable();
-        yearsControl?.setValue('');
-      }
-    });
 
-    // Also apply it immediately based on the current value
-    const knownCaseInitial = this.diagnosisForm.get('knownCase')?.value;
-    if (knownCaseInitial !== 'Yes') {
-      this.diagnosisForm.get('yearsKnown')?.disable();
+  this.diagnosisForm.get('newlyDiagnosed')?.valueChanges.subscribe(value => {
+    const knownCase = this.diagnosisForm.get('knownCase');
+    const years = this.diagnosisForm.get('yearsKnown');
+
+    if (value === 'No') {
+      knownCase?.enable();
+    } else {
+      knownCase?.disable();
+      knownCase?.setValue('');
+      years?.disable();
+      years?.setValue('');
     }
+  });
 
+  this.diagnosisForm.get('knownCase')?.valueChanges.subscribe(value => {
+    const years = this.diagnosisForm.get('yearsKnown');
+    if (value === 'Yes' && this.diagnosisForm.get('newlyDiagnosed')?.value === 'No') {
+      years?.enable();
+    } else {
+      years?.disable();
+      years?.setValue('');
+    }
+  });
+
+  const newlyDiagnosedInitial = this.diagnosisForm.get('newlyDiagnosed')?.value;
+  const knownCaseInitial = this.diagnosisForm.get('knownCase')?.value;
+
+  if (newlyDiagnosedInitial === 'No') {
+    this.diagnosisForm.get('knownCase')?.enable();
+  } else {
+    this.diagnosisForm.get('knownCase')?.disable();
+    this.diagnosisForm.get('knownCase')?.setValue('');
   }
+
+  if (knownCaseInitial !== 'Yes') {
+    this.diagnosisForm.get('yearsKnown')?.disable();
+  }
+}
+
 
   fetchAndStorePatientId(patientId: number): void {
     this.diagnosisService.getdiagnosisId(patientId).subscribe({
@@ -99,9 +120,6 @@ export class DiagnosisComponent implements OnInit {
             adherence: data.adherenceToTherapy ? 'Yes' : 'No'
           });
 
-        
-
-
         } else {
           console.warn('⚠️ No Diagonsis data found in response.');
         }
@@ -112,24 +130,38 @@ export class DiagnosisComponent implements OnInit {
     });
   }
 
+showDiag() {
+  const newlyDiagnosed = this.diagnosisForm.get('newlyDiagnosed')?.value;
+  const knownCaseControl = this.diagnosisForm.get('knownCase');
+  const yearsControl = this.diagnosisForm.get('yearsKnown');
 
-   showDiag() {
-    const newlyDiagnosed = this.diagnosisForm.get('newlyDiagnosed')?.value;
+  if (newlyDiagnosed === 'Yes') {
+    // Disable both if newly diagnosed = Yes
+    knownCaseControl?.setValue('');
+    knownCaseControl?.disable();
+    yearsControl?.setValue('');
+    yearsControl?.disable();
+  } 
+  else if (newlyDiagnosed === 'No') {
+    // Enable knownCase when No
+    knownCaseControl?.enable();
 
-    if (newlyDiagnosed === 'No') {
-      this.diagnosisForm.get('knownCase')?.setValue('');
-      this.diagnosisForm.get('yearsKnown')?.setValue('');
-      this.diagnosisForm.get('knownCase')?.disable();
-      this.diagnosisForm.get('yearsKnown')?.disable();
-    } else if (newlyDiagnosed === 'Yes') {
-      this.diagnosisForm.get('knownCase')?.enable();
-      this.diagnosisForm.get('yearsKnown')?.enable();
-    }else{
-     
-      this.diagnosisForm.get('knownCase')?.disable();
-      this.diagnosisForm.get('yearsKnown')?.disable();
+    // yearsKnown depends on knownCase value
+    if (knownCaseControl?.value === 'Yes') {
+      yearsControl?.enable();
+    } else {
+      yearsControl?.disable();
+      yearsControl?.setValue('');
     }
+  } 
+  else {
+    // Default state
+    knownCaseControl?.disable();
+    knownCaseControl?.setValue('');
+    yearsControl?.disable();
+    yearsControl?.setValue('');
   }
+}
 
   onSubmit(): void {
     if (this.diagnosisForm.valid) {
@@ -139,8 +171,58 @@ export class DiagnosisComponent implements OnInit {
       this.diagnosisForm.markAllAsTouched();
     }
   }
+validateFields(): boolean {
+  const form = this.diagnosisForm;
+
+  // Newly Diagnosed
+  if (!form.get('newlyDiagnosed')?.value) {
+    alert('Please select Newly Diagnosed');
+    return false;
+  }
+
+  // Known Case (only required if Newly Diagnosed = No)
+  if (form.get('newlyDiagnosed')?.value === 'No' && !form.get('knownCase')?.value) {
+    alert('Please select Known Case of GERD');
+    return false;
+  }
+
+  // Years Known (only required if Known Case = Yes and Newly Diagnosed = No)
+  if (
+    form.get('newlyDiagnosed')?.value === 'No' &&
+    form.get('knownCase')?.value === 'Yes' &&
+    !form.get('yearsKnown')?.value
+  ) {
+    alert('Please enter number of years Known');
+    return false;
+  }
+
+  // GERD Type
+  if (!form.get('gerdType')?.value) {
+    alert('Please select GERD Type');
+    return false;
+  }
+
+  // Refractory
+  if (!form.get('refractory')?.value) {
+    alert('Please select Refractory to PPI');
+    return false;
+  }
+
+  // Adherence
+  if (!form.get('adherence')?.value) {
+    alert('Please select Adherence to Therapy');
+    return false;
+  }
+
+  return true; // All validations passed
+}
 
   Submit(): void {
+
+    if (!this.validateFields()) {
+    return; 
+  }
+
     if (!this.formValidation.validateForm(this.diagnosisForm)) {
       this.diagnosisForm.markAllAsTouched();
       return;
@@ -183,13 +265,13 @@ export class DiagnosisComponent implements OnInit {
     const currentUrl = this.router.url;
     const patientId = this.patientId;
 
-
-    // Optional: route to next section or back to dashboard
     this.router.navigate([`/managament/${this.patientId}/${this.stage}`], {
       state: {
         tabId: this.tabId,
         patientId: this.patientId,
-        isViewMode: this.isViewMode
+        isViewMode: this.isViewMode,
+       fromNavigation: true
+
       }
     });
 

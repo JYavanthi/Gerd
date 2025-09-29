@@ -2,6 +2,8 @@
   <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
   <div class="main-content p-4">
     <div class="form-card">
+      <app-stage-progress [patientId]="patientId" *ngIf="!isPrintMode">
+      </app-stage-progress>
       <div class="form-header">PERSONAL HISTORY
         <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
       </div>
@@ -43,15 +45,18 @@
                   <input type="radio" formControlName="computerUsed" name="computerUsed" [value]="false" />
                   No
                 </label>
-                <div  style="color: red;" *ngIf="gadgetForm.get('computerUsed')?.touched && gadgetForm.get('computerUsed')?.invalid" 
-     class="text-danger small">  Computer Used is required.</div>
+                <div style="color: red;"
+                  *ngIf="gadgetForm.get('computerUsed')?.touched && gadgetForm.get('computerUsed')?.invalid"
+                  class="text-danger small"> Computer Used is required.</div>
               </td>
               <td>
-                <input type="text" class="form-control" formControlName="computerUsedhrs" placeholder="hrs/day"  [disabled]="!gadgetForm.get('computerUsed')?.value"/>
-              
+                <input type="number" class="form-control" formControlName="computerUsedhrs" placeholder="hrs/day"
+                  [disabled]="!gadgetForm.get('computerUsed')?.value" (keydown)="blockInvalidKeys($event)" (input)="preventNegative($event)"  />
+
               </td>
               <td>
-                <input type="text" class="form-control" formControlName="computerUsedyears" placeholder="years"  [disabled]="!gadgetForm.get('computerUsed')?.value"/>
+                <input type="number" class="form-control" formControlName="computerUsedyears" placeholder="years"
+                  [disabled]="!gadgetForm.get('computerUsed')?.value" (keydown)="blockInvalidKeys($event)" (input)="preventNegative($event)"  />
               </td>
             </tr>
 
@@ -62,12 +67,15 @@
                   Yes</label>&nbsp;
                 <label><input type="radio" formControlName="smartphoneUsed" name="smartphoneUsed" [value]="false" />
                   No</label>
-                  <div  style="color: red;" *ngIf="gadgetForm.get('smartphoneUsed')?.touched && gadgetForm.get('smartphoneUsed')?.invalid" 
-     class="text-danger small">  Computer Used is required.</div>
+                <div style="color: red;"
+                  *ngIf="gadgetForm.get('smartphoneUsed')?.touched && gadgetForm.get('smartphoneUsed')?.invalid"
+                  class="text-danger small"> Computer Used is required.</div>
               </td>
-              <td><input type="text" class="form-control" formControlName="smartphoneUsedhrs" placeholder="hrs/day" />
+              <td><input type="number" class="form-control" formControlName="smartphoneUsedhrs" placeholder="hrs/day"
+                  (keydown)="blockInvalidKeys($event)" (input)="preventNegative($event)" />
               </td>
-              <td><input type="text" class="form-control" formControlName="smartphoneUsedyears" placeholder="years" />
+              <td><input type="number" class="form-control" formControlName="smartphoneUsedyears" placeholder="years"
+                  (keydown)="blockInvalidKeys($event)" (input)="preventNegative($event)"  />
               </td>
             </tr>
           </tbody>
@@ -75,46 +83,55 @@
       </div>
 
       <div class="form-group">
-        <label style="font-weight: bold;">Working Hours (Occupation)</label>
+        <label style="font-weight: bold;">Working Hours </label>
         <div class="step-container">
           <ul class="list-unstyled">
             <li>
-              <label><input type="radio" formControlName="workingHours" name="workingHours" value="4.00 am to 12.00 noon (Early Morning Shift)" />
+              <label><input type="radio" formControlName="workingHours" name="workingHours"
+                  value="4.00 am to 12.00 noon (Early Morning Shift)" />
                 4.00 am to 12.00 noon (Early Morning Shift)</label>
             </li>
             <li>
-              <label><input type="radio" formControlName="workingHours" name="workingHours" value="6.00 am to 3.00 pm (Morning Shift)" />
+              <label><input type="radio" formControlName="workingHours" name="workingHours"
+                  value="6.00 am to 3.00 pm (Morning Shift)" />
                 6.00 am to 3.00 pm (Morning Shift)</label>
             </li>
             <li>
-              <label><input type="radio" formControlName="workingHours" name="workingHours" value="9.00 am to 6.00 pm (General Shift)" />
+              <label><input type="radio" formControlName="workingHours" name="workingHours"
+                  value="9.00 am to 6.00 pm (General Shift)" />
                 9.00 am to 6.00 pm (General Shift)</label>
             </li>
             <li>
-              <label><input type="radio" formControlName="workingHours" name="workingHours" value="12.00 noon to 8.00 pm (Afternoon Shift)" />
+              <label><input type="radio" formControlName="workingHours" name="workingHours"
+                  value="12.00 noon to 8.00 pm (Afternoon Shift)" />
                 12.00 noon to 8.00 pm (Afternoon Shift)</label>
             </li>
             <li>
-              <label><input type="radio" formControlName="workingHours" name="workingHours" value="8.00 pm to 8.00 am (Night Shift)" />
+              <label><input type="radio" formControlName="workingHours" name="workingHours"
+                  value="8.00 pm to 8.00 am (Night Shift)" />
                 8.00 pm to 8.00 am (Night Shift)</label>
             </li>
           </ul>
         </div>
       </div>
 
-      <div class="form-group">
-        <label style="font-weight: bold;">Job Type/Occupation</label>
-        <div>
-          <label><input type="radio" formControlName="jobType" name="jobType" value="Sedentary" /> Sedentary</label>
-          <label><input type="radio" formControlName="jobType" name="jobType" value="Non-Sedentary" />
-            Non-Sedentary</label>
-        </div>
-      </div>
+     <div class="form-group">
+  <label style="font-weight: bold;">Job Type</label>
+  <div>
+    <label>
+      <input type="radio" formControlName="jobType" name="jobType" value="Sedentary" /> Sedentary
+    </label>
+    <label>
+      <input type="radio" formControlName="jobType" name="jobType" value="Non-Sedentary" /> Non-Sedentary
+    </label>
+  </div>
+</div>
+
 
       <div class="form-group">
         <label style="font-weight: bold;">Duration (No. of Years in the Above Working Hours)</label>
         <input type="number" class="form-control" formControlName="totalWorkingYears"
-          placeholder="Enter duration in years" />
+          placeholder="Enter duration in years" (keydown)="blockInvalidKeys($event)" />
       </div>
 
       <div class="form-group text-start">

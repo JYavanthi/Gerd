@@ -654,6 +654,18 @@
         }
       }
     },
+    "/api/CompletedReport/GetCompletedReportDataCount": {
+      "get": {
+        "tags": [
+          "CompletedReport"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/CompletedReport/GetCompletedReportData": {
       "get": {
         "tags": [
@@ -1738,6 +1750,18 @@
         }
       }
     },
+    "/api/InCompletedReport/GetInCompletedReportDataCount": {
+      "get": {
+        "tags": [
+          "InCompletedReport"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/InCompletedReport/GetInCompletedReportData": {
       "get": {
         "tags": [
@@ -2520,6 +2544,28 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/Pincode/GetPincodesByCity": {
+      "get": {
+        "tags": [
+          "Pincode"
+        ],
+        "parameters": [
+          {
+            "name": "citiid",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }

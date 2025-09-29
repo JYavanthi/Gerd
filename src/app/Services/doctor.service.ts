@@ -12,5 +12,10 @@ export class DoctorService {
   getAllDoctors(): Observable<any> {
     console.log('base url', this.baseUrl)
     return this.http.get<any>(`${this.baseUrl}/DoctorReg/GetDoctor`);
-  }    
+  } 
+  
+  getAllDoctorslist(): Observable<any> {
+    console.log('base url', this.baseUrl)
+    return this.http.get<any>(`${this.baseUrl}/DoctorReport/DownloadDoctorReport`);
+  }
 }

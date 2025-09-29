@@ -5,6 +5,8 @@
         <div class="main-content">
             <div class="form-card">
                 <div class="form-group">
+                    <app-stage-progress [patientId]="patientId"  *ngIf="!isPrintMode">
+                    </app-stage-progress>
                     <div class="form-header">FAMILY HISTORY
                         <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
 
@@ -31,29 +33,27 @@
                             <input type="radio" value="yes" formControlName="historyofEndoscopy" /> Yes
                         </label>
                         <label>
-                            <input type="radio" value="no" formControlName="historyofEndoscopy" /> No
+                            <input type="radio" value="yno" formControlName="historyofEndoscopy" /> No
                         </label>
 
-                        <!-- Date Field -->
+                      
                         <div class="checkbox-group mt-3">
                             <h6>Date:</h6>
                             <input type="date" class="form-input" formControlName="endoscopyDate" [max]="today" />
                         </div>
 
-                        <!-- Report Attached -->
+                       
                         <div class="checkbox-group mt-3">
                             <h6>Report Attached:</h6>
                             <label>
                                 <input type="radio" value="yes" formControlName="endoscopyAttached" /> Yes
                             </label>
                             <label>
-                                <input type="radio" value="no" formControlName="endoscopyAttached" /> No
+                                <input type="radio" value="No" formControlName="endoscopyAttached" /> No
                             </label>
 
-                            <!-- Attachment & Remarks -->
                             <div class="attachment-remarks-container">
 
-                                <!-- File Upload -->
                                 <div *ngIf="endoscopyGSForm.get('endoscopyAttached')?.value === 'yes'"
                                     class="attachment-block">
                                     <label><strong>Attachment</strong></label>
@@ -68,7 +68,8 @@
                                     <div *ngIf="attachmentList.length > 0" class="file-list mt-2">
                                         <h6>Selected Files:</h6>
                                         <ul>
-                                            <li *ngFor="let file of attachmentList  let i = index" class="d-flex align-items-center gap-2" >
+                                            <li *ngFor="let file of attachmentList  let i = index"
+                                                class="d-flex align-items-center gap-2">
                                                 {{ file.attachmentName }}
                                                 <button type="button" class="btn btn-sm btn-success ms-2"
                                                     (click)="viewAttachment(file)">
@@ -76,7 +77,8 @@
                                                 </button>
 
                                                 <!-- Delete -->
-                                                <button type="button" class="btn btn-sm btn-danger ms-2"  *ngIf="(stage === 0 || stage === 2 || stage === 4)"
+                                                <button type="button" class="btn btn-sm btn-danger ms-2"
+                                                    *ngIf="(stage === 0 || stage === 2 || stage === 4)"
                                                     (click)="deleteAttachment(file, i, 'ph')">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
@@ -90,7 +92,6 @@
                                     <input type="text" class="underline-input" placeholder="Enter remarks"
                                         formControlName="endoscopyRemark" [disabled]="fileUploadDisabled" />
                                 </div>
-
                             </div>
                         </div>
                     </div>

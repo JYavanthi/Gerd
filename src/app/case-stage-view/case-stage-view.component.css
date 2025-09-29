@@ -1,26 +1,8 @@
-/* 
-
-.baseline-stage{
-  margin-left: 150px;
+.readonly {
+  pointer-events: none; 
+  user-select: none;     
+  opacity: 0.95;      
 }
-
-.followup1-stage{
-    margin-left: 150px;
-}
-.followup2-stage{
-    margin-left: 150px;
-}
-
-h1{
-  background-color: white;
-  text-align: center;
-  font-weight: bold;
-  padding: 15px;
-  font-size: 30px;
-}
-.therefriest{
-  
-} */
 
 .baseline-stage{
   margin-left: 150px;
@@ -47,4 +29,43 @@ h2 {
     margin-top: 10px;
     border-radius: 0;
     margin-left: 10px;
+}
+
+@media print {
+  /* Hide buttons */
+  button, .btn {
+    display: none !important;
+  }
+
+  /* Each component gets its own page */
+  #caseStageContent > div > * {
+    page-break-before: always;
+    page-break-inside: avoid; /* avoid splitting inside component */
+  }
+
+  /* Optional: remove page-break for the first component of each stage */
+  #caseStageContent > div > *:first-child {
+    page-break-before: auto;
+  }
+
+  /* Ensure headings don't get cut */
+  h2 {
+    page-break-after: avoid;
+  }
+
+  /* Show only content */
+  #caseStageContent, #caseStageContent * {
+    visibility: visible;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #caseStageContent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
 }

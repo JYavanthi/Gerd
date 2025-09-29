@@ -39,7 +39,7 @@ export class SleepComponent implements OnInit {
     private sleepService: sleepService
   ) {
     this.sleepForm = this.fb.group({
-      patientId: [this.patientService.getPatientId()],
+      patientId: [''],
       sleepApnea: [''],
       sleepApneaFrequency: [''],
       sleepApneaDuration: [''],
@@ -70,8 +70,9 @@ export class SleepComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.patientId = this.route.snapshot.params['patientId'];
+    this.patientId = Number(this.route.snapshot.params['patientId']);
     this.stage = Number(this.route.snapshot.params['stage'] || 0);
+
     this.sleepForm.get('sleepApnea')?.valueChanges.subscribe(value => {
 
       const allowedWithoutSave = [1, 3, 5];
@@ -81,6 +82,7 @@ export class SleepComponent implements OnInit {
 
       if (value === 'No') {
         this.sleepForm.patchValue({
+          patientId: this.patientId,
           sleepApneaFrequency: '',
           sleepApneaDuration: ''
         });
@@ -97,7 +99,6 @@ export class SleepComponent implements OnInit {
       }
     });
 
-    // Enable/Disable logic per exercise
     const exercises = ['jogging', 'gym', 'yoga', 'walking', 'aerobics', 'zumba', 'others'];
     exercises.forEach(ex => {
       this.sleepForm.get(ex)?.valueChanges.subscribe(value => {
@@ -121,7 +122,7 @@ export class SleepComponent implements OnInit {
       });
     });
 
-    // Disable entire exercise block if intake = 'no'
+
     this.sleepForm.get('exerciseIntake')?.valueChanges.subscribe(value => {
       const fields = [
         'jogging', 'joggingFrequency', 'joggingDuration',
@@ -133,39 +134,50 @@ export class SleepComponent implements OnInit {
         'others', 'othersFrequency', 'othersDuration', 'othersText'
       ];
 
-      if (this.sleepForm.get('others')?.value === 'Yes') {
-        this.sleepForm.get('othersText')?.enable();
-      }
-      else {
-        this.sleepForm.value.othersText = '';
-        this.sleepForm.get('othersText')?.disable();
-      }
-      if (value === 'no') {
+      if (value === 'No') {
         fields.forEach(field => {
           this.sleepForm.get(field)?.reset();
           this.sleepForm.get(field)?.disable();
-
-          if (this.sleepForm.get('others')?.value === 'No') {
-            this.sleepForm.value.othersText = '';
-            this.sleepForm.get('othersText')?.disable();
-          }
         });
-      } else if (value === 'Yes' && !this.isViewMode) {
+      }
+      else if (value === 'Yes' && !this.isViewMode) {
         const radioFields = ['jogging', 'gym', 'yoga', 'walking', 'aerobics', 'zumba', 'others'];
         radioFields.forEach(field => {
           this.sleepForm.get(field)?.enable();
-          if (this.sleepForm.get('others')?.value === 'Yes') this.sleepForm.get('othersText')?.enable();
         });
+
+        if (this.sleepForm.get('others')?.value === 'Yes') {
+          this.sleepForm.get('othersText')?.enable();
+        } else {
+          this.sleepForm.get('othersText')?.disable();
+        }
+      }
+      else {
+        fields.forEach(field => this.sleepForm.get(field)?.disable());
       }
     });
 
-    // const currentUrl = this.router.url;
-    // const state = history.state;
 
-    this.fetchSleepData(this.patientService.getPatientId(), this.stage);
+
+
+    this.fetchSleepData(this.patientId, this.stage);
   }
 
+
+  blockInvalidKeys(event: KeyboardEvent) {
+    if (['e', 'E', '+', '-','.'].includes(event.key)) {
+      event.preventDefault();
+    }
+  }
+   preventNegative(event: any) {
+ 
+  if (event.target.value < 0) {
+    event.target.value = 0; // reset to 0 if negative
+  }
+}
+
   fetchSleepData(patientId: number, stage: number): void {
+    this.sleepForm.reset();
     this.sleepService.getSleepByPatientId(patientId, stage).subscribe({
       next: (res: any) => {
         if (res.type === 'S' && res.data) {
@@ -189,7 +201,7 @@ export class SleepComponent implements OnInit {
             walkingDuration: d.walkingDuration ?? '',
             aerobics: d.aerobicsyes ? 'Yes' : (d.aerobicsno ? 'No' : ''),
             aerobicsFrequency: d.aerobicsFrequency ?? '',
-            aerobicsDuration: d.aerobicsDuration ??'',
+            aerobicsDuration: d.aerobicsDuration ?? '',
             othersText: d.othersText ?? '',
             zumba: d.zumbayes ? 'Yes' : (d.zumbano ? 'No' : ''),
             zumbaFrequency: d.zumbaFrequency ?? '',
@@ -220,29 +232,32 @@ export class SleepComponent implements OnInit {
   };
 
 
-  selectedfld: number=0;
+  selectedfld: number = 0;
+
+
   validateFlds(): boolean {
     const missingVal: string[] = [];
+    let anyExerciseSelected = false;  // ✅ declare here
 
     for (const key of Object.keys(this.fieldsVal)) {
-      const state = this.fieldsVal[key];
+      const isYes = this.sleepForm.get(key)?.value === 'Yes';
 
-       const isYes = this.sleepForm.get(key)?.value === 'Yes';
-     
       if (isYes) {
+        anyExerciseSelected = true;   // at least one exercise selected
         const freq = this.sleepForm.get(`${key}Frequency`)?.value;
         const dur = this.sleepForm.get(`${key}Duration`)?.value;
-        this.selectedfld = 1;
+
         if (!freq || !dur) {
           missingVal.push(key.charAt(0).toUpperCase() + key.slice(1));
         }
       }
-    };
-    if (this.sleepForm.get('exerciseIntake')?.value==='Yes' && this.selectedfld===0)
-    {
-      alert('Select atleast one exercise');
+    }
+
+    if (this.sleepForm.get('exerciseIntake')?.value === 'Yes' && !anyExerciseSelected) {
+      alert('Please select at least one exercise');
       return false;
     }
+
     if (missingVal.length > 0) {
       alert("Please fill frequency and duration fields for: " + missingVal.join(", "));
       return false;
@@ -252,10 +267,112 @@ export class SleepComponent implements OnInit {
   }
 
 
+  // onSave() {
 
-  onSave() {
+  //   if (!this.formValidation.validateForm(this.sleepForm)) {
+  //     this.sleepForm.markAllAsTouched();
+  //     return;
+  //   }
 
-    //this.validateFld();
+  //   const f = this.sleepForm.value;
+  //   const sleepval = this.sleepForm.get('sleepApnea')?.value;
+  //   const sleepfreq = this.sleepForm.get('sleepApneaFrequency')?.value;
+  //   const sleepdura = this.sleepForm.get('sleepApneaDuration')?.value;
+  //   if (sleepval === '' || sleepval === null) {
+  //     alert('Select Sleep Apnea')
+  //     return;
+  //   }
+  //   else {
+  //     if (sleepval === 'Yes') {
+  //       if (sleepfreq === '' || sleepfreq === null) {
+  //         alert('Enter Sleep Frequency')
+  //         return;
+  //       }
+  //       if (sleepdura === '' || sleepdura === null) {
+  //         alert('Enter Sleep Duration')
+  //         return;
+  //       }
+  //     }
+
+  //   }
+  //   const exval = this.sleepForm.get('exerciseIntake')?.value;
+  //   if (exval === '' || exval === null) {
+  //     alert('Select Excercise')
+  //     return;
+  //   }
+
+  //   if (!this.validateFlds()) {
+  //     return;
+  //   }
+  //   const now = new Date().toISOString();
+  //   let user: any = localStorage.getItem('doctor')
+  //   this.userData = JSON.parse(user);
+  //   const param = {
+
+
+  //     Flag: 'I',
+  //     Id: 0,
+  //     PatientId: this.patientId,
+  //     Stage: this.stage,
+  //     sleepApneayes: f.sleepApnea === 'Yes' ? 'Yes' : '',
+  //     sleepApneano: f.sleepApnea === 'No' ? 'No' : '',
+  //     sleepApneaFrequency: f.sleepApneaFrequency ?? '',
+  //     sleepApneaDuration: f.sleepApneaDuration ?? '',
+
+  //     exerciseIntakeyes: f.exerciseIntake === 'Yes' ? 'Yes' : '',
+  //     exerciseIntakeno: f.exerciseIntake === 'No' ? 'No' : '',
+  //     joggingSelectedyes: f.jogging === 'Yes' ? 'Yes' : '',
+  //     joggingSelectedno: f.jogging === 'No' ? 'No' : '',      
+  //     joggingFrequency: f.joggingFrequency ? String(f.joggingFrequency) : '',
+  //     joggingDuration: f.joggingDuration ? String(f.joggingDuration) : '',
+  //     gymSelectedyes: f.gym === 'Yes' ? 'Yes' : '',
+  //     gymSelectedno: f.gym === 'No' ? 'No' : '',
+  //     gymFrequency: f.gymFrequency  ? String(f.gymFrequency) : '',
+  //     gymDuration: f.gymDuration  ? String(f.gymDuration) : '',
+  //     yogaSelectedyes: f.yoga === 'Yes' ? 'Yes' : '',
+  //     yogaSelectedno: f.yoga === 'No' ? 'No' : '',
+  //     yogaFrequency: f.yogaFrequency ? String(f.yogaFrequency) : '',
+  //     yogaDuration: f.yogaDuration ? String(f.yogaDuration) : '',
+  //     walkingSelectedyes: f.walking === 'Yes' ? 'Yes' : '',
+  //     walkingSelectedno: f.walking === 'No' ? 'No' : '',
+  //     walkingFrequency: f.walkingFrequency ? String(f.walkingFrequency) : '',
+  //     walkingDuration: f.walkingDuration ? String(f.walkingDuration) : '',
+  //     aerobicsyes: f.aerobics === 'Yes' ? 'Yes' : '',
+  //     aerobicsno: f.aerobics === 'No' ? 'No' : '',
+  //     aerobicsFrequency: f.aerobicsFrequency ? String(f.aerobicsFrequency) : '',
+  //     aerobicsDuration: f.aerobicsDuration ? String(f.aerobicsDuration) : '',
+  //     zumbayes: f.zumba === 'Yes' ? 'Yes' : '',
+  //     zumbano: f.zumba === 'No' ? 'No' : '',
+  //     zumbaFrequency: f.zumbaFrequency ? String(f.zumbaFrequency) : '',
+  //     zumbaDuration: f.zumbaDuration ? String(f.zumbaDuration) : '',
+  //     othersText: f.othersText ?? '',
+  //     othersyes: f.others === 'Yes' ? 'Yes' : '',
+  //     othersno: f.others === 'No' ? 'No' : '',
+  //     othersFrequency: f.othersFrequency ? String(f.othersFrequency) : '',
+  //     othersDuration: f.othersDuration ? String(f.othersDuration) : '',
+  //     CreatedBy: this.userData?.doctorId,
+  //     CreatedAt: now,
+  //     ModifiedDt: now
+  //   };
+  //   this.http.httpPost(API_URLS.SLEEP_SAVE, param).subscribe({
+  //     next: (res: any) => {
+  //       if (res.type === 'S') {
+  //         alert('Save Successfully')
+  //         this.formValidation.showAlert('Saved Successfully', 'success');
+  //         this.isSaved = true;
+  //       } else {
+  //         this.formValidation.showAlert('Error saving data!', 'danger');
+  //       }
+  //     },
+  //     error: (err) => {
+  //       console.error('Save error:', err);
+  //       this.formValidation.showAlert('Network or server error during save.', 'danger');
+  //     }
+  //   });
+  // }
+
+   onSave() {
+
     if (!this.formValidation.validateForm(this.sleepForm)) {
       this.sleepForm.markAllAsTouched();
       return;
@@ -303,39 +420,40 @@ export class SleepComponent implements OnInit {
       Stage: this.stage,
       sleepApneayes: f.sleepApnea === 'Yes' ? 'Yes' : '',
       sleepApneano: f.sleepApnea === 'No' ? 'No' : '',
-      sleepApneaFrequency: f.sleepApneaFrequency ?? '',
-      sleepApneaDuration: f.sleepApneaDuration ?? '',
+      sleepApneaFrequency: f.sleepApneaFrequency ? String(f.sleepApneaFrequency) : '',
+      sleepApneaDuration: f.sleepApneaDuration ? String(f.sleepApneaDuration) : '',
+
       exerciseIntakeyes: f.exerciseIntake === 'Yes' ? 'Yes' : '',
       exerciseIntakeno: f.exerciseIntake === 'No' ? 'No' : '',
       joggingSelectedyes: f.jogging === 'Yes' ? 'Yes' : '',
-      joggingSelectedno: f.jogging === 'No' ? 'No' : '',
-      joggingFrequency: f.joggingFrequency ?? '',
-      joggingDuration: f.joggingDuration ?? '',
+      joggingSelectedno: f.jogging === 'No' ? 'No' : '',      
+      joggingFrequency: f.joggingFrequency ? String(f.joggingFrequency) : '',
+      joggingDuration: f.joggingDuration ? String(f.joggingDuration) : '',
       gymSelectedyes: f.gym === 'Yes' ? 'Yes' : '',
       gymSelectedno: f.gym === 'No' ? 'No' : '',
-      gymFrequency: f.gymFrequency ?? '',
-      gymDuration: f.gymDuration ?? '',
+      gymFrequency: f.gymFrequency  ? String(f.gymFrequency) : '',
+      gymDuration: f.gymDuration  ? String(f.gymDuration) : '',
       yogaSelectedyes: f.yoga === 'Yes' ? 'Yes' : '',
       yogaSelectedno: f.yoga === 'No' ? 'No' : '',
-      yogaFrequency: f.yogaFrequency ?? '',
-      yogaDuration: f.yogaDuration ?? '',
+      yogaFrequency: f.yogaFrequency ? String(f.yogaFrequency) : '',
+      yogaDuration: f.yogaDuration ? String(f.yogaDuration) : '',
       walkingSelectedyes: f.walking === 'Yes' ? 'Yes' : '',
       walkingSelectedno: f.walking === 'No' ? 'No' : '',
-      walkingFrequency: f.walkingFrequency ?? '',
-      walkingDuration: f.walkingDuration ?? '',
+      walkingFrequency: f.walkingFrequency ? String(f.walkingFrequency) : '',
+      walkingDuration: f.walkingDuration ? String(f.walkingDuration) : '',
       aerobicsyes: f.aerobics === 'Yes' ? 'Yes' : '',
       aerobicsno: f.aerobics === 'No' ? 'No' : '',
-      aerobicsFrequency: f.aerobicsFrequency ?? '',
-      aerobicsDuration: f.aerobicsDuration ?? '',
+      aerobicsFrequency: f.aerobicsFrequency ? String(f.aerobicsFrequency) : '',
+      aerobicsDuration: f.aerobicsDuration ? String(f.aerobicsDuration) : '',
       zumbayes: f.zumba === 'Yes' ? 'Yes' : '',
       zumbano: f.zumba === 'No' ? 'No' : '',
-      zumbaFrequency: f.zumbaFrequency ?? '',
-      zumbaDuration: f.zumbaDuration ?? '',
+      zumbaFrequency: f.zumbaFrequency ? String(f.zumbaFrequency) : '',
+      zumbaDuration: f.zumbaDuration ? String(f.zumbaDuration) : '',
       othersText: f.othersText ?? '',
       othersyes: f.others === 'Yes' ? 'Yes' : '',
       othersno: f.others === 'No' ? 'No' : '',
-      othersFrequency: f.othersFrequency ?? '',
-      othersDuration: f.othersDuration ?? '',
+      othersFrequency: f.othersFrequency ? String(f.othersFrequency) : '',
+      othersDuration: f.othersDuration ? String(f.othersDuration) : '',
       CreatedBy: this.userData?.doctorId,
       CreatedAt: now,
       ModifiedDt: now
@@ -436,5 +554,7 @@ export class SleepComponent implements OnInit {
 
   }
 
+
+  
 }
 

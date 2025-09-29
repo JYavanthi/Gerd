@@ -419,8 +419,18 @@
   },
   {
     "ContainingType": "Gred.Controllers.CompletedReportController",
-    "Method": "GetCompletedReportCount",
+    "Method": "GetCompletedReportData",
     "RelativePath": "api/CompletedReport/GetCompletedReportData",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.CompletedReportController",
+    "Method": "GetCompletedReportDataCount",
+    "RelativePath": "api/CompletedReport/GetCompletedReportDataCount",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1095,8 +1105,18 @@
   },
   {
     "ContainingType": "Gred.Controllers.InCompletedReportController",
-    "Method": "GetInCompletedReportCount",
+    "Method": "GetInCompletedReportData",
     "RelativePath": "api/InCompletedReport/GetInCompletedReportData",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.InCompletedReportController",
+    "Method": "GetInCompletedReportDataCount",
+    "RelativePath": "api/InCompletedReport/GetInCompletedReportDataCount",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1566,6 +1586,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "Gred.Controllers.PincodeController",
+    "Method": "GetPincodesByCity",
+    "RelativePath": "api/Pincode/GetPincodesByCity",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "citiid",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "gred.Controllers.PtnTrackController",

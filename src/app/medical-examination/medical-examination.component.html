@@ -1,11 +1,14 @@
 <form [formGroup]="medicalExaminationForm" (ngSubmit)="Submit()">
     <div class="container d-flex" style="min-height: 100vh;">
-        
+
         <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
         <!-- Main Content -->
         <div class="flex-grow-1 d-flex align-items-start justify-content-start" style="margin: 2rem 0;">
             <div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
+                <app-stage-progress [patientId]="patientId" *ngIf="!isPrintMode">
+                </app-stage-progress>
                 <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
+
                     MEDICAL EXAMINATION
                     <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>
                 </h2>
@@ -19,15 +22,15 @@
                 <h4 style="color: #333;"><b>Physical Examination</b></h4><br />
 
                 <div class="row mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-4"> 
                         <label for="height" class="form-label">Height (in cms)</label>
                         <input type="number" id="height" class="form-control" formControlName="PE_Height"
-                            (input)="calculateBMI()">
+                            (input)="calculateBMI()" (keydown)="blockInvalidKeys($event)" (input)="preventNegative($event)">
                     </div>
                     <div class="col-md-4">
                         <label for="weight" class="form-label">Weight (in kg)</label>
                         <input type="number" id="weight" class="form-control" formControlName="PE_Weight"
-                            (input)="calculateBMI()">
+                            (input)="calculateBMI()" (keydown)="blockInvalidKeys($event)" (input)="preventNegative($event)">
                     </div>
                     <div class="col-md-4">
                         <label for="bmi" class="form-label">BMI (Auto fill)</label>

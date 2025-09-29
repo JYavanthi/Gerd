@@ -33,7 +33,6 @@
     box-shadow: none;
 }
 
-/* Group box for reports */
 .report-group {
     display: flex;
     flex-direction: column;
@@ -41,7 +40,6 @@
     border-top: solid 1px lightgray;
 }
 
-/* Divider between buttons */
 .report-group .nav-btn {
     margin: 0;
     font-size: 13px;

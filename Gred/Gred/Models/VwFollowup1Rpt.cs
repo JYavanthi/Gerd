@@ -19,9 +19,9 @@ public partial class VwFollowup1Rpt
 
     public string? Occupation { get; set; }
 
-    public string? StateName { get; set; }
+    public string StateName { get; set; } = null!;
 
-    public string? CityName { get; set; }
+    public string CityName { get; set; } = null!;
 
     public string? PlaceType { get; set; }
 
@@ -151,13 +151,13 @@ public partial class VwFollowup1Rpt
 
     public string? DyspepticDysmotilitySymptom { get; set; }
 
-    public bool? Heartburn { get; set; }
+    public string Heartburn { get; set; } = null!;
 
-    public bool? Regurgitation { get; set; }
+    public string Regurgitation { get; set; } = null!;
 
-    public bool? RetrosternalPain { get; set; }
+    public string RetrosternalPain { get; set; } = null!;
 
-    public bool? AcidTasteInMouth { get; set; }
+    public string AcidTasteInMouth { get; set; } = null!;
 
     public int? TotalSymptomScoreTssInGerdPatients { get; set; }
 

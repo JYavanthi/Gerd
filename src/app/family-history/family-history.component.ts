@@ -49,6 +49,24 @@ export class FamilyHistoryComponent implements OnInit {
     if (allowedWithoutSave.includes(this.stage)) {
       this.isSaved = true;
     }
+   if (this.familyhistoryForm.get('ppiusage')?.value !== 'yes') {
+    this.medications.disable(); // disable all medication controls
+  }
+
+  // Listen for changes to PPI usage
+  this.familyhistoryForm.get('ppiusage')?.valueChanges.subscribe(value => {
+    if (value === 'yes') {
+      this.medications.enable(); // enable if yes
+    } else {
+      this.medications.disable(); 
+      this.medications.controls.forEach(ctrl => {
+        ctrl.get('medicationName')?.setValue('');
+        ctrl.get('dose')?.setValue('');
+        ctrl.get('frequency')?.setValue('');
+      });
+    }
+  });
+
 
     this.familyhistoryForm.get('fH_GRED')?.valueChanges.subscribe(value => {
       const control = this.familyhistoryForm.get('fH_Remark');
@@ -89,26 +107,24 @@ export class FamilyHistoryComponent implements OnInit {
         this.loadFamilyHistory(this.patientId);
         this.loadMedicationData(this.patientId, this.stage);
       }
-     
+
     });
 
-    // const cachedData = this.patientService.getfamalyhistoryData();
-    // if (cachedData) {
-    //   this.familyhistoryForm.patchValue(cachedData);
-    // }
-
-    // Ensure at least one medication row exists initially if FormArray is empty
-    
+   
   }
+
+  
 
   createMedicationGroup(med: any = {}): FormGroup {
     return this.fb.group({
-      MedicationID: [med.medicationid || med.MedicationID || 0],
-      medicationName: ['', Validators.required],
-      dose: ['', Validators.required],
-      frequency: ['', Validators.required]
+      medicationId: [med.medicationId || 0],
+      medicationName: [med.medicationName || '', Validators.required],
+      dose: [med.dose || '', Validators.required],
+      frequency: [med.frequency || '', Validators.required]
     });
   }
+
+
 
 
   get medications(): FormArray {
@@ -121,85 +137,80 @@ export class FamilyHistoryComponent implements OnInit {
 
 
   deleteRow(group: any, index: number) {
-  const medValue = group.value;
-  console.log('group.value',group.value);
-  const medicationID = medValue.medicationId || 0;
-  console.log('medicationID',medicationID, index);
-  if (medicationID > 0) {
-    const medParam = {
-      Flag: 'D',
-      patientId: this.patientId,
-      stage: this.stage,
-      medicationId: medicationID,
-      GHID: 0,
-      medicationName: medValue.medicationName ?? '',
-      Dose: medValue.dose ?? '',
-      Frequency: medValue.frequency ?? '',
-      Molecule: '',
-      CreatedBy: 0
-    };
-    
-    this.http.httpPost(API_URLS.MedicationY_SAVE, medParam).subscribe({
-      next: (res: any) => {
-        console.log('medParam',medParam);
-        if (res?.type === 'S') {
-          this.medications.removeAt(index);
-          alert('Medication deleted successfully!');
-          index--;
-           // remove only after backend confirms
-        } else {
-          alert('Failed to delete medication!');
+    const medValue = group.value;
+    console.log('group.value', group.value);
+    const medicationID = medValue.medicationId || 0;
+    console.log('medicationID', medicationID, index);
+    if (medicationID > 0) {
+      const medParam = {
+        Flag: 'D',
+        patientId: this.patientId,
+        stage: this.stage,
+        medicationId: medicationID,
+        GHID: 0,
+        medicationName: medValue.medicationName ?? '',
+        Dose: medValue.dose ?? '',
+        Frequency: medValue.frequency ?? '',
+        Molecule: '',
+        CreatedBy: 0
+      };
+
+      this.http.httpPost(API_URLS.MedicationY_SAVE, medParam).subscribe({
+        next: (res: any) => {
+          console.log('medParam', medParam);
+          if (res?.type === 'S') {
+            this.medications.removeAt(index);
+            alert('Medication deleted successfully!');
+            index--;
+            // remove only after backend confirms
+          } else {
+            alert('Failed to delete medication!');
+          }
+        },
+        error: () => {
+          alert('Error deleting medication!');
         }
-      },
-      error: () => {
-        alert('Error deleting medication!');
-      }
-    });
-  } else {
-    // Row not in DB, just remove from UI
-    this.medications.removeAt(index);
+      });
+    } else {
+      // Row not in DB, just remove from UI
+      this.medications.removeAt(index);
+    }
   }
-}
+
 
   loadMedicationData(patientId: number, stage: number): void {
-    const url = API_URLS.MEDICATION_GET_BY_ID
-      .replace('{patientId}', patientId.toString())
-      .replace('{stage}', stage.toString());
-    
-    this.http.httpGet(url).subscribe((res: any) => {
-      console.log('response type ',res.type)
-      if (res?.type === 'S') {
-        this.medications.clear();
-        console.log( ' res.data', res.data);
-        if (res.data.length > 0) {
-        
-          res.data.forEach((med: any) => {
-            
-           //this.medications.push(this.createMedicationGroup(med));
-           //  this.medications.push(this.createMedicationGroup());
-            this.medications.push(this.fb.group({
-              medicationId: med.medicationId ||'',
-              medicationName: med.medicationName || '',
-              dose: med.dose || '',
-              frequency: med.frequency || ''
-            }));
-          });
-          
-          console.log( ' this.medications',this.medications);
-        } else {
-          // No data found, ensure one empty row is available for input
-         if (this.medications.length === 0) {
-          this.medications.push(this.createMedicationGroup(''));
-          }
+  const url = API_URLS.MEDICATION_GET_BY_ID
+    .replace('{patientId}', patientId.toString())
+    .replace('{stage}', stage.toString());
+
+  this.http.httpGet(url).subscribe((res: any) => {
+    this.medications.clear(); // clear existing rows
+
+    if (res?.type === 'S' && res.data.length > 0) {
+      res.data.forEach((med: any) => {
+        const group = this.fb.group({
+          medicationId: med.medicationId || '',
+          medicationName: med.medicationName || '',
+          dose: med.dose || '',
+          frequency: med.frequency || ''
+        });
+
+        if (this.familyhistoryForm.get('ppiusage')?.value !== 'yes') {
+          group.disable();
         }
+
+        this.medications.push(group);
+      });
+    } else {
+      const group = this.createMedicationGroup();
+      if (this.familyhistoryForm.get('ppiusage')?.value !== 'yes') {
+        group.disable();
       }
-      else{
-        if (this.medications.length === 0) {
-          this.medications.push(this.createMedicationGroup(''));
-       }
-      }
-    });
-  }
+      this.medications.push(group);
+    }
+  });
+}
+
 
   loadFamilyHistory(patientId: number): void {
     this.familyHistoryService.getFamilyHistoryById(patientId, this.stage).subscribe((res: any) => {
@@ -218,7 +229,7 @@ export class FamilyHistoryComponent implements OnInit {
           this.medications.clear();
           data.medications.forEach((med: any) => {
             this.medications.push(this.fb.group({
-              medicationID:med.medicationId || '',
+              medicationID: med.medicationId || '',
               medicationName: med.medicationName || '',
               dose: med.dose || '',
               frequency: med.frequency || ''
@@ -238,16 +249,60 @@ export class FamilyHistoryComponent implements OnInit {
     this.http.httpGet(url).subscribe((res: any) => {
       if (res?.type === 'S') {
         this.medval = res.data;
-      }});
+      }
+    });
   }
 
 
-Submit() {
-  if (!this.formValidation.validateForm(this.familyhistoryForm)) {
-    this.familyhistoryForm.markAllAsTouched();
-    return;
+  validatefields(): boolean {
+    const fhGred = this.familyhistoryForm.get('fH_GRED')?.value;
+    const fhRemark = this.familyhistoryForm.get('fH_Remark')?.value;
+    const fhEGC = this.familyhistoryForm.get('fH_EGC')?.value;
+    const fhEGCRemark = this.familyhistoryForm.get('fH_EGCRemark')?.value;
+    const ppiUsage = this.familyhistoryForm.get('ppiusage')?.value;
+
+    if (this.familyhistoryForm.get('fH_GRED')?.value === '') {
+      alert('Select Family History of GERD');
+      return false;
+    }
+
+
+   
+
+    if (fhGred === 'yes' && (!fhRemark || fhRemark.trim() === '')) {
+      alert(' Please enter Family History of GERD Remark.');
+      return false;
+    }
+
+
+    if (fhEGC === 'yes' && (!fhEGCRemark || fhEGCRemark.trim() === '')) {
+      alert(' Please enter Esophago-Gastric Cancer Remark.');
+      return false;
+    }
+
+
+     if (this.familyhistoryForm.get('ppiusage')?.value === '') {
+      alert('Select Usage of PPI');
+      return false;
+    }
+    if (ppiUsage === 'yes') {
+      for (let i = 0; i < this.medications.length; i++) {
+        const med = this.medications.at(i);
+        if (!med.get('medicationName')?.value || !med.get('dose')?.value || !med.get('frequency')?.value) {
+          alert(` Please fill Medication Name, Dose, and Frequency in row ${i + 1}.`);
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
-  let user: any = localStorage.getItem('doctor')
+
+async Submit() {
+  // Stop submission if validation fails
+  if (!this.validatefields()) return;
+
+  let user: any = localStorage.getItem('doctor');
   this.userData = JSON.parse(user);
 
   const param = {
@@ -266,124 +321,115 @@ Submit() {
     Frequency: '',
     CreatedBy: this.userData?.doctorId
   };
-  this.http.httpPost(API_URLS.FAMILY_HISTORY_SAVE, param).subscribe((res: any) => {
+
+  this.http.httpPost(API_URLS.FAMILY_HISTORY_SAVE, param).subscribe(async (res: any) => {
     if (res.type === 'S') {
       this.isSaved = true;
-      const medicationRequests = this.medications.controls.map((medCtrl) => {
-        const medValue = medCtrl.value;
+      alert('Family history saved successfully!');
+
+      const ppiUsage = this.familyhistoryForm.get('ppiusage')?.value;
+
+      const medicationRequests = this.medications.controls.map((ctrl) => {
+        const medValue = ctrl.value;
+
         const medParam = {
           Flag: 'I',
           patientId: this.patientId,
           Stage: this.stage,
-          MedicationID: medValue.medicationId,
+          MedicationID: medValue.medicationId || 0,
           GHID: 0,
-          MedicationName: medValue.medicationName ?? '',
-          Dose: medValue.dose ?? '',
-          Frequency: medValue.frequency ?? '',
+          MedicationName: ppiUsage === 'yes' && medValue.medicationName?.trim() ? medValue.medicationName.toString() : null,
+          Dose: ppiUsage === 'yes' && medValue.dose?.trim() ? medValue.dose.toString() : null,
+          Frequency: ppiUsage === 'yes' && medValue.frequency?.trim() ? medValue.frequency.toString() : null,
           Molecule: '',
           CreatedBy: this.userData?.doctorId,
         };
+
         return this.http.httpPost(API_URLS.MedicationY_SAVE, medParam).toPromise();
       });
 
-      Promise.all(medicationRequests).then(() => {
-        this.formValidation.showAlert('Saved Successfully', 'success');
-  this.loadMedicationData(this.patientId!, this.stage);
-        this.http.httpGet('/PatientReg/GetPatient').subscribe((getRes: any) => {
-          if (getRes.type === 'S' && getRes.data?.length > 0) {
-            this.isSaved = true;
-            alert('Saved Successfully'); // ← Test this
-            this.formValidation.showAlert('Saved Successfully', 'success');
-            //const latestPatient = getRes.data[getRes.data.length - 1];
-            // const updatedPatientId = latestPatient.patientId;
+      try {
+        await Promise.all(medicationRequests);
+        // alert('Medications saved successfully!');
+      } catch (error) {
+        alert('Error saving medications!');
+      }
 
-            // this.patientService.setPatientId(updatedPatientId);
-            //this.patientService.setDoctorId(param.CreatedBy);
-
-            // this.router.navigate([], {
-            //   queryParams: {
-            //     patientId: updatedPatientId,
-            //     doctorId: param.CreatedBy
-            //   }
-            // });
-          } else {
-            this.formValidation.showAlert('Unable to fetch Patient ID after save', 'danger');
-          }
-        });
-      }).catch(() => {
-        this.formValidation.showAlert('Error saving medication data!', 'danger');
-      });
     } else {
-      this.formValidation.showAlert('Error saving family history!', 'danger');
+      alert('Error saving family history!');
     }
   });
 }
 
+  onNext() {
+    const currentUrl = this.router.url;
 
-onNext() {
-  const currentUrl = this.router.url;
 
-  // if (currentUrl.includes('follow-up-1')) {
-  //   this.router.navigate([`/history-endoscopy/${this.patientId}/${this.stage}`], {
-  //     state: {
-  //       patientId: this.patientId,
-  //       tabId: this.tabId,
-  //       isViewMode: this.isViewMode,
-  //       stage: this.stage
-  //     }
-  //   });
-  // } else {
-  //   this.router.navigate(['/follow-up-2/history-endoscopy'], {
-  //     state: {
-  //       patientId: this.patientId,
-  //       tabId: this.tabId,
-  //       isViewMode: this.isViewMode,
-  //       stage: this.stage
-  //     }
-  //   });
-  // }
-}
+  }
 
-OnNext() {
-  this.router.navigate([`/history-endoscopy/${this.patientId}/${this.stage}`], {
-    state: {
-      tabId: this.tabId,
-      patientId: this.patientId,
-      isViewMode: this.isViewMode
+  blockInvalidKeys(event: KeyboardEvent) {
+    if (['e', 'E', '+',].includes(event.key)) {
+      event.preventDefault();
     }
-  });
-}
-goback() {
-  this.router.navigate([`/gadget/${this.patientId}/${this.stage}`], {
-    state: {
-      tabId: this.tabId,
-      patientId: this.patientId,
-      stage: this.stage,
-      isViewMode: true
+
+  }
+
+
+  preventNegative(event: any) {
+
+    if (event.target.value < 0) {
+      event.target.value = 0; // reset to 0 if negative
     }
-  });
-}
-back() {
-  this.router.navigate([`/gadget/${this.patientId}/${this.stage}`], {
-    state: {
-      tabId: this.tabId,
-      patientId: this.patientId,
-      isViewMode: true
+  }
+
+
+  OnNext() {
+    this.router.navigate([`/history-endoscopy/${this.patientId}/${this.stage}`], {
+      state: {
+        tabId: this.tabId,
+        patientId: this.patientId,
+        isViewMode: this.isViewMode
+      }
+    });
+  }
+  goback() {
+    this.router.navigate([`/gadget/${this.patientId}/${this.stage}`], {
+      state: {
+        tabId: this.tabId,
+        patientId: this.patientId,
+        stage: this.stage,
+        isViewMode: true
+      }
+    });
+  }
+  back() {
+    this.router.navigate([`/gadget/${this.patientId}/${this.stage}`], {
+      state: {
+        tabId: this.tabId,
+        patientId: this.patientId,
+        isViewMode: true
+      }
+    });
+  }
+  getStatusClass(step: number): string {
+    if (this.stage === 0 && step === 1) return 'baseline-blue';
+
+    if (this.stage >= 1 && step === 1) return 'baseline-green';
+    if (this.stage >= 1 && this.stage < 3 && step === 2) return 'baseline-blue';
+
+    if (this.stage >= 3 && step === 2) return 'baseline-green';
+    if (this.stage >= 3 && this.stage < 5 && step === 3) return 'baseline-blue';
+
+    if (this.stage === 5 && step === 3) return 'baseline-green';
+
+    return 'inactive-tab';
+  }
+
+  allowOnlyText(event: KeyboardEvent) {
+    const pattern = /[a-zA-Z ]/;
+    const inputChar = String.fromCharCode(event.charCode);
+    if (!pattern.test(inputChar)) {
+      event.preventDefault();
     }
-  });
-}
-getStatusClass(step: number): string {
-  if (this.stage === 0 && step === 1) return 'baseline-blue';
-
-  if (this.stage >= 1 && step === 1) return 'baseline-green';
-  if (this.stage >= 1 && this.stage < 3 && step === 2) return 'baseline-blue';
-
-  if (this.stage >= 3 && step === 2) return 'baseline-green';
-  if (this.stage >= 3 && this.stage < 5 && step === 3) return 'baseline-blue';
-
-  if (this.stage === 5 && step === 3) return 'baseline-green';
-
-  return 'inactive-tab';
-}
-
+  }
 }

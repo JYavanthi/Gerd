@@ -10,7 +10,7 @@
     <div class="stat-cards">
       <div class="card add-case" (click)="navigateToAddCase()">ADD NEW CASE</div>
       <div class="card view-submitted">
-        <div>View Submitted<br />cases</div>
+        <div>Submitted<br />cases</div>
         <div class="value">{{ totalCases }}</div>
       </div>
       <div class="card incomplete">
@@ -23,7 +23,7 @@
       </div>
       <div class="card gender">
         Patient Gender<br />
-        <strong>Male:</strong> {{ maleCount }} <strong>Female:</strong> {{ femaleCount }}
+        <strong>Male:</strong> {{ maleCount }} <strong>Female:</strong> {{ femaleCount }} <strong>Other:</strong> {{otherCount}}
       </div>
     </div>
 
@@ -45,7 +45,6 @@
           <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
           </canvas>
         </div>
-
 
       </div>
     </div>

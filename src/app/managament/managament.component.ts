@@ -13,7 +13,8 @@ import { PatientService } from '../Services/patient.service';
   styleUrl: './managament.component.css'
 })
 export class ManagamentComponent {
-  @Input() patientId: number | null | undefined = null;
+  @Input() patientId: number | null | undefined = null
+// @Input() patientId: number | null = null;
   @Input() doctorId: number | null = null;
   isViewMode = false;
   isFollowUp: boolean = false;
@@ -46,12 +47,16 @@ export class ManagamentComponent {
     if (state) {
       this.newStage = state['stage']
     }
-    this.route.queryParams.subscribe((params: Params) => {
-      this.patientId = this.patientService.getPatientId();
-      this.stage = Number(this.route.snapshot.params['stage']);
-      this.doctorId = this.userData?.doctorId;
+this.route.queryParams.subscribe((params: Params) => {
+  if (!this.patientId) {
+    this.patientId = this.patientService.getPatientId();
+  }
 
-    });
+  this.stage = Number(this.route.snapshot.params['stage']);
+  this.doctorId = this.userData?.doctorId;
+
+  console.log("👉 PatientId resolved:", this.patientId);
+});
   }
 
 
@@ -60,7 +65,6 @@ export class ManagamentComponent {
       this.patchManagement(this.data);
     }
   }
-
 private patchManagement(data: any) {
   if (!data) return;
 
@@ -81,25 +85,27 @@ private patchManagement(data: any) {
   console.log("✅ Patched Management data", this.drugTherapy, this.lifestyle);
 }
 
-  
-  ngOnInit(): void {
+ngOnInit(): void {
+  const navState = history.state;
 
-    this.stage = Number(this.route.snapshot.params['stage'] || 0);
+  this.patientId =
+      navState?.patientId
+      || Number(this.route.snapshot.params['patientId'])
+      || Number(this.route.snapshot.queryParams['patientId'])
+      || null;
 
-    const allowedWithoutSave = [1, 3, 5];
-    if (allowedWithoutSave.includes(this.stage)) {
-      this.isSaved = true;
-    }
-    console.log("TABID", this.tabId)
-    const state = history.state;
-    this.tabId = state?.tabId ?? 1;
-    this.patientId = state?.patientId;
-    const currentUrl = this.router.url;
+  this.doctorId = this.userData?.doctorId;
+  this.stage = Number(this.route.snapshot.params['stage'] || 0);
 
-    if (this.patientService.getPatientId()) {
-      this.getManagementDataById(this.patientService.getPatientId(), this.stage);
-    }
+  console.log("👉 Final resolved PatientId:", this.patientId, "Stage:", this.stage);
+
+  if (this.patientId) {
+    this.getManagementDataById(this.patientId, this.stage);
+    this.patientService.setPatientId(this.patientId); // 🔹 sync to service
+  } else {
+    console.error('❌ No patientId found to fetch management data!');
   }
+}
   lifestyleItems = [
     'Diet modification',
     'Moderation of alcohol',
@@ -133,7 +139,7 @@ private patchManagement(data: any) {
 
   }
   getManagementDataById(patientId: number, stage: number) {
-    const url = `${API_URLS.BASE_URL}/Management/GetManagementById/${this.patientService.getPatientId()}/${stage}`;
+    const url = `${API_URLS.BASE_URL}/Management/GetManagementById/${patientId}/${stage}`;
     this.httpClient.get<any>(url).subscribe({
       next: (res) => {
         if (res && res.data) {
@@ -208,7 +214,7 @@ private patchManagement(data: any) {
     const param = {
       stage: this.ptnstage,
       flag: 'I',
-      PatientID: patientId,
+      PatientID: this.patientId || this.patientService.getPatientId(), 
       lifestyleRecommendations: this.getLifestyleBitmask(),
       createdBy: this.doctorId,
       PPI_Medication_Name: this.drugTherapy[0].name,
@@ -262,7 +268,8 @@ private patchManagement(data: any) {
     else this.ptnstage = this.stage;
 
     const completeCasePayload = {
-      patientId: this.patientId ?? PatientID,
+     // patientId: PatientID,
+       patientId: this.patientId, 
       stage: this.ptnstage ? this.stage : 0,
       createdby: this.userData?.doctorId
     };
@@ -402,6 +409,26 @@ private patchManagement(data: any) {
 
     return 'inactive-tab';
   }
+
+    blockInvalidKeys(event: KeyboardEvent) {
+    if ([, 'E', '+'].includes(event.key)) {
+      event.preventDefault();
+    }
+  }
+  
+     preventNegative(event: any) {
+ 
+  if (event.target.value < 0) {
+    event.target.value = 0; // reset to 0 if negative
+  }
+}
+  allowOnlyText(event: KeyboardEvent) {
+  const pattern = /[a-zA-Z ]/;
+  const inputChar = String.fromCharCode(event.charCode);
+  if (!pattern.test(inputChar)) {
+    event.preventDefault();
+  }
+}
 }
 
 

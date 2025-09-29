@@ -70,7 +70,7 @@ export class GadgetComponent implements OnInit {
       smartphoneUsedyears: ['', Validators.required],
 
       workingHours: ['', Validators.required],
-      jobType: ['', Validators.required],
+      jobType: [null, Validators.required],
       totalWorkingYears: ['', Validators.required],
     });
 
@@ -89,25 +89,38 @@ export class GadgetComponent implements OnInit {
     if (!data) return;
 
     this.gadgetForm.patchValue({
+      // id: data.id ?? 0,
+      // gadget: data.gadget ?? '',
+
+      // computerUsed: data.computerUsed ?? false,
+      // computerUsedhrs: data.computerUsedhrs ?? '',
+      // computerUsedyears: data.computerUsedyears ?? '',
+      // computerFrequency: data.computerFrequency ?? '',
+      // computerDurationYears: data.computerDurationYears ?? '',
+
+      // smartphoneUsed: data.smartphoneUsed ?? false,
+      // smartphoneUsedhrs: data.smartphoneUsedhrs ?? '',
+      // smartphoneUsedyears: data.smartphoneUsedyears ?? '',
+      // smartphoneFrequency: data.smartphoneFrequency ?? '',
+      // smartphoneDurationYears: data.smartphoneDurationYears ?? '',
+
+      // workingHours: data.workingHours ?? '',
+      // jobType: data.jobType ?? '',
+      // totalWorkingYears: data.totalWorkingYears ?? '',
+      // createdBy: data.createdBy ?? ''
+
       id: data.id ?? 0,
       gadget: data.gadget ?? '',
-
-      computerUsed: data.computerUsed ?? false,
-      computerUsedhrs: data.computerUsedhrs ?? '',
-      computerUsedyears: data.computerUsedyears ?? '',
-      computerFrequency: data.computerFrequency ?? '',
-      computerDurationYears: data.computerDurationYears ?? '',
-
-      smartphoneUsed: data.smartphoneUsed ?? false,
-      smartphoneUsedhrs: data.smartphoneUsedhrs ?? '',
-      smartphoneUsedyears: data.smartphoneUsedyears ?? '',
-      smartphoneFrequency: data.smartphoneFrequency ?? '',
-      smartphoneDurationYears: data.smartphoneDurationYears ?? '',
-
+      computerUsed: data.computerUsed,
+      computerUsedhrs: data.computerFrequency ?? '',
+      computerUsedyears: data.computerDurationYears ?? '',
+      smartphoneUsed: data.smartphoneUsed,
+      smartphoneUsedhrs: data.smartphoneFrequency ?? '',
+      smartphoneUsedyears: data.smartphoneDurationYears ?? '',
       workingHours: data.workingHours ?? '',
       jobType: data.jobType ?? '',
       totalWorkingYears: data.totalWorkingYears ?? '',
-      createdBy: data.createdBy ?? ''
+      createdBy: data.createdBy
     });
   }
 
@@ -204,6 +217,19 @@ export class GadgetComponent implements OnInit {
         console.error('❌ Error fetching gadget data:', err);
       }
     });
+
+    this.http.httpGet(`/PatientReg/GetPatient/${patientId}`).subscribe({
+      next: (res: any) => {
+        if (res && res.data && res.data.occupation) {
+          this.gadgetForm.patchValue({
+            jobType: res.data.occupation
+          });
+          this.updateJobTypeRadioState(res.data.occupation);
+        }
+      },
+      error: (err) => console.error('❌ Error fetching patient data:', err)
+    });
+
   }
 
 
@@ -214,8 +240,8 @@ export class GadgetComponent implements OnInit {
 
 
   }
-   
-  validateFld() :boolean {
+
+  validateFld(): boolean {
 
     if (this.gadgetForm.get('computerUsed')?.value === '' || this.gadgetForm.get('computerUsed')?.value === null) {
       alert("Select Computer usage")
@@ -231,7 +257,7 @@ export class GadgetComponent implements OnInit {
         return false;
       }
     }
-    
+
     if (this.gadgetForm.get('smartphoneUsed')?.value === '' || this.gadgetForm.get('smartphoneUsed')?.value === null) {
       alert("Select Smartphone usage")
       return false;
@@ -246,27 +272,29 @@ export class GadgetComponent implements OnInit {
         return false;
       }
     }
-    if (this.gadgetForm.get('workingHours')?.value === '' || this.gadgetForm.get('workingHours')?.value=== null) {
-        alert("Select working hours");
-        return false;
-      }
-    
-      if (this.gadgetForm.get('jobType')?.value === '' || this.gadgetForm.get('jobType')?.value=== null) {
-        alert("Select job type");
-        return false;
-      }
-      
-      if (this.gadgetForm.get('totalWorkingYears')?.value === '' ) {
-        alert("Select Durtion");
-        return false;
-      }
-      
+    if (this.gadgetForm.get('workingHours')?.value === '' || this.gadgetForm.get('workingHours')?.value === null) {
+      alert("Select working hours");
+      return false;
+    }
+
+    if (this.gadgetForm.get('jobType')?.value === '' || this.gadgetForm.get('jobType')?.value === null) {
+      alert("Select job type");
+      return false;
+    }
+
+    if (this.gadgetForm.get('totalWorkingYears')?.value === '') {
+      alert("Select Duration");
+      return false;
+    }
+
+
+
     return true;
   }
 
   Submit(): void {
 
-    if(!this.validateFld()){
+    if (!this.validateFld()) {
       return;
     }
 
@@ -284,33 +312,42 @@ export class GadgetComponent implements OnInit {
     }
 
     //let user: any = localStorage.getItem('doctor');
-  //  this.userData = JSON.parse(user);
-   // const gadgetFormValues = this.gadgetForm.getRawValue();
-   this.doctorId=this.patientService.getDoctorId();
+    //  this.userData = JSON.parse(user);
+    // const gadgetFormValues = this.gadgetForm.getRawValue();
+    this.doctorId = this.patientService.getDoctorId();
 
-  const formValue = this.gadgetForm.value;
+    const formValue = this.gadgetForm.value;
 
-const payload= {
+
+    const payload = {
       flag: 'I',
-      id: this.gadgetForm.get('id')?.value,
-      patientId: this.patientId,
-     
-      stage: this.stage,
-      computerUsed: this.gadgetForm.get('computerUsed')?.value,
-      computerFrequency: this.gadgetForm.get('computerUsedhrs')?.value ?? null,
-      computerDurationYears: formValue.computerUsedyears? Number(formValue.computerUsedyears): null, 
+      id: this.gadgetForm.get('id')?.value ?? 0,
+      patientId: this.patientId ?? null,
+      stage: this.stage ?? null,
+      gadget: this.gadgetForm.get('gadget')?.value?.trim() ?? '',
 
+      computerUsed: !!this.gadgetForm.get('computerUsed')?.value,
+      computerFrequency: this.gadgetForm.get('computerUsedhrs') != null
+        ? String(this.gadgetForm.get('computerUsedhrs')?.value)
+        : null,
+      computerDurationYears: this.gadgetForm.get('computerUsedyears')?.value
+        ? Number(this.gadgetForm.get('computerUsedyears')?.value)
+        : null,
 
       smartphoneUsed: !!this.gadgetForm.get('smartphoneUsed')?.value,
-      smartphoneFrequency: this.gadgetForm.get('smartphoneUsedhrs')?.value ?? null,
-      smartphoneDurationYears: formValue.smartphoneUsedyears? Number(formValue.smartphoneUsedyears): null,
+      smartphoneFrequency: this.gadgetForm.get('smartphoneUsedhrs') != null
+        ? String(this.gadgetForm.get('smartphoneUsedhrs')?.value)
+        : null,
+      smartphoneDurationYears: this.gadgetForm.get('smartphoneUsedyears')?.value
+        ? Number(this.gadgetForm.get('smartphoneUsedyears')?.value)
+        : null,
 
-
-      workingHours: this.gadgetForm.get('workingHours')?.value ?? '',
-      jobType: this.gadgetForm.get('jobType')?.value ?? '',
-      totalWorkingYears: this.gadgetForm.get('totalWorkingYears')?.value,
-      createdBy: this.doctorId.toString()
+      workingHours: this.gadgetForm.get('workingHours')?.value ?? null,
+      jobType: this.gadgetForm.get('jobType')?.value ?? null,
+      totalWorkingYears: this.gadgetForm.get('totalWorkingYears')?.value ?? null,
+      createdBy: this.doctorId?.toString() ?? null
     };
+
 
     this.http.httpPost(API_URLS.GADGET_SAVE, payload).subscribe({
       next: (res: any) => {
@@ -427,6 +464,43 @@ const payload= {
     };
 
     return fieldLabels[fieldName] || fieldName;
+  }
+
+
+
+  blockInvalidKeys(event: KeyboardEvent) {
+    if (['e', 'E', '+', '-','.'].includes(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+
+  preventNegative(event: any) {
+
+    if (event.target.value < 0) {
+      event.target.value = 0; // reset to 0 if negative
+    }
+  }
+
+
+  updateJobTypeRadioState(selectedValue: string | null): void {
+    const sedentaryControl = document.querySelector<HTMLInputElement>(
+      'input[name="jobType"][value="Sedentary"]'
+    );
+    const nonSedentaryControl = document.querySelector<HTMLInputElement>(
+      'input[name="jobType"][value="Non-Sedentary"]'
+    );
+
+    if (selectedValue === 'Sedentary') {
+      sedentaryControl!.disabled = false;
+      nonSedentaryControl!.disabled = true;
+    } else if (selectedValue === 'Non-Sedentary') {
+      sedentaryControl!.disabled = true;
+      nonSedentaryControl!.disabled = false;
+    } else {
+      sedentaryControl!.disabled = false;
+      nonSedentaryControl!.disabled = false;
+    }
   }
 
 }

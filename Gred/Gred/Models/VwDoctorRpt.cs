@@ -19,8 +19,6 @@ public partial class VwDoctorRpt
 
     public string? HospitalName { get; set; }
 
-    public string? Password { get; set; }
-
     public string State { get; set; } = null!;
 
     public string City { get; set; } = null!;
@@ -28,12 +26,4 @@ public partial class VwDoctorRpt
     public string? EnterCodeNo { get; set; }
 
     public string? Status { get; set; }
-
-    public int? CreatedBy { get; set; }
-
-    public DateTime? CreatedDt { get; set; }
-
-    public int? ModifiedBy { get; set; }
-
-    public DateTime? ModifiedDt { get; set; }
 }

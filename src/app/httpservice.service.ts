@@ -11,31 +11,31 @@ export class HttpserviceService {
     throw new Error('Method not implemented.');
   }
   apiUrl = API_URLS.BASE_URL;
-  constructor(private http: HttpClient) {}
-private baseUrl = API_URLS.BASE_URL;
+  constructor(private http: HttpClient) { }
+  private baseUrl = API_URLS.BASE_URL;
   headers = new HttpHeaders({
     'Content-Type': 'application/json'
   });
 
-httpGet(endpoint: string, param: any = {}): Observable<any[]> {
-  return this.http.get<any[]>(`${this.apiUrl}${endpoint}`, { headers: this.headers, params: param });
-}
+  httpGet(endpoint: string, param: any = {}): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}${endpoint}`, { headers: this.headers, params: param });
+  }
 
-httpGet2<T>(endpoint: string, param: any = {}): Observable<T> {
-  return this.http.get<T>(`${this.apiUrl}${endpoint}`, { headers: this.headers, params: param });
-}
+  httpGet2<T>(endpoint: string, param: any = {}): Observable<T> {
+    return this.http.get<T>(`${this.apiUrl}${endpoint}`, { headers: this.headers, params: param });
+  }
 
   httpPost(endpoint: string, param: any): Observable<any[]> {
     return this.http.post<any[]>(`${this.apiUrl}${endpoint}`, param, { headers: this.headers });
   }
 
-  
-httpPostFileUPload(endpoint: string, fData:any,param: HttpParams): Observable<any[]> {
+
+  httpPostFileUPload(endpoint: string, fData: any, param: HttpParams): Observable<any[]> {
     let params = new HttpParams()
     params = param
-    return this.http.post<any[]>(this.apiUrl+endpoint,fData, { params })
+    return this.http.post<any[]>(this.apiUrl + endpoint, fData, { params })
   }
-  
+
 
   httpPut(endpoint: string, param: any): Observable<any[]> {
     return this.http.put<any[]>(`${this.apiUrl}${endpoint}`, param, { headers: this.headers });
@@ -51,17 +51,20 @@ httpPostFileUPload(endpoint: string, fData:any,param: HttpParams): Observable<an
       responseType: 'blob'  // Important for binary file downloads
     });
   }
-getPageRouterByPatientId(patientId: number): Observable<any> {
-  const url = API_URLS.BASE_URL + API_URLS.GET_PAGE_ROUTER.replace('{patientId}', patientId.toString());
-  console.log('Calling URL:', url);
-  return this.http.get<any>(url);
-}
+  getPageRouterByPatientId(patientId: number): Observable<any> {
+    const url = API_URLS.BASE_URL + API_URLS.GET_PAGE_ROUTER.replace('{patientId}', patientId.toString());
+    console.log('Calling URL:', url);
+    return this.http.get<any>(url);
+  }
 
-httpDelete(url: string) {
-  return this.http.delete(this.baseUrl + url);
-}
+  httpDelete(url: string) {
+    return this.http.delete(this.baseUrl + url);
+  }
 
   httpGetFile(url: string): Observable<Blob> {
     return this.http.get(url, { responseType: 'blob' });
   }
+
+
+  
 }

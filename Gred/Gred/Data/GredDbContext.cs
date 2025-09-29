@@ -62,6 +62,8 @@ public partial class GredDbContext : DbContext
 
     public virtual DbSet<PersonalHistory> PersonalHistories { get; set; }
 
+    public virtual DbSet<Pincode> Pincodes { get; set; }
+
     public virtual DbSet<PtnTrack> PtnTracks { get; set; }
 
     public virtual DbSet<Sleep> Sleeps { get; set; }
@@ -130,12 +132,15 @@ public partial class GredDbContext : DbContext
 
     public virtual DbSet<VwPersonalHistory> VwPersonalHistories { get; set; }
 
+    public virtual DbSet<VwPincode> VwPincodes { get; set; }
+
     public virtual DbSet<VwSleep> VwSleeps { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-       => optionsBuilder.UseSqlServer("Server=DESKTOP-RA0KPRS\\SQLEXPRESS;Database=GERD;Trusted_Connection=True;TrustServerCertificate=True");
-  // => optionsBuilder.UseSqlServer("Server=EC2AMAZ-4MMGIBF\\SQLEXPRESS;Database=GERD;user Id=sa1; Password=Micro@123#; Trusted_Connection=True;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-RA0KPRS\\SQLEXPRESS;Database=GERD;Trusted_Connection=True;TrustServerCertificate=True");
+ //  => optionsBuilder.UseSqlServer("Server=EC2AMAZ-4MMGIBF\\SQLEXPRESS;Database=GERD;user Id=sa1; Password=Micro@123#; Trusted_Connection=True;TrustServerCertificate=True");
+
   protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Abbre>(entity =>
@@ -1696,6 +1701,64 @@ public partial class GredDbContext : DbContext
                 .HasConstraintName("FK_PersonalHistory_Patient");
         });
 
+        modelBuilder.Entity<Pincode>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_Pincode");
+
+            entity.ToTable("pincode");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Circlename)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("circlename");
+            entity.Property(e => e.Citiid).HasColumnName("citiid");
+            entity.Property(e => e.Deliverystatus)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Districtname)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Divisionname)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("divisionname");
+            entity.Property(e => e.OfficeType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("officeType");
+            entity.Property(e => e.Officename)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("officename");
+            entity.Property(e => e.Pincode1)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("pincode");
+            entity.Property(e => e.Regionname)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("regionname");
+            entity.Property(e => e.RelatedHeadoffice)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("relatedHeadoffice");
+            entity.Property(e => e.RelatedSuboffice)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("relatedSuboffice");
+            entity.Property(e => e.Statename)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("statename");
+            entity.Property(e => e.Taluk)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Telephone)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<PtnTrack>(entity =>
         {
             entity.ToTable("PtnTrack");
@@ -3174,6 +3237,12 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Acid Taste Postural");
+            entity.Property(e => e.Acidtasteinmouth)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.AdherenceToTherapy)
+                .HasMaxLength(3)
+                .IsUnicode(false);
             entity.Property(e => e.AeratedDrinks)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -3247,7 +3316,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("Asthma Remarks");
-            entity.Property(e => e.B1Regurgitation).HasColumnName("B1_Regurgitation");
+            entity.Property(e => e.B1Regurgitation)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("B1_Regurgitation");
             entity.Property(e => e.BariatricSurgery)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -3268,7 +3340,13 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("Behavioural disorders");
-            entity.Property(e => e.BiopsyAttached).HasColumnName("Biopsy_Attached");
+            entity.Property(e => e.Biopsy)
+                .HasMaxLength(3)
+                .IsUnicode(false);
+            entity.Property(e => e.BiopsyAttached)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("Biopsy_Attached");
             entity.Property(e => e.BiopsyDate)
                 .HasColumnType("datetime")
                 .HasColumnName("Biopsy_Date");
@@ -3434,7 +3512,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("F1_AcidRefluxrelatedSymptom");
-            entity.Property(e => e.F1Acidtasteinmouth).HasColumnName("F1_Acidtasteinmouth");
+            entity.Property(e => e.F1Acidtasteinmouth)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F1_Acidtasteinmouth");
             entity.Property(e => e.F1AlginateDose)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -3590,7 +3671,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("F1_HB_Postural");
-            entity.Property(e => e.F1HeartburnHeartburn).HasColumnName("F1_HeartburnHeartburn");
+            entity.Property(e => e.F1HeartburnHeartburn)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F1_HeartburnHeartburn");
             entity.Property(e => e.F1Hillsclassification)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -3751,8 +3835,14 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("F1 Regular exercise");
-            entity.Property(e => e.F1Regurgitation).HasColumnName("F1_Regurgitation");
-            entity.Property(e => e.F1Retrosternalpain).HasColumnName("F1_Retrosternalpain");
+            entity.Property(e => e.F1Regurgitation)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F1_Regurgitation");
+            entity.Property(e => e.F1Retrosternalpain)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F1_Retrosternalpain");
             entity.Property(e => e.F1RpDuration).HasColumnName("F1_RP_Duration");
             entity.Property(e => e.F1RpFrequency).HasColumnName("F1_RP_Frequency");
             entity.Property(e => e.F1RpNocturnal)
@@ -3812,7 +3902,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("F2_AcidRefluxrelatedSymptom");
-            entity.Property(e => e.F2Acidtasteinmouth).HasColumnName("F2_Acidtasteinmouth");
+            entity.Property(e => e.F2Acidtasteinmouth)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F2_Acidtasteinmouth");
             entity.Property(e => e.F2AlginateDose)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -3968,7 +4061,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("F2_HB_Postural");
-            entity.Property(e => e.F2HeartburnHeartburn).HasColumnName("F2_HeartburnHeartburn");
+            entity.Property(e => e.F2HeartburnHeartburn)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F2_HeartburnHeartburn");
             entity.Property(e => e.F2Hillsclassification)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -4129,8 +4225,14 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("F2 Regular exercise");
-            entity.Property(e => e.F2Regurgitation).HasColumnName("F2_Regurgitation");
-            entity.Property(e => e.F2Retrosternalpain).HasColumnName("F2_Retrosternalpain");
+            entity.Property(e => e.F2Regurgitation)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F2_Regurgitation");
+            entity.Property(e => e.F2Retrosternalpain)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F2_Retrosternalpain");
             entity.Property(e => e.F2RpDuration).HasColumnName("F2_RP_Duration");
             entity.Property(e => e.F2RpFrequency).HasColumnName("F2_RP_Frequency");
             entity.Property(e => e.F2RpNocturnal)
@@ -4272,6 +4374,9 @@ public partial class GredDbContext : DbContext
                 .HasColumnName("H2Blockers_Medication_Name");
             entity.Property(e => e.HeartburnDurationYrs).HasColumnName("HeartburnDuration[Yrs)");
             entity.Property(e => e.HeartburnFrequencyWk).HasColumnName("HeartburnFrequency(/Wk)");
+            entity.Property(e => e.HeartburnHeartburn)
+                .HasMaxLength(10)
+                .IsUnicode(false);
             entity.Property(e => e.HeartburnNocturnal)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -4341,7 +4446,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Jogging Frequency (hrs/week)");
-            entity.Property(e => e.KnownCaseOfGerd).HasColumnName("KnownCaseOfGERD");
+            entity.Property(e => e.KnownCaseOfGerd)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("KnownCaseOfGERD");
             entity.Property(e => e.Laxlesclassification)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -4354,18 +4462,24 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(1000)
                 .IsUnicode(false)
                 .HasColumnName("Los Angeles Grade Remarks");
+            entity.Property(e => e.ManometryTest)
+                .HasMaxLength(3)
+                .IsUnicode(false);
             entity.Property(e => e.ModerationOfAlcohol)
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("Moderation of alcohol");
-            entity.Property(e => e.MtAttached).HasColumnName("MT_Attached");
-            entity.Property(e => e.MtDate)
-                .HasColumnType("datetime")
-                .HasColumnName("MT_Date");
+            entity.Property(e => e.MtAttached)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("MT_Attached");
             entity.Property(e => e.MtRemark)
                 .HasMaxLength(1000)
                 .IsUnicode(false)
                 .HasColumnName("MT_Remark");
+            entity.Property(e => e.Mtdate)
+                .HasColumnType("datetime")
+                .HasColumnName("MTDate");
             entity.Property(e => e.NeurologicalDisorder)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -4374,6 +4488,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("Neurological Disorder Remarks");
+            entity.Property(e => e.NewlyDiagnosed)
+                .HasMaxLength(3)
+                .IsUnicode(false);
             entity.Property(e => e.NsaidsDose)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -4524,7 +4641,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Prokinetics_Medication_Name");
-            entity.Property(e => e.RefractoryToPpi).HasColumnName("RefractoryToPPI");
+            entity.Property(e => e.RefractoryToPpi)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("RefractoryToPPI");
             entity.Property(e => e.RegularExercise)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -4559,6 +4679,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Retrosternal Postural");
+            entity.Property(e => e.Retrosternalpain)
+                .HasMaxLength(10)
+                .IsUnicode(false);
             entity.Property(e => e.RheumatoidArthritis)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -4909,7 +5032,6 @@ public partial class GredDbContext : DbContext
                 .ToView("vw_DoctorRPT");
 
             entity.Property(e => e.City).HasMaxLength(100);
-            entity.Property(e => e.CreatedDt).HasColumnType("datetime");
             entity.Property(e => e.DoctorId).HasColumnName("DoctorID");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
@@ -4925,11 +5047,7 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("MCICode");
-            entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
             entity.Property(e => e.Name)
-                .HasMaxLength(250)
-                .IsUnicode(false);
-            entity.Property(e => e.Password)
                 .HasMaxLength(250)
                 .IsUnicode(false);
             entity.Property(e => e.PhoneNo)
@@ -5098,7 +5216,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Acid Reflux related Symptom");
-            entity.Property(e => e.AcidTasteInMouth).HasColumnName("Acid taste in mouth");
+            entity.Property(e => e.AcidTasteInMouth)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("Acid taste in mouth");
             entity.Property(e => e.AlginateDose)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -5269,6 +5390,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("HB_Postural");
+            entity.Property(e => e.Heartburn)
+                .HasMaxLength(10)
+                .IsUnicode(false);
             entity.Property(e => e.HillSClassification)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -5437,7 +5561,13 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("Regular exercise");
-            entity.Property(e => e.RetrosternalPain).HasColumnName("Retrosternal pain");
+            entity.Property(e => e.Regurgitation)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.RetrosternalPain)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("Retrosternal pain");
             entity.Property(e => e.RpDuration).HasColumnName("RP_Duration");
             entity.Property(e => e.RpFrequency).HasColumnName("RP_Frequency");
             entity.Property(e => e.RpNocturnal)
@@ -5511,7 +5641,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Acid Reflux related Symptom");
-            entity.Property(e => e.AcidTasteInMouth).HasColumnName("Acid taste in mouth");
+            entity.Property(e => e.AcidTasteInMouth)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("Acid taste in mouth");
             entity.Property(e => e.AlginateDose)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -5682,6 +5815,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("HB_Postural");
+            entity.Property(e => e.Heartburn)
+                .HasMaxLength(10)
+                .IsUnicode(false);
             entity.Property(e => e.HillSClassification)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -5850,7 +5986,13 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("Regular exercise");
-            entity.Property(e => e.RetrosternalPain).HasColumnName("Retrosternal pain");
+            entity.Property(e => e.Regurgitation)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.RetrosternalPain)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("Retrosternal pain");
             entity.Property(e => e.RpDuration).HasColumnName("RP_Duration");
             entity.Property(e => e.RpFrequency).HasColumnName("RP_Frequency");
             entity.Property(e => e.RpNocturnal)
@@ -6044,6 +6186,12 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Acid Taste Postural");
+            entity.Property(e => e.Acidtasteinmouth)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.AdherenceToTherapy)
+                .HasMaxLength(3)
+                .IsUnicode(false);
             entity.Property(e => e.AeratedDrinks)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -6117,7 +6265,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("Asthma Remarks");
-            entity.Property(e => e.B1Regurgitation).HasColumnName("B1_Regurgitation");
+            entity.Property(e => e.B1Regurgitation)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("B1_Regurgitation");
             entity.Property(e => e.BariatricSurgery)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -6138,7 +6289,13 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("Behavioural disorders");
-            entity.Property(e => e.BiopsyAttached).HasColumnName("Biopsy_Attached");
+            entity.Property(e => e.Biopsy)
+                .HasMaxLength(3)
+                .IsUnicode(false);
+            entity.Property(e => e.BiopsyAttached)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("Biopsy_Attached");
             entity.Property(e => e.BiopsyDate)
                 .HasColumnType("datetime")
                 .HasColumnName("Biopsy_Date");
@@ -6304,7 +6461,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("F1_AcidRefluxrelatedSymptom");
-            entity.Property(e => e.F1Acidtasteinmouth).HasColumnName("F1_Acidtasteinmouth");
+            entity.Property(e => e.F1Acidtasteinmouth)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F1_Acidtasteinmouth");
             entity.Property(e => e.F1AlginateDose)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -6460,7 +6620,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("F1_HB_Postural");
-            entity.Property(e => e.F1HeartburnHeartburn).HasColumnName("F1_HeartburnHeartburn");
+            entity.Property(e => e.F1HeartburnHeartburn)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F1_HeartburnHeartburn");
             entity.Property(e => e.F1Hillsclassification)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -6621,8 +6784,14 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("F1 Regular exercise");
-            entity.Property(e => e.F1Regurgitation).HasColumnName("F1_Regurgitation");
-            entity.Property(e => e.F1Retrosternalpain).HasColumnName("F1_Retrosternalpain");
+            entity.Property(e => e.F1Regurgitation)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F1_Regurgitation");
+            entity.Property(e => e.F1Retrosternalpain)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F1_Retrosternalpain");
             entity.Property(e => e.F1RpDuration).HasColumnName("F1_RP_Duration");
             entity.Property(e => e.F1RpFrequency).HasColumnName("F1_RP_Frequency");
             entity.Property(e => e.F1RpNocturnal)
@@ -6682,7 +6851,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("F2_AcidRefluxrelatedSymptom");
-            entity.Property(e => e.F2Acidtasteinmouth).HasColumnName("F2_Acidtasteinmouth");
+            entity.Property(e => e.F2Acidtasteinmouth)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F2_Acidtasteinmouth");
             entity.Property(e => e.F2AlginateDose)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -6838,7 +7010,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("F2_HB_Postural");
-            entity.Property(e => e.F2HeartburnHeartburn).HasColumnName("F2_HeartburnHeartburn");
+            entity.Property(e => e.F2HeartburnHeartburn)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F2_HeartburnHeartburn");
             entity.Property(e => e.F2Hillsclassification)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -6999,8 +7174,14 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("F2 Regular exercise");
-            entity.Property(e => e.F2Regurgitation).HasColumnName("F2_Regurgitation");
-            entity.Property(e => e.F2Retrosternalpain).HasColumnName("F2_Retrosternalpain");
+            entity.Property(e => e.F2Regurgitation)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F2_Regurgitation");
+            entity.Property(e => e.F2Retrosternalpain)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("F2_Retrosternalpain");
             entity.Property(e => e.F2RpDuration).HasColumnName("F2_RP_Duration");
             entity.Property(e => e.F2RpFrequency).HasColumnName("F2_RP_Frequency");
             entity.Property(e => e.F2RpNocturnal)
@@ -7142,6 +7323,9 @@ public partial class GredDbContext : DbContext
                 .HasColumnName("H2Blockers_Medication_Name");
             entity.Property(e => e.HeartburnDurationYrs).HasColumnName("HeartburnDuration[Yrs)");
             entity.Property(e => e.HeartburnFrequencyWk).HasColumnName("HeartburnFrequency(/Wk)");
+            entity.Property(e => e.HeartburnHeartburn)
+                .HasMaxLength(10)
+                .IsUnicode(false);
             entity.Property(e => e.HeartburnNocturnal)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -7211,7 +7395,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Jogging Frequency (hrs/week)");
-            entity.Property(e => e.KnownCaseOfGerd).HasColumnName("KnownCaseOfGERD");
+            entity.Property(e => e.KnownCaseOfGerd)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("KnownCaseOfGERD");
             entity.Property(e => e.Laxlesclassification)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -7224,18 +7411,24 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(1000)
                 .IsUnicode(false)
                 .HasColumnName("Los Angeles Grade Remarks");
+            entity.Property(e => e.ManometryTest)
+                .HasMaxLength(3)
+                .IsUnicode(false);
             entity.Property(e => e.ModerationOfAlcohol)
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("Moderation of alcohol");
-            entity.Property(e => e.MtAttached).HasColumnName("MT_Attached");
-            entity.Property(e => e.MtDate)
-                .HasColumnType("datetime")
-                .HasColumnName("MT_Date");
+            entity.Property(e => e.MtAttached)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("MT_Attached");
             entity.Property(e => e.MtRemark)
                 .HasMaxLength(1000)
                 .IsUnicode(false)
                 .HasColumnName("MT_Remark");
+            entity.Property(e => e.Mtdate)
+                .HasColumnType("datetime")
+                .HasColumnName("MTDate");
             entity.Property(e => e.NeurologicalDisorder)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -7244,6 +7437,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("Neurological Disorder Remarks");
+            entity.Property(e => e.NewlyDiagnosed)
+                .HasMaxLength(3)
+                .IsUnicode(false);
             entity.Property(e => e.NsaidsDose)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -7394,7 +7590,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Prokinetics_Medication_Name");
-            entity.Property(e => e.RefractoryToPpi).HasColumnName("RefractoryToPPI");
+            entity.Property(e => e.RefractoryToPpi)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("RefractoryToPPI");
             entity.Property(e => e.RegularExercise)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -7429,6 +7628,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Retrosternal Postural");
+            entity.Property(e => e.Retrosternalpain)
+                .HasMaxLength(10)
+                .IsUnicode(false);
             entity.Property(e => e.RheumatoidArthritis)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -8664,6 +8866,19 @@ public partial class GredDbContext : DbContext
             entity.Property(e => e.TobaccoQuantity)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<VwPincode>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_pincode");
+
+            entity.Property(e => e.Citiid).HasColumnName("citiid");
+            entity.Property(e => e.Pincode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("pincode");
         });
 
         modelBuilder.Entity<VwSleep>(entity =>

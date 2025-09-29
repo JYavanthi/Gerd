@@ -2,8 +2,10 @@
   <app-sidebar *ngIf="!isPrintMode"></app-sidebar>
 
   <div class="flex-grow-1 p-4">
+    
     <div class="rounded shadow-sm p-4 " style="background-color: white;">
-
+ <app-stage-progress [patientId]="patientId!" *ngIf="!isPrintMode">
+                </app-stage-progress>
       <div class="mt-4" style="padding-left: 1rem; padding-right: 1rem;">
         <h5 class="text-white p-2 mb-4" style="background-color: #357083;">MANAGEMENT</h5>
         <div class="arrow-status" style="margin-bottom: 20px;" *ngIf="isFollowUp">
@@ -43,10 +45,9 @@
               <tbody>
                 <tr *ngFor="let drug of drugTherapy">
                   <td>{{ drug.class }}</td>
-                  <td><input type="text" [(ngModel)]="drug.name" class="w-100 border-0" style="outline: none;"></td>
-                  <td><input type="text" [(ngModel)]="drug.dose" class="w-100 border-0" style="outline: none;"></td>
-                  <td><input type="text" [(ngModel)]="drug.frequency" class="w-100 border-0" style="outline: none;">
-                  </td>
+                  <td><input type="text" [(ngModel)]="drug.name" class="w-100 border-0" style="outline: none;"  (keypress)="allowOnlyText($event)"></td>
+                  <td><input type="text" [(ngModel)]="drug.dose" class="w-100 border-0" style="outline: none;" (keydown)="blockInvalidKeys($event)" (input)="preventNegative($event)"></td>
+                  <td><input type="text" [(ngModel)]="drug.frequency" class="w-100 border-0" style="outline: none;" (keydown)="blockInvalidKeys($event)" (input)="preventNegative($event)"></td>
                 </tr>
               </tbody>
             </table>

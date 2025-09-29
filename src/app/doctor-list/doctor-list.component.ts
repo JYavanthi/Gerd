@@ -23,29 +23,65 @@ export class DoctorListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
-    this.doctorService.getAllDoctors().subscribe({
+
+    // this.doctorService.getAllDoctorslist().subscribe({
+    //   next: (response: any) => {
+    //     if (Array.isArray(response.data)) {
+    //       // ✅ Assign doctor list first
+    //       this.doctorList = response.data.map((doctor: any) => ({
+    //         ...doctor,
+    //         baseline: 0,
+    //         followUpOne: 0,
+    //         followUpTwo: 0
+    //       }));
+
+    //       // ✅ Now subscribe to patient cases
+    //       this.caseDataService.getCases().subscribe((cases: Case[]) => {
+    //         this.doctorList.forEach((doctor: any) => {
+    //           const patientsForDoctor = cases.filter(p => p.doctorId === doctor.doctorId);
+
+    //           doctor.baseline = patientsForDoctor.filter(p => p.stage === 0).length;
+    //           doctor.followUpOne = patientsForDoctor.filter(p => p.stage === 1).length;
+    //           doctor.followUpTwo = patientsForDoctor.filter(p => p.stage === 3).length;
+    //         });
+    //       });
+
+    //     } else {
+    //       this.doctorList = [];
+    //     }
+    //   },
+    //   error: (error) => {
+    //     console.error(error);
+    //   }
+    // });
+
+    this.doctorService.getAllDoctorslist().subscribe({
       next: (response: any) => {
+        let doctors: any[] = [];
+
         if (Array.isArray(response.data)) {
-          // ✅ Assign doctor list first
-          this.doctorList = response.data.map((doctor: any) => ({
+          doctors = response.data;
+        } else if (Array.isArray(response)) {
+          doctors = response; // 👈 your API looks like this
+        }
+
+        if (doctors.length > 0) {
+          this.doctorList = doctors.map((doctor: any) => ({
             ...doctor,
             baseline: 0,
             followUpOne: 0,
             followUpTwo: 0
           }));
 
-          // ✅ Now subscribe to patient cases
           this.caseDataService.getCases().subscribe((cases: Case[]) => {
             this.doctorList.forEach((doctor: any) => {
               const patientsForDoctor = cases.filter(p => p.doctorId === doctor.doctorId);
 
               doctor.baseline = patientsForDoctor.filter(p => p.stage === 0).length;
-              doctor.followUpOne = patientsForDoctor.filter(p => p.stage === 1).length;
-              doctor.followUpTwo = patientsForDoctor.filter(p => p.stage === 3).length;
+              doctor.followUpOne = patientsForDoctor.filter(p => p.stage === 2).length;
+              doctor.followUpTwo = patientsForDoctor.filter(p => p.stage === 4).length;
             });
           });
-
         } else {
           this.doctorList = [];
         }
@@ -54,6 +90,7 @@ export class DoctorListComponent implements OnInit {
         console.error(error);
       }
     });
+
   }
 
 
@@ -116,11 +153,11 @@ export class DoctorListComponent implements OnInit {
       });
     });
   }
-getStateName(id: number): string {
-  return this.stateMap[id] || id.toString();
-}
+  getStateName(id: number): string {
+    return this.stateMap[id] || id.toString();
+  }
 
-getCityName(id: number): string {
-  return this.cityMap[id] || id.toString();
-}
+  getCityName(id: number): string {
+    return this.cityMap[id] || id.toString();
+  }
 }

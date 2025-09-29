@@ -51,10 +51,12 @@
 }
 .text-success {
   color: green;
+  cursor: pointer;
 }
 
 .text-danger {
   color: red;
+  cursor: pointer;
 }
 
 .main-content {
@@ -92,6 +94,7 @@
 }
 
 .card.add-case {
+  cursor: pointer;
   background-color: #2D6F83;
   font-size: 1rem;
   font-weight: 700;
@@ -147,7 +150,7 @@
   overflow: hidden;
 }
 .chart-bar {
-  height: 250px;
+  height: 265px;
   display: flex;
   justify-content: center;
   align-items: center;

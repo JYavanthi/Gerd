@@ -338,3 +338,19 @@
     display: flex;
     gap: 10px;
 }
+
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.table-row.ng-invalid.ng-touched {
+  background-color: #fff6f6; /* light red */
+}
+
+button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

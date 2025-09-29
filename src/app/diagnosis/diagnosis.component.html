@@ -6,7 +6,8 @@
     <div class="flex-grow-1 d-flex align-items-start justify-content-start"
       style="margin-top: 2rem; margin-bottom: 2rem;">
       <div class="form-container p-4 shadow bg-white" style="border-radius: 1rem; width: 93%; max-width: 1200px;">
-
+  <app-stage-progress [patientId]="patientId"  *ngIf="!isPrintMode">
+        </app-stage-progress>
         <h2 class="mb-4" style="color: white; font-weight: 600; margin-left: 0.25rem;">
           DIAGNOSIS
           <div *ngIf="isFollowUp" (click)="onNext()"><i class="fa-solid fa-arrow-right"></i></div>

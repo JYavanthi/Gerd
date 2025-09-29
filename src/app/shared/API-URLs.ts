@@ -1,8 +1,8 @@
 export const API_URLS = {
-BASE_URL: 'https://www.gerdregistryofindia.com/GERD/api',
-  
-//BASE_URL: 'http://localhost:5058/api',
-  
+//BASE_URL: 'https://www.gerdregistryofindia.com/GERD/api',
+
+ BASE_URL: 'http://localhost:5058/api',
+ 
   KEY: 'TSSACPAPI73263707',
   CHEIF_COMPLAINT_SAVE: '/CheifComplaint/SaveCheifComplaint',
   CHEIF_COMPLAINT_GET: '/CheifComplaint/GetCheifComplaint',
@@ -11,8 +11,8 @@ BASE_URL: 'https://www.gerdregistryofindia.com/GERD/api',
   COMORBIDITIES_SAVE: '/Comorbidities/SaveComorbidities',
   GET_COMORBIDITIES_BY_ID: '/Comorbidities/GetComorbditiesById',
 
-  DIAGNOSIS_SAVE: '/Diagnosis/SaveDiagnosis', 
-  DIAGNOSIS_GET_DOCTOR: '/Diagnosis/GetDoctor', 
+  DIAGNOSIS_SAVE: '/Diagnosis/SaveDiagnosis',
+  DIAGNOSIS_GET_DOCTOR: '/Diagnosis/GetDoctor',
 
   DOCTOR_REG_SAVE: '/DoctorReg/SaveDoctorReg',
   DOCTOR_REG_GET: '/DoctorReg/GetDoctor',
@@ -65,5 +65,7 @@ BASE_URL: 'https://www.gerdregistryofindia.com/GERD/api',
   GET_CURRENT_STAGE: '/Management/GetCurrentStage',
   PATIENT_REG_GET: '/PatientReg/GetPatient',
 
-  GET_PAGE_ROUTER: '/PtnTrack/GetPageRouterByPatientId/{patientId}'
+  GET_PAGE_ROUTER: '/PtnTrack/GetPageRouterByPatientId/{patientId}',
+
+  GET_PINCODE: '/Pincode/GetPincodesByCity'
 };    

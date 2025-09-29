@@ -216,6 +216,7 @@ body {
   display: flex;
   gap: 10px;
   align-items: center;
+  width: 53%;
 }
 
 .input-group input[type="file"] {
@@ -224,7 +225,6 @@ body {
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
 
 .small {
   color: #6c757d;

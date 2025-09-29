@@ -7,8 +7,6 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChiefComplaintService } from '../Services/chief-complaint.service';
 import { ComorbiditiesService } from '../Services/comorbidities.service';
-import { HistoryService } from '../Services/history.servie';
-import { PatientService } from '../Services/patient.service';
 import { PatientHistoryService } from '../Services/patient-history.service';
 import { HttpserviceService } from '../httpservice.service';
 import { sleepService } from '../Services/Sleep.service';
@@ -45,7 +43,7 @@ export class CaseStageViewComponent implements OnInit {
   baselinePersonalHistory: any = null;
   baselineSleep: any = null;
   baselinegadge: any = null;
-  baselinepersonalHistory:any=null
+  baselinepersonalHistory: any = null
 
   baselineAssessment: any = null
   followUp1Assessment: any = null;
@@ -54,8 +52,13 @@ export class CaseStageViewComponent implements OnInit {
   baselinemanagement: any = null;
   followUp1management: any = null;
   followUp2management: any = null;
+  loadingPdf: boolean = false;
 
-  baselineCurrentMedication:any =null
+  baselineCurrentMedication: any = null
+
+loadStageData1 = true;
+loadStageData2= true;
+loadStageData3 =true;
   constructor(
     private route: ActivatedRoute,
     private chiefComplaintService: ChiefComplaintService,
@@ -69,13 +72,13 @@ export class CaseStageViewComponent implements OnInit {
     private managementService: ManagementService,
     private personalHistoryService: PersonalHistoryService,
     private currentMedicationsService: CurrentMedicationsService
-    
+
 
   ) { }
 
   ngOnInit(): void {
 
-    
+
     // Get patientId from route
     this.route.params.subscribe(params => {
       this.patientId = +params['patientId'] || 0;
@@ -84,10 +87,13 @@ export class CaseStageViewComponent implements OnInit {
         return;
       }
 
-      // Load all 3 stages
+    
+      
+       // Load all 3 stages
       this.loadStageData(1); // baseline
       this.loadStageData(3); // follow-up 1
       this.loadStageData(5); // follow-up 2
+  
     });
   }
 
@@ -103,12 +109,15 @@ export class CaseStageViewComponent implements OnInit {
           switch (stage) {
             case 1:
               this.baselineData = res.data;
+              this.loadStageData1 =false
               break;
             case 3:
               this.followUp1Data = res.data;
+              this.loadStageData2 =false
               break;
             case 5:
               this.followUp2Data = res.data;
+              this.loadStageData3 =false
               break;
           }
         } else {
@@ -210,12 +219,9 @@ export class CaseStageViewComponent implements OnInit {
               this.followUp2Assessment = res.data;
               break;
           }
-        } else {
-          console.warn(`⚠️ No comorbidities found for stage ${stage}`);
         }
-      },
-      error: err => console.error(`❌ Error fetching comorbidities for stage ${stage}:`, err)
-    });
+      }
+    })
 
 
     this.managementService.getManagementDataById(this.patientId, stage).subscribe({
@@ -223,13 +229,24 @@ export class CaseStageViewComponent implements OnInit {
         if (res.type === 'S' && res.data) {
           switch (stage) {
             case 1:
-              this.baselinemanagement = res.data;
+              setTimeout(() => {
+                this.baselinemanagement = res.data;
+              }, 500);
+
               break;
             case 3:
-              this.followUp1management = res.data;
+              setTimeout(() => {
+                this.followUp1management = res.data;
+              }, 1500);
+
               break;
+            // this.followUp1management = res.data;
+            //break;
             case 5:
-              this.followUp2management = res.data;
+              setTimeout(() => {
+                this.followUp2management = res.data;
+              }, 1500);
+              //this.followUp2management = res.data;
               break;
           }
         } else {
@@ -246,12 +263,7 @@ export class CaseStageViewComponent implements OnInit {
             case 1:
               this.baselinepersonalHistory = res.data;
               break;
-            case 3:
-              this.followUp1management = res.data;
-              break;
-            case 5:
-              this.followUp2management = res.data;
-              break;
+
           }
         } else {
           console.warn(`⚠️ No comorbidities found for stage ${stage}`);
@@ -262,7 +274,7 @@ export class CaseStageViewComponent implements OnInit {
 
 
 
-        this.currentMedicationsService.getCurrentMedicationById(this.patientId, stage).subscribe({
+    this.currentMedicationsService.getCurrentMedicationById(this.patientId, stage).subscribe({
       next: (res: any) => {
         if (res.type === 'S' && res.data) {
           switch (stage) {
@@ -281,33 +293,85 @@ export class CaseStageViewComponent implements OnInit {
 
   }
 
+  // async downloadAllStages(patientId: number) {
+  //   const content = document.getElementById('caseStageContent');
+  //   if (!content) {
+  //     alert('File not downloadable')
+  //     return;
+  //   }
+  //   const canvas = await html2canvas(content, { scale: 1 });
+  //   const imgData = canvas.toDataURL('image/png');
+
+  //   const pdf = new jsPDF('p', 'mm', 'a4');
+  //   const imgWidth = 210; 
+  //   const pageHeight = 290; 
+  //   const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  //   let heightLeft = imgHeight;
+  //   let position = 0;
+
+  //   // First page
+  //   pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+  //   heightLeft -= pageHeight;
+
+  //   // Extra pages if content is taller than one page
+  //   while (heightLeft > 0) {
+  //     position = heightLeft - imgHeight;
+  //     pdf.addPage();
+  //     pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+  //     heightLeft -= pageHeight;
+  //   }
+
+  //   pdf.save(`Patient_${patientId}_All_Stages.pdf`);
+  // }
+
+
   async downloadAllStages(patientId: number) {
-    const content = document.getElementById('caseStageContent');
-    if (!content) return;
+    this.loadingPdf = true;
 
-    const canvas = await html2canvas(content, { scale: 2 });
-    const imgData = canvas.toDataURL('image/png');
+    try {
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = 210;
+      const pageHeight = 290;
 
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210; 
-    const pageHeight = 297; 
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      // Select each component individually
+      const components: HTMLElement[] = Array.from(
+        document.querySelectorAll(
+          'app-demographic, app-chief-complaint, app-comorbidities, app-history, app-personal-history, app-current-medications, app-sleep, app-gadget, app-history-endoscopy, app-assessment, app-diagnosis, app-managament'
+        )
+      ) as HTMLElement[];
 
-    let heightLeft = imgHeight;
-    let position = 0;
+      // Remove the first default empty page that jsPDF creates
+      doc.deletePage(1);
 
-    // First page
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+      for (let i = 0; i < components.length; i++) {
+        const el = components[i];
+        if (!el) continue;
 
-    // Extra pages if content is taller than one page
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        const canvas = await html2canvas(el, { scale: 2, useCORS: true });
+        const imgData = canvas.toDataURL('image/png');
+        const imgHeight = (canvas.height * pageWidth) / canvas.width;
+
+        doc.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight);
+
+        if (i < components.length - 1) {
+          doc.addPage();
+        }
+      }
+
+      doc.save(`Patient_${patientId}_All_Stages.pdf`);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      alert('Failed to generate PDF. Make sure all components are rendered.');
+    } finally {
+      this.loadingPdf = false;
     }
-
-    pdf.save(`Patient_${patientId}_All_Stages.pdf`);
   }
+
+  printPage() {
+    window.print();
+  }
+
 }

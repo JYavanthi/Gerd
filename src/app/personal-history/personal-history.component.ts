@@ -306,44 +306,44 @@ export class PersonalHistoryComponent {
       patientId: this.patientId,
       createdBy: this.doctorId,
       aeratedIntake: this.intakeStates['aerated'],
-      aeratedFrequency: this.formData.get('aerated.frequency')?.value || '',
-      aeratedQuantity: this.formData.get('aerated.quantity')?.value || '',
-      aeratedDuration: this.formData.get('aerated.duration')?.value || '',
+      aeratedFrequency: this.formData.get('aerated.frequency')?.value?.toString() || '' ,
+      aeratedQuantity: this.formData.get('aerated.quantity')?.value?.toString() || '',
+      aeratedDuration: this.formData.get('aerated.duration')?.value?.toString() || '',
 
       coffeeIntake: this.intakeStates['coffee'],
-      coffeeFrequency: this.formData.get('coffee.frequency')?.value || '',
-      coffeeQuantity: this.formData.get('coffee.quantity')?.value || '',
-      coffeeDuration: this.formData.get('coffee.duration')?.value || '',
+      coffeeFrequency: this.formData.get('coffee.frequency')?.value?.toString() || '',
+      coffeeQuantity: this.formData.get('coffee.quantity')?.value?.toString() || '',
+      coffeeDuration: this.formData.get('coffee.duration')?.value?.toString() || '',
 
       teaIntake: this.intakeStates['tea'],
-      teaFrequency: this.formData.get('tea.frequency')?.value || '',
-      teaQuantity: this.formData.get('tea.quantity')?.value || '',
-      teaDuration: this.formData.get('tea.duration')?.value || '',
+      teaFrequency: this.formData.get('tea.frequency')?.value?.toString() || '',
+      teaQuantity: this.formData.get('tea.quantity')?.value?.toString() || '',
+      teaDuration: this.formData.get('tea.duration')?.value?.toString() || '',
 
       spicyIntake: this.intakeStates['spicy'],
-      spicyFrequency: this.formData.get('spicy.frequency')?.value || '',
-      spicyQuantity: this.formData.get('spicy.quantity')?.value || '',
-      spicyDuration: this.formData.get('spicy.duration')?.value || '',
+      spicyFrequency: this.formData.get('spicy.frequency')?.value?.toString() || '',
+      spicyQuantity: this.formData.get('spicy.quantity')?.value?.toString() || '',
+      spicyDuration: this.formData.get('spicy.duration')?.value?.toString() || '',
 
       alcoholIntake: this.intakeStates['alcohol'],
-      alcoholFrequency: this.formData.get('alcohol.frequency')?.value || '',
-      alcoholQuantity: this.formData.get('alcohol.quantity')?.value || '',
-      alcoholDuration: this.formData.get('alcohol.duration')?.value || '',
+      alcoholFrequency: this.formData.get('alcohol.frequency')?.value?.toString() || '',
+      alcoholQuantity: this.formData.get('alcohol.quantity')?.value?.toString() || '',
+      alcoholDuration: this.formData.get('alcohol.duration')?.value?.toString() || '',
 
       sweetsIntake: this.intakeStates['sweets'],
-      sweetsFrequency: this.formData.get('sweets.frequency')?.value || '',
-      sweetsQuantity: this.formData.get('sweets.quantity')?.value || '',
-      sweetsDuration: this.formData.get('sweets.duration')?.value || '',
+      sweetsFrequency: this.formData.get('sweets.frequency')?.value?.toString() || '',
+      sweetsQuantity: this.formData.get('sweets.quantity')?.value?.toString() || '',
+      sweetsDuration: this.formData.get('sweets.duration')?.value?.toString() || '',
 
       smokingIntake: this.intakeStates['smoking'],
-      smokingFrequency: this.formData.get('smoking.frequency')?.value || '',
-      smokingQuantity: this.formData.get('smoking.quantity')?.value || '',
-      smokingDuration: this.formData.get('smoking.duration')?.value || '',
+      smokingFrequency: this.formData.get('smoking.frequency')?.value?.toString() || '',
+      smokingQuantity: this.formData.get('smoking.quantity')?.value?.toString() || '',
+      smokingDuration: this.formData.get('smoking.duration')?.value?.toString() || '',
 
       tobaccoIntake: this.intakeStates['tobacco'],
-      tobaccoFrequency: this.formData.get('tobacco.frequency')?.value || '',
-      tobaccoQuantity: this.formData.get('tobacco.quantity')?.value || '',
-      tobaccoDuration: this.formData.get('tobacco.duration')?.value || ''
+      tobaccoFrequency: this.formData.get('tobacco.frequency')?.value?.toString() || '',
+      tobaccoQuantity: this.formData.get('tobacco.quantity')?.value?.toString() || '',
+      tobaccoDuration: this.formData.get('tobacco.duration')?.value?.toString() || ''
     };
     
 
@@ -364,6 +364,17 @@ export class PersonalHistoryComponent {
       return;
     }
     } 
+  blockInvalidKeys(event: KeyboardEvent) {
+  if (['e', 'E', '+', '-','.'].includes(event.key)) {
+    event.preventDefault();
+  }
+}
+preventNegative(event: any) {
+ 
+  if (event.target.value < 0) {
+    event.target.value = 0; 
+  }
+}
 
    
   

@@ -61,9 +61,9 @@
             <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
                 <div class="card orange">Completed Cases</div>
                 <div class="value green" style="background-color: #326978">
-                    {{ completedList?.length ?? '0' }}
+                    {{ completeCount }}
                     <i class="fas fa-download excel-icon fa-lg" style="color: rgb(220, 165, 76);"
-                        (click)="downloadCompletedList()"></i>
+                        (click)="downloadCompleted2List()"></i>
                 </div>
             </div>
 
@@ -71,17 +71,20 @@
             <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
                 <div class="card orange">Incomplete Cases</div>
                 <div class="value green" style="background-color: #326978">
-                    {{inCompletedList?.length ?? '0'}}
+                    {{incompleteCount}}
                     <i class="fas fa-download excel-icon fa-lg" style="color: rgb(220, 165, 76);"
                         (click)="downloadInCompletedList()"></i>
                 </div>
             </div>
 
+
+            
             <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
                 <div class="card orange">Gender</div>
                 <div class="value green small" style="background-color: #326978">
                     M: {{dashboardStats.gender.male}}<br />
-                    F: {{dashboardStats.gender.female }}
+                    F: {{dashboardStats.gender.female }}<br/>
+                    O : {{dashboardStats.gender.other }}
                     <i class="fas fa-download excel-icon fa-lg" (click)="downloadGenderExcel()"
                         style="color: rgb(220, 165, 76);"></i>
                 </div>

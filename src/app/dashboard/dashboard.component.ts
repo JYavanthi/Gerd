@@ -15,7 +15,7 @@ import { StageService } from '../Services/StageService.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-    @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
+  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
   caseSub!: Subscription;
   tableData: any[] = [];
   doctorlist: any[] = [];
@@ -33,18 +33,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   userData: any;
   patient: any;
   stage: number = 0;
-   patientId: number = 0;
+  patientId: number = 0;
   totalCases = 0;
   completedCases = 0;
   incompleteCases = 0;
   pendingCases = 0;
   maleCount = 0;
   femaleCount = 0;
+  otherCount = 0;
   baseline: any;
   followup1: any;
   followup2: any;
   doctorId: any = '';
-  pieChartLabels: string[] = ['Completed', 'Incomplete', 'Pending'];
+  pieChartLabels: string[] = ['Completed', 'Pending'];
   pieChartData: ChartData<'pie', number[], string> = {
     labels: this.pieChartLabels,
     datasets: [{ data: [], backgroundColor: ['#76e4f7', '#4ab0c4', '#ef476f'] }]
@@ -89,7 +90,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.caseSub = this.http.httpGet('/PatientReg/GetPatient').subscribe((response: any) => {
       if (response?.data && Array.isArray(response.data)) {
         this.tableData = response.data.filter((patient: any) =>
-          parseInt(patient.doctorId) === parseInt(this.doctorId)
+          String(patient.doctorId).trim() === String(this.doctorId).trim()
         );
 
         // Sort by date descending
@@ -139,6 +140,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.incompleteCases = 0;  // adjust if needed
     this.maleCount = this.tableData.filter(r => r.gender?.toLowerCase() === 'male').length;
     this.femaleCount = this.tableData.filter(r => r.gender?.toLowerCase() === 'female').length;
+    this.otherCount = this.tableData.filter(r => r.gender?.toLowerCase() === 'other').length;
   }
 
   updatePagination() {
@@ -196,75 +198,62 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
 
-updatePieChart() {
-  this.pieChartData = {
-    labels: this.pieChartLabels,
-    datasets: [{
-      data: [this.completedCases, this.incompleteCases, this.pendingCases],
-      backgroundColor: ['#76e4f7', '#4ab0c4', '#ef476f']
-    }]
-  };
+  updatePieChart() {
+    this.pieChartData = {
+      labels: this.pieChartLabels,
+      datasets: [{
+        data: [this.completedCases,  this.pendingCases],
+        backgroundColor: ['#76e4f7', '#ef476f'], 
+      hoverBackgroundColor: ['#76e4f7', '#ef476f']
+      }]
+    };
 
-  // Optional: manually trigger chart update if you have @ViewChild
-  this.chart?.update();
-}
+    // Optional: manually trigger chart update if you have @ViewChild
+    this.chart?.update();
+  }
 
 
 
-updateBarChart() {
-  const currentYear = new Date().getFullYear();
-  const months = 12;
-  const completedCounts = Array(months).fill(0);
-  const pendingCounts = Array(months).fill(0);
-  const incompleteCounts = Array(months).fill(0);
+  updateBarChart() {
+    const months = 12;
+    const completedCounts = Array(months).fill(0);
+    const pendingCounts = Array(months).fill(0);
 
-  console.log('Current year:', currentYear);
+    this.tableData.forEach(row => {
+      if (!row.createdDt) return;
+      const date = new Date(row.createdDt);
+      if (isNaN(date.getTime())) return;
 
-  this.tableData.forEach(row => {
-    const date = new Date(row.date);
-    const status = row.status?.toLowerCase() || '';
-
-    console.log('Row date:', row.date, 'Parsed year:', date.getFullYear(), 'Status:', status);
-
-    if (!isNaN(date.getTime()) && date.getFullYear() === currentYear) {
       const month = date.getMonth();
+      const status = row.status?.toLowerCase() || '';
 
       if (status === 'completed') {
         completedCounts[month]++;
       } else if (status === 'pending') {
         pendingCounts[month]++;
-      } else if (status === 'incomplete') {
-        incompleteCounts[month]++;
       }
-    }
-  });
+    });
 
-  console.log('Monthly counts - Completed:', completedCounts);
-  console.log('Monthly counts - Pending:', pendingCounts);
-  console.log('Monthly counts - Incomplete:', incompleteCounts);
+    this.barChartData = {
+      labels: this.barChartLabels,
+      datasets: [
+        {
+          label: 'Completed',
+          data: completedCounts,
+          backgroundColor: '#76e4f7',
+          hoverBackgroundColor: '#76e4f7'
+        },
+        {
+          label: 'Pending',
+          data: pendingCounts,
+          backgroundColor: '#ef476f',
+          hoverBackgroundColor: '#ef476f'
+        }
+      ]
+    };
 
-  // Replace entire datasets array to ensure change detection
-  this.barChartData = {
-    labels: this.barChartLabels,
-    datasets: [
-      {
-        label: 'Completed',
-        data: completedCounts,
-        backgroundColor: '#76e4f7'
-      },
-      {
-        label: 'Pending',
-        data: pendingCounts,
-        backgroundColor: '#ef476f'
-      },
-      {
-        label: 'Incomplete',
-        data: incompleteCounts,
-        backgroundColor: '#4ab0c4'
-      }
-    ]
-  };
-}
+    this.chart?.update();
+  }
 
 
   handleStageClick(row: any, section: 'baseline' | 'followUp1' | 'followUp2') {
@@ -339,13 +328,13 @@ updateBarChart() {
       });
     }
   }
-  navigateToAddCase(){
+  navigateToAddCase() {
     //this.router.navigate(['/demographic/']);
-    this.router.navigate([`/demographic/${this.patientId}/${this.stage}`]) 
+    this.router.navigate([`/demographic/${this.patientId}/${this.stage}`])
   }
 
-downloadAllStages(patientID: any) {
-  this.router.navigate([`/case-stage-view/${patientID}`]);
-}
+  downloadAllStages(patientID: any) {
+    this.router.navigate([`/case-stage-view/${patientID}`]);
+  }
 
 }

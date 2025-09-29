@@ -1,4 +1,3 @@
-
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { PatientService } from '../Services/patient.service';
@@ -15,6 +14,7 @@ import { HttpserviceService } from '../httpservice.service';
 import { FormvalidationService } from '../formvalidation.service';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { count } from 'console';
 
 
 @Component({
@@ -32,7 +32,7 @@ export class AdminDashboardComponent {
     patients: 0,
     completedCases: 0,
     incompleteCases: 0,
-    gender: { male: 0, female: 0 },
+    gender: { male: 0, female: 0,other: 0 },
     baselineCases: 0,
     followup1Cases: 0,
     followup2Cases: 0
@@ -40,7 +40,7 @@ export class AdminDashboardComponent {
   patients: any;
   incompleteCases: any[] = [];
   doctors: any[] = [];
-  gender!: { male: number; female: number };
+  gender!: { male: number; female: number; other: number };
   caseIdsToDownload = [];
   private baseUrl = API_URLS.BASE_URL;
   baslineReportList: any
@@ -50,6 +50,8 @@ export class AdminDashboardComponent {
   inCompletedList: any;
   completedFollowUp2List: any;
   doctorsReportList:any;
+  incompleteCount: any;
+  completeCount:any;
 
   constructor(
     private httpClient: HttpClient,
@@ -123,62 +125,25 @@ this.downloadDoctorReportExcel()
     );
   }
 
-  // idu all doctor's data downloading
-  // downloadDoctorsExcel() {
-  //   this.patientService.getAllDoctorData().subscribe(
-  //     (res: any) => {
-  //       if (res.data && res.data.length > 0) {
-  //         this.doctors = res.data;
-  //         this.excelExportService.exportAsExcelFile(this.doctors, "All_Doctors_Data");
-  //       }
-  //       else {
-  //         alert("No Doctor's Data Found. ");
-  //       }
-  //     },
-  //     (error: any) => {
-  //       console.log("Error in Fetching Doctor Data", error);
-  //       alert("Failed to fetch doctor data.");
-  //     }
-  //   )
-  // }
-
-
-  //   getDoctorCount() {
-  //   this.patientService.getAllDoctorData().subscribe(
-  //     (res: any) => {
-  //       if (res.data && res.data.length > 0) {
-  //         this.doctors = res.data;
-  //         this.dashboardStats.doctors = res.data.length;
-  //       } else {
-  //         this.dashboardStats.doctors = 0;
-  //       }
-  //     },
-  //     (error: any) => {
-  //       console.error("Error in fetching doctor data", error);
-  //       this.dashboardStats.doctors = 0;
-  //     }
-  //   );
-  // }
-
-
-
-  // idu gender's data downloading
   downloadGenderExcel(): void {
     this.patientService.getAllPatientData().subscribe(
       (res: any) => {
         const patients = res.data || [];
         let male = 0;
         let female = 0;
+        let other= 0;
 
         patients.forEach((patient: any) => {
           const gender = patient.gender?.toLowerCase();
           if (gender === 'male' || gender === 'm') male++;
           else if (gender === 'female' || gender === 'f') female++;
+          else if (gender === 'other' || gender === 'f') other++;
         });
 
         const data = [
           { Gender: 'Male', Count: male },
-          { Gender: 'Female', Count: female }
+          { Gender: 'Female', Count: female },
+          {Gender: 'other',count:other},
         ];
 
         this.excelExportService.exportAsExcelFile(data, 'Gender_Counts');
@@ -190,22 +155,24 @@ this.downloadDoctorReportExcel()
     );
   }
 
-  // idu gender's data count part
   getGenderCount(): void {
     this.patientService.getAllPatientData().subscribe(
       (res: any) => {
         const patients = res.data || [];
         let male = 0;
         let female = 0;
+        let other = 0;
 
         patients.forEach((patient: any) => {
           const gender = patient.gender?.toLowerCase();
           if (gender === 'male' || gender === 'm') male++;
           else if (gender === 'female' || gender === 'f') female++;
+           else if (gender === 'other' || gender === 'f') other++;
         });
 
         this.dashboardStats.gender.male = male;
         this.dashboardStats.gender.female = female;
+        this.dashboardStats.gender.other = other;
       },
       (error: any) => {
         console.error('Error fetching gender counts:', error);
@@ -213,10 +180,7 @@ this.downloadDoctorReportExcel()
     );
   }
 
-  // idu doctors's data count part
 
-
-  // idu patient's data count part
   getPatientCount() {
     this.patientService.getAllPatientData().subscribe(
       (res: any) => {
@@ -267,9 +231,19 @@ this.downloadDoctorReportExcel()
     saveAs(blob, 'baslineReportList.xlsx');
   }
 
+
 downloadDoctorReportExcel(): void {
   this.http.httpGet('/DoctorReport/DownloadDoctorReport').subscribe((res: any) => {
-    this.doctorsReportList = res; // store JSON
+    if (Array.isArray(res) && res.length > 0) {
+      this.doctorsReportList = res.map((doctor: any) => {
+        // remove unwanted fields
+        const { password, createdDt, createdBy, modifiedDt, modifiedBy, ...rest } = doctor;
+        return rest;  // make sure to return!
+      });
+    } else {
+      this.doctorsReportList = [];
+      alert('No doctor data found.');
+    }
   });
 }
 
@@ -336,108 +310,51 @@ downLoadDoctor() {
   }
 
 
-  downloadCompletedList() {
+  inCompletedReportExcel(): void {
+  this.http.httpGet('/InCompletedReport/GetInCompletedReportDataCount').subscribe((res: any) => {
+     this.incompleteCount=res;
+    }
+    );
+  }
+
+ downloadInCompletedList(): void {
+    this.http.httpGet('/InCompletedReport/GetInCompletedReportData').subscribe((res: any) => {
+    this.inCompletedList = res
+    const worksheet = XLSX.utils.json_to_sheet(this.inCompletedList);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'IncompletedReport.xlsx');
+
+      }
+   );
+  }
+
+    completedReportExcel(): void {
+    this.http.httpGet('/CompletedReport/GetCompletedReportDataCount').subscribe((res: any) => {
+      this.completeCount = res
+    }
+    );
+  }
+  
+downloadCompleted2List(): void {
+    this.http.httpGet('/CompletedReport/GetCompletedReportData').subscribe((res: any) => {
+    this.completedList = res
     const worksheet = XLSX.utils.json_to_sheet(this.completedList);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
 
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(blob, 'CompletedRPT.xlsx');
-  }
-
-
-  downloadInCompletedList() {
-    this.inCompletedList = JSON.parse(this.inCompletedList); 
-    const worksheet = XLSX.utils.json_to_sheet(this.inCompletedList);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(blob, 'InCompletedRPT.xlsx');
-  }
-
-  inCompletedReportExcel(): void {
-    this.http.httpGet('/InCompletedReport/GetInCompletedReportData').subscribe((res: any) => {
-      this.inCompletedList = res
-    });
-  }
-
-
-  downloadCompleted2List() {
-    const worksheet = XLSX.utils.json_to_sheet(this.inCompletedList);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(blob, 'CompletedRPT.xlsx');
-  }
-  completedReportExcel(): void {
-    this.http.httpGet('/CompletedReport/GetCompletedReportData').subscribe((res: any) => {
-      this.completedList = res
-    }
-    );
-  }
-
-  // downloadCompletedCasesReport(): void {
-  //   this.https.get<number>(`${this.baseUrl}/Comple           tedReport/DownloadCompletedReport`).subscribe({
-  //     next: (count) => {
-  //       this.dashboardStats.completedCases = count;
-  //       alert(count);
-  //     },
-  //     error: (err) => {
-  //       console.error('Failed to load baseline count', err);
-  //     }
-  //   });
-  // }
-  // downloadCompletedCasesReport(): void {
-  //   this.reportService.downloadCompletedCasesReportExcel().subscribe(
-  //     (res: Blob) => {
-
-
-  //       const url = window.URL.createObjectURL(res);
-  //       const a = document.createElement('a');
-  //       a.href = url;
-  //       a.download = 'Full_Completed_Report.xlsx'; // match backend filename
-  //       a.click();
-  //       window.URL.revokeObjectURL(url);
-  //     },
-  //     (error: any) => {
-  //       console.error('Failed to download completed report', error);
-  //       alert('Failed to download completed report.');
-  //     }
-  //   );
-  // }
-
-  downloadInCompleteReport(): void {
-    const apiUrl = `${this.baseUrl}/InCompletedReport/DownloadInCompletedReport`;
-
-    this.https.get(apiUrl, { responseType: 'blob' }).subscribe(
-
-      (response: Blob) => {
-        if (!response || response.size === 0) {
-          console.error('❌ The Excel file is empty or invalid.');
-          alert('Failed to download the report. The file is empty or corrupted.');
-          return;
-        }
-
-        const url = window.URL.createObjectURL(response);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'InCompleted_Report.xlsx';
-        a.click();
-        window.URL.revokeObjectURL(url);
-      },
-      (error) => {
-        console.error('❌ Download failed', error);
-        alert('Failed to download InCompleted Report');
+    saveAs(blob, 'CompletedReport.xlsx');
       }
 
     );
 
   }
+  
   downloadFollowUp2Report(): void {
     const apiUrl = `${this.baseUrl}/FollowUp2Report/DownloadFollowUp1Report`;
     this.https.get(apiUrl, { responseType: "blob" }).subscribe(

@@ -68,7 +68,8 @@ border: none;
 }
 
 .form-select:focus~.form-label,
-.form-select:valid~.form-label {
+/* .form-select:valid~.form-label  */
+.form-select:not(:placeholder-shown)~.form-label{
   top: -14px;
   font-size: 12px;
   color: #027082;
@@ -226,7 +227,5 @@ h2 {
     flex-direction: column;
     gap: 10px;
   }
-
-
 
 }

@@ -1,4 +1,4 @@
-.stepper {
+/* .stepper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,4 +27,74 @@
 
 .step.completed {
   background-color: green;
+} */
+
+.stepper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.step {
+  position: relative;
+  padding: 10px 30px;
+  background-color: gray;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  margin-right: -20px;
+  clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%, 10% 50%);
+  z-index: 1;
+  overflow: hidden; /* make sure shine stays inside shape */
+}
+
+.step:last-child {
+  margin-right: 0;
+}
+
+.step.in-progress {
+  background-color: blue;
+}
+
+.step.completed {
+  background-color: green;
+}
+
+/* ✨ Shine effect for each step */
+.step::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-20deg);
+  animation: shine 1s ease-in-out forwards;
+}
+
+/* stagger delays for baseline → fu1 → fu2 */
+.step:nth-child(1)::after {
+  animation-delay: 0s;
+}
+.step:nth-child(2)::after {
+  animation-delay: 0.5s;
+}
+.step:nth-child(3)::after {
+  animation-delay: 1s;
+}
+
+@keyframes shine {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
 }

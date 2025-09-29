@@ -35,7 +35,7 @@ export class MedicalExaminationComponent implements OnInit {
     private formValidation: FormvalidationService,
     private patientService: PatientService,
     private medicalExaminationService: medicalExaminationService,
-     public route: ActivatedRoute,
+    public route: ActivatedRoute,
   ) {
     this.medicalExaminationForm = this.fb.group({
       Flag: [''],
@@ -71,21 +71,21 @@ export class MedicalExaminationComponent implements OnInit {
 
 
   ngOnInit(): void {
-     this.patientId = Number(this.route.snapshot.params['patientId']);
-    this.stage = Number(this.route.snapshot.params['stage'])||0;
-    this.doctorId=this.patientService.getDoctorId();
+    this.patientId = Number(this.route.snapshot.params['patientId']);
+    this.stage = Number(this.route.snapshot.params['stage']) || 0;
+    this.doctorId = this.patientService.getDoctorId();
 
-   const allowedWithoutSave = [1, 3, 5];
-  if (allowedWithoutSave.includes(this.stage)) {
-    this.isSaved = true;
-  }
+    const allowedWithoutSave = [1, 3, 5];
+    if (allowedWithoutSave.includes(this.stage)) {
+      this.isSaved = true;
+    }
     const currentUrl = this.router.url;
-    
 
-    this.isViewMode =this.isViewMode ?? false;
+
+    this.isViewMode = this.isViewMode ?? false;
     this.fetchMedicalExaminationData(this.patientId);
 
-    
+
     this.medicalExaminationForm.get('PE_Height')?.valueChanges.subscribe(() => this.calculateBMI());
     this.medicalExaminationForm.get('PE_Weight')?.valueChanges.subscribe(() => this.calculateBMI());
 
@@ -109,9 +109,14 @@ export class MedicalExaminationComponent implements OnInit {
                 PE_Weight: d.peWeight ?? '',
                 PE_BMI: d.peBmi ?? '',
 
-                SE_GANormal: d.seGanormal === '1' ? 'normal' : d.seGanormal === '0' ? '' : null,
-                SE_GAAbNormalCS: d.seGaabNormalCs === '1' ? 'cs' : d.seGaabNormalCs === '0' ? '' : null,
-                SE_GAAbNormalNCS: d.seGaabNormalNcs === '1' ? 'ncs' : d.seGaabNormalNcs === '0' ? '' : null,
+                // SE_GANormal: d.seGanormal === '1' ? 'normal' : d.seGanormal === '0' ? '' : null,
+                // SE_GAAbNormalCS: d.seGaabNormalCs === '1' ? 'cs' : d.seGaabNormalCs === '0' ? '' : null,
+                // SE_GAAbNormalNCS: d.seGaabNormalNcs === '1' ? 'ncs' : d.seGaabNormalNcs === '0' ? '' : null,
+                // PE_BMSE_GAAbNormalRemarkI5: d.seGaabNormalRemark ?? '',
+
+                SE_GANormal: d.seGanormal === '1' ? 'normal' : '',
+                SE_GAAbNormalCS: d.seGaabNormalCs === '1' ? 'cs' : '',
+                SE_GAAbNormalNCS: d.seGaabNormalNcs === '1' ? 'ncs' : '',
                 PE_BMSE_GAAbNormalRemarkI5: d.seGaabNormalRemark ?? '',
 
                 PAE_Findings: d.paeFindings ?? '',
@@ -128,12 +133,24 @@ export class MedicalExaminationComponent implements OnInit {
 
                 CreatedBy: this.doctorId
               });
+
+
+            if (d.seGaabNormalCs === '1') {
+              this.medicalExaminationForm.get('PE_BMSE_GAAbNormalRemarkI5')?.enable();
+            }
+            if (d.seRsabNormalCs === '1') {
+              this.medicalExaminationForm.get('SE_RSAbNormalRemark')?.enable();
+            }
+            if (d.othersAbNormalCs === '1') {
+              this.medicalExaminationForm.get('OthersAbNormalRemark')?.enable();
+            }
+
             // if (this.isViewMode) {
             //   this.medicalExaminationForm.disable();
             // }
 
             //console.log('✅ Medical Examination data patched:', this.medicalExaminationForm.value);
-          
+
           } else {
             console.warn('⚠️ No Medical Examination data found.');
           }
@@ -142,6 +159,8 @@ export class MedicalExaminationComponent implements OnInit {
           console.error('❌ Error fetching Medical Examination data:', err);
         }
       });
+
+
   }
   onGAChange(value: string): void {
     this.medicalExaminationForm.patchValue({
@@ -191,13 +210,177 @@ export class MedicalExaminationComponent implements OnInit {
     }
   }
 
+
+  validatefields(): boolean {
+    const form = this.medicalExaminationForm;
+
+    const height = form.get('PE_Height')?.value;
+    if (!height || height <= 0) {
+      alert('Enter valid Height');
+      return false;
+    }
+
+    const weight = form.get('PE_Weight')?.value;
+    if (!weight || weight <= 0) {
+      alert('Enter valid Weight');
+      return false;
+    }
+
+
+    
+    const bmi = form.get('PE_BMI')?.value;
+    if (!bmi || bmi <= 0) {
+      alert('BMI is invalid. Check height and weight.');
+      return false;
+    }
+
+
+    const gaNormal = form.get('SE_GANormal')?.value;
+    const gaCS = form.get('SE_GAAbNormalCS')?.value;
+    const gaNCS = form.get('SE_GAAbNormalNCS')?.value;
+    if (!gaNormal && !gaCS && !gaNCS) {
+      alert('Select General Appearance (GA) status');
+      return false;
+    }
+
+    const barrettsRemarks = form.get('PE_BMSE_GAAbNormalRemarkI5')?.value;
+    if (gaCS && (!barrettsRemarks || barrettsRemarks.trim() === '')) {
+      alert('Enter Barrett’s remark');
+      return false;
+    }
+
+
+    const rsNormal = form.get('SE_RSNormal')?.value;
+    const rsCS = form.get('SE_RSAbNormal_CS')?.value;
+    const rsNCS = form.get('SE_RSAbNormal_NCS')?.value;
+    if (!rsNormal && !rsCS && !rsNCS) {
+      alert('Select Respiratory status');
+      return false;
+    }
+
+    const rsRemark = form.get('SE_RSAbNormalRemark')?.value;
+    if (rsCS && (!rsRemark || rsRemark.trim() === '')) {
+      alert('Enter Respiratory remark');
+      return false;
+    }
+
+    const othersNormal = form.get('OthersNormal')?.value;
+    const othersCS = form.get('OthersAbNormal_CS')?.value;
+    const othersNCS = form.get('OthersAbNormal_NCS')?.value;
+    if (!othersNormal && !othersCS && !othersNCS) {
+      alert('Select Others status');
+      return false;
+    }
+
+    const othersRemark = form.get('OthersAbNormalRemark')?.value;
+    if (othersCS && (!othersRemark || othersRemark.trim() === '')) {
+      alert('Enter Others remark');
+      return false;
+    }
+
+
+    const paeFindings = form.get('PAE_Findings')?.value;
+    if (!paeFindings || paeFindings.trim() === '') {
+      alert('Enter PAE Findings');
+      return false;
+    }
+
+    return true;
+  }
+
+
+  // Submit(): void {
+  //   if (!this.validatefields()) return;
+
+  //   if (!this.formValidation.validateForm(this.medicalExaminationForm)) {
+  //     alert('Enter all required values');
+  //     this.medicalExaminationForm.markAllAsTouched();
+  //     return;
+  //   }
+
+  //   const formValue = this.medicalExaminationForm.value;
+
+  //   const medicalExaminationPayload = {
+  //     Meid: !!formValue.MEID ? parseInt(formValue.MEID, 10) : null,
+  //     Flag: !!formValue.MEID ? 'U' : 'I',
+  //     DoctorId: this.doctorId,
+  //     PatientId: this.patientId,
+  //     Stage: this.stage,
+
+  //     pE_Height: formValue.PE_Height !== '' ? formValue.PE_Height : null,
+  //     pE_Weight: formValue.PE_Weight !== '' ? formValue.PE_Weight : null,
+  //     pE_BMI: this.bmi != null ? this.bmi.toString() : null,
+
+  //     sE_GANormal: formValue.SE_GANormal === 'normal',
+  //     sE_GAAbNormalCS: formValue.SE_GAAbNormalCS === 'cs',
+  //     sE_GAAbNormalNCS: formValue.SE_GAAbNormalNCS === 'ncs',
+  //     pE_BMSE_GAAbNormalRemarkI5: formValue.PE_BMSE_GAAbNormalRemarkI5,
+
+  //     sE_RSNormal: formValue.SE_RSNormal === 'normal',
+  //     sE_RSAbNormal_CS: formValue.SE_RSAbNormal_CS === 'cs',
+  //     sE_RSAbNormal_NCS: formValue.SE_RSAbNormal_NCS === 'ncs',
+  //     sE_RSAbNormalRemark: formValue.SE_RSAbNormalRemark,
+
+  //     othersNormal: formValue.OthersNormal === 'normal',
+  //     othersAbNormal_CS: formValue.OthersAbNormal_CS === 'cs',
+  //     othersAbNormal_NCS: formValue.OthersAbNormal_NCS === 'ncs',
+  //     othersAbNormalRemark: formValue.OthersAbNormalRemark,
+
+  //     paE_Findings: formValue.PAE_Findings,
+
+  //     CreatedBy: this.doctorId
+  //   };
+
+  //   const payload = { ...medicalExaminationPayload, Stage: this.stage };
+
+  //   console.log('Payload being sent:', JSON.stringify(payload, null, 2));
+
+  //   this.http.httpPost('/MedicalExamination/SaveMedicalExamination', payload).subscribe({
+  //     next: (res: any) => {
+  //       if (res?.type === 'S') {
+  //         this.isSaved = true;
+  //         alert('Saved Successfully');
+  //       } else {
+  //         this.formValidation.showAlert('Error!!', 'danger');
+  //       }
+  //     },
+  //     error: err => {
+  //       console.error('Submit error: ', err);
+  //       this.formValidation.showAlert('Error!!', 'danger');
+  //     }
+  //   });
+  // }
+
+
   Submit(): void {
+
+         if (!this.validatefields()) return;
+
     if (!this.formValidation.validateForm(this.medicalExaminationForm)) {
       this.medicalExaminationForm.markAllAsTouched();
       return;
     }
 
     const formValue = this.medicalExaminationForm.value;
+
+
+    const height = formValue.PE_Height;
+    const weight = formValue.PE_Weight;
+
+    if (height && weight && height > 0 && weight > 0) {
+      const bmi = weight / ((height / 100) ** 2);
+      this.bmi = parseFloat(bmi.toFixed(2));
+
+      if (this.bmi < 13) {
+        alert('BMI is below 13 → mild thinest. Please check height and weight.');
+        return;
+      }
+      if (this.bmi > 40) {
+        alert('BMI is above 40 →  Morbidly Obese. Please check height and weight.');
+        return;
+      }
+    }
+
     const medicalExaminationPayload = {
       Meid: !!formValue.MEID ? parseInt(formValue.MEID, 10) : null,
       Flag: !!formValue.MEID ? 'U' : 'I',
@@ -242,15 +425,20 @@ export class MedicalExaminationComponent implements OnInit {
           this.isSaved = true;
           alert('Saved Successfully');
         } else {
-          this.formValidation.showAlert('Error!!', 'danger');
+          alert('Error in saving assessment');
         }
       },
       error: err => {
         console.error('Submit error: ', err);
-        this.formValidation.showAlert('Error!!', 'danger');
+        alert('Error in saving assessment');
       }
     });
   }
+
+
+
+
+
 
   calculateBMI() {
     const height = this.medicalExaminationForm.get('PE_Height')?.value;
@@ -269,6 +457,8 @@ export class MedicalExaminationComponent implements OnInit {
       });
     }
   }
+
+
 
   canProceed(): boolean {
     const form = this.medicalExaminationForm;
@@ -302,7 +492,7 @@ export class MedicalExaminationComponent implements OnInit {
     } else {
       this.router.navigate([`/assessment/${this.patientId}/${this.stage}`], {
         state: {
-          fromNavigation: true ,
+          fromNavigation: true,
           tabId: this.tabId,
           patientId: this.patientId,
           stage: this.stage,
@@ -314,7 +504,7 @@ export class MedicalExaminationComponent implements OnInit {
   OnNext() {
     this.router.navigate([`/assessment/${this.patientId}/${this.stage}`], {
       state: {
-         fromNavigation: true ,
+        fromNavigation: true,
         tabId: this.tabId,
         patientId: this.patientId,
         stage: this.stage,
@@ -332,7 +522,7 @@ export class MedicalExaminationComponent implements OnInit {
       }
     });
   }
-back(){
+  back() {
     this.router.navigate([`/current-medicaton/${this.patientId}/${this.stage}`], {
       state: {
         tabId: this.tabId,
@@ -342,7 +532,7 @@ back(){
       }
     });
   }
-  
+
   getStatusClass(step: number): string {
     if (this.stage === 0 && step === 1) return 'baseline-blue';
 
@@ -357,7 +547,24 @@ back(){
     return 'inactive-tab';
   }
 
+
+  blockInvalidKeys(event: KeyboardEvent) {
+    if (['e', 'E', '+', '-',].includes(event.key)) {
+      event.preventDefault();
+    }
+
+  }
+  preventNegative(event: any) {
+
+    if (event.target.value < 0) {
+      event.target.value = 0; // reset to 0 if negative
+    }
+  }
+
 }
+
+
+
 
 
 

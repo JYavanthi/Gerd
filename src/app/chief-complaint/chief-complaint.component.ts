@@ -41,7 +41,7 @@ export class ChiefComplaintComponent implements OnInit {
     this.chiefComplaintForm = this.fb.group({
       heartburnDuration: [null, Validators.required],
       heartburnFrequency: [null, Validators.required],
-      postural_heartburn: [null, Validators.required],
+      postural_heartburn: [null, Validators.required ],
       nocturnal_heartburn: [null, Validators.required],
 
       regurgitationDuration: [null, Validators.required],
@@ -69,7 +69,7 @@ export class ChiefComplaintComponent implements OnInit {
     this.stage = Number(this.route.snapshot.params['stage'] || 0);
     this.doctorId = this.patientService.getDoctorId();
     if (this.stage===2) {this.cctext='Data seen here is as per  information keyed  in baseline. To be edited as per the current complaint'}
-    else if(this.stage===4){this.cctext='data seen here is as per  information keyed  in follow-up1. To be edited as per the current complaint'}
+    else if(this.stage===4){this.cctext='Data seen here is as per  information keyed  in follow-up1. To be edited as per the current complaint'}
     else{this.cctext='' }
 
     const allowedWithoutSave = [1, 3, 5];
@@ -79,16 +79,14 @@ export class ChiefComplaintComponent implements OnInit {
 
     if (this.patientId !== 0)
       this.fetchChiefComplaintData(this.patientId);
-
   }
 
-
+  
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && this.data) {
-      this.patchForm(this.data);
+        this.patchForm(this.data);
     }
-  }
-
+}
   private patchForm(data: any): void {
     this.chiefComplaintForm.patchValue({
       heartburnDuration: data.hbDuration,
@@ -112,14 +110,15 @@ export class ChiefComplaintComponent implements OnInit {
 
   stageval: number = 0;
   cctext: string = '';
+  setStage: number=0;
   fetchChiefComplaintData(patientId: number): void {
-
+  if (this.setStage===1) return;
 
     this.chiefComplaintService.getChiefComplaintByPatientId(patientId, this.stage).subscribe({
       next: (res: any) => {
         if (this.stage === 2 || this.stage === 4) this.stageval = this.stage;
         if (res.type === 'S' && res.data) {
-          this.isSaved = true;
+         // this.isSaved = false;
           const data = res.data;
           // console.log('✅ Chief Complaint data:', data);
           this.stage = data.stage;
@@ -147,7 +146,8 @@ export class ChiefComplaintComponent implements OnInit {
           if (this.stageval === 2) this.stage = 1
           if (this.stageval === 4) this.stage = 3
           // console.log('this.stageval', this.stageval, this.stage)
-          this.fetchChiefComplaintData(this.patientId);
+          this.fetchChiefComplaintData(Number(this.patientId));
+          this.setStage=1;
           setTimeout(() => {
 
             this.stage = this.stageval;
@@ -162,6 +162,21 @@ export class ChiefComplaintComponent implements OnInit {
     });
   }
 
+  blockInvalidKeys(event: KeyboardEvent) {
+  if (['e', 'E', '+', '-','.'].includes(event.key)) {
+    event.preventDefault();
+  }
+  
+}
+
+
+preventNegative(event: any) {
+ 
+  if (event.target.value < 0) {
+    event.target.value = 0; // reset to 0 if negative
+  }
+}
+
   onCodeFocus(): void {
     this.showCodeMessage = true;
   }
@@ -174,12 +189,7 @@ export class ChiefComplaintComponent implements OnInit {
       return;
     }
 
-    // if (this.chiefComplaintForm.invalid) {
-    //   this.chiefComplaintForm.markAllAsTouched();
-    //   this.formValidation.showAlert('Please fill all required fields', 'danger');
-    //   return;
-    // }
-
+    
 
     if (this.patientId === null) {
       this.formValidation.showAlert('Patient ID is missing', 'danger');
@@ -224,7 +234,6 @@ export class ChiefComplaintComponent implements OnInit {
       (res: any) => {
         if (res.type === 'S') {
           this.isSaved = true;
-        
           this.formValidation.showAlert('Chief complaint saved successfully', 'success');
               alert('Saved Successfully');
 
@@ -236,19 +245,19 @@ export class ChiefComplaintComponent implements OnInit {
 
             // } else {
             //   this.formValidation.showAlert('Unable to fetch Patient ID after save', 'danger');
-            //   alert('⚠️ Unable to fetch Patient ID after save');
+            //   alert(' Unable to fetch Patient ID after save');
             // }
           //});
         } else {
           const errorMsg = `Error: ${res.message || 'Unknown error'}`;
           this.formValidation.showAlert(errorMsg, 'danger');
-          alert(`❌ ${errorMsg}`);
+          alert(` ${errorMsg}`);
         }
       },
       error => {
         console.error('Error saving chief complaint:', error);
         this.formValidation.showAlert('Error saving chief complaint', 'danger');
-        alert('❌ Error saving chief complaint');
+        alert(' Error saving chief complaint');
       }
     );
   }
@@ -316,5 +325,5 @@ export class ChiefComplaintComponent implements OnInit {
 
     return 'inactive-tab';
   }
-
+  
 }
