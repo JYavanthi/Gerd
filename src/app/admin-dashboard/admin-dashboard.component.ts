@@ -440,4 +440,8 @@ downloadCompleted2List(): void {
     goTocontactUs(){
     this.router.navigate(['/contact-us']);
   }
+
+  goTofilterchart(){
+    this.router.navigate(['/filterchartComponent']);
+  }
 }

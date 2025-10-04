@@ -28,7 +28,11 @@ export class HttpserviceService {
   httpPost(endpoint: string, param: any): Observable<any[]> {
     return this.http.post<any[]>(`${this.apiUrl}${endpoint}`, param, { headers: this.headers });
   }
+httpPostMail(url: string, data: any, options?: any): Observable<any> {
+  return this.http.post(this.baseUrl + url, data, options);
+}
 
+  
 
   httpPostFileUPload(endpoint: string, fData: any, param: HttpParams): Observable<any[]> {
     let params = new HttpParams()

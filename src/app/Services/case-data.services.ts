@@ -40,7 +40,10 @@ export interface Case {
   baselineClass?: string;
   followUp1Class?: string;
   followUp2Class?: string;
-  patientName?: string;  
+  patientName?: string;
+  createdDt: Date;
+  state?: string;
+  city?: string;
 
   // 👇 Add this to allow indexing by string
   [key: string]: any;
@@ -132,7 +135,7 @@ export class CaseDataService {
   }
 
   getCaseById(id: number): Case | undefined {
-    console.log('this.caseList',this.caseList)
+    console.log('this.caseList', this.caseList)
     return this.caseList.find((c: Case) => c.patientId === id);
   }
 

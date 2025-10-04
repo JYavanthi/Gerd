@@ -62,6 +62,8 @@ export const API_URLS = {
 
   WEATHER_FORECAST: '/WeatherForecast',
 
+  COMPLETEDRPT:'/CompletedReport/GetCompletedReportData',
+
   GET_CURRENT_STAGE: '/Management/GetCurrentStage',
   PATIENT_REG_GET: '/PatientReg/GetPatient',
 

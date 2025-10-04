@@ -29,6 +29,8 @@ import { CoMorbiditiesReportComponent } from './co-morbidities-report/co-morbidi
 import { CaseStageViewComponent } from './case-stage-view/case-stage-view.component';
 import { DoctorListComponent } from './doctor-list/doctor-list.component';
 import { StageProgressComponent } from './stage-progress/stage-progress.component';
+import { FilterchartComponent } from './filterchart/filterchart.component';
+
 
 
 const routes: Routes = [
@@ -50,8 +52,8 @@ const routes: Routes = [
   { path: 'family-history', component: FamilyHistoryComponent },
   { path: 'history-endoscopy', component: HistoryEndoscopyComponent },
   { path: 'current-medicaton', component: CurrentMedicationsComponent },
-    { path: 'current-medicaton/:patientId/:stage', component: CurrentMedicationsComponent },
-  // { path: 'medical-examination', component: MedicalExaminationComponent },
+  { path: 'current-medicaton/:patientId/:stage', component: CurrentMedicationsComponent },
+  { path: 'filterchartComponent', component: FilterchartComponent },
 
   { path: 'medical-examination/:patientId/:stage', component: MedicalExaminationComponent },
 

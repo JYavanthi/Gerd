@@ -26,21 +26,22 @@ export class GenderReportComponent implements OnInit {
   zones: string[] = [];
   // states: number[] = [];
   // cities: number[] = [];
-  
+
   selectedZone = '';
   selectedState = 0;
   selectedCity = 0;
 
-  genderChartLabels = ['Male', 'Female'];
+  genderChartLabels = ['Male', 'Female', 'Other'];
   genderChartData = {
     labels: this.genderChartLabels,
     datasets: [
       {
-        data: [0, 0],
-        backgroundColor: ['#36A2EB', '#FFCE56'],
+        data: [0, 0, 0], // Include "Other"
+        backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384'], // Add color for Other
       },
     ],
   };
+
 
   genderChartOptions: ChartOptions<'pie'> = {
     responsive: true,
@@ -76,7 +77,7 @@ export class GenderReportComponent implements OnInit {
               const percentage = total ? ((value / total) * 100).toFixed(1) : 0;
 
               return {
-                text: `${label} (${value})`,  // <-- Only percentage number here
+                text: `${label} (${value})`,  // shows Male/Female/Other count
                 fillStyle: (dataset.backgroundColor as string[])[index],
                 strokeStyle: (dataset.backgroundColor as string[])[index],
                 index,
@@ -106,18 +107,18 @@ export class GenderReportComponent implements OnInit {
     private formValidation: FormvalidationService,
   ) { }
 
-ngOnInit(): void {
-  this.genderService.getGenderReport().subscribe(res => {
-    if (res.success && res.data) {
-      this.rawData = res.data;
-      this.filteredData = [...this.rawData];
-      this.extractFilterOptions();
-      this.updateChartData(this.filteredData);
-      this.chart?.update(); // <-- Ensure chart updates after setting data
-      this.loadStates();
-    }
-  });
-}
+  ngOnInit(): void {
+    this.genderService.getGenderReport().subscribe(res => {
+      if (res.success && res.data) {
+        this.rawData = res.data;
+        this.filteredData = [...this.rawData];
+        this.extractFilterOptions();
+        this.updateChartData(this.filteredData);
+        this.chart?.update(); // <-- Ensure chart updates after setting data
+        this.loadStates();
+      }
+    });
+  }
 
   extractFilterOptions() {
     this.zones = [...new Set(this.rawData.map(x => x.zone))];
@@ -125,26 +126,28 @@ ngOnInit(): void {
     this.cities = [...new Set(this.rawData.map(x => x.city))];
   }
 
- updateChartData(data: any[]) {
-  const maleCount = data.filter(x => x.gender?.toLowerCase() === 'male').length;
-  const femaleCount = data.filter(x => x.gender?.toLowerCase() === 'female').length;
-  this.genderChartData.datasets[0].data = [maleCount, femaleCount];
-  this.chart?.update();  // <-- Add this here
-}
+  updateChartData(data: any[]) {
+    const maleCount = data.filter(x => x.gender?.toLowerCase() === 'male').length;
+    const femaleCount = data.filter(x => x.gender?.toLowerCase() === 'female').length;
+    const otherCount = data.filter(x => x.gender?.toLowerCase() === 'other').length;
+
+    this.genderChartData.datasets[0].data = [maleCount, femaleCount, otherCount];
+    this.chart?.update();  // Refresh the chart
+  }
 
   filterAllIndia() {
-  this.filteredData = [...this.rawData];
+    this.filteredData = [...this.rawData];
 
-  this.selectedZone = '';
-  this.selectedState = 0;
-  this.selectedCity = 0;
+    this.selectedZone = '';
+    this.selectedState = 0;
+    this.selectedCity = 0;
 
-  this.states = [...this.allStates];  // Reset full list of states
-  this.cities = [...this.allCities];  // Reset full list of cities
+    this.states = [...this.allStates];  // Reset full list of states
+    this.cities = [...this.allCities];  // Reset full list of cities
 
-  this.updateChartData(this.filteredData);
-  this.chart?.update(); // refresh chart
-}
+    this.updateChartData(this.filteredData);
+    this.chart?.update(); // refresh chart
+  }
 
 
   filterByZone(zone: string) {
@@ -266,7 +269,7 @@ ngOnInit(): void {
     this.updateChartData(this.filteredData);
     this.chart?.update();
   }
-login(){
+  login() {
     this.router.navigate(['/login']);
   }
 
@@ -276,10 +279,10 @@ login(){
   goTotreatmentReport() {
     this.router.navigate(['/treatmentReport']);
   }
-   goDoctorlist(){  
+  goDoctorlist() {
     this.router.navigate(['/doctor-list']);
   }
-   goTocontactUs(){
-      this.router.navigate(['/contact-us']);
-    }
+  goTocontactUs() {
+    this.router.navigate(['/contact-us']);
+  }
 }

@@ -1,38 +1,38 @@
 <div class="admin-dashboard-container">
-  <aside class="sidebar">
-    <button class="nav-btn">Dashboard</button>
-         <button class="nav-btn" (click)="goDoctorlist()">View Doctors</button>
-     <button class="nav-btn" (click)="goTocontactUs()">Contact Us</button>
-    <button class="nav-btn" >Reports</button>
+    <aside class="sidebar">
+        <button class="nav-btn">Dashboard</button>
+        <button class="nav-btn" (click)="goDoctorlist()">View Doctors</button>
+        <button class="nav-btn" (click)=" goTofilterchart()">Filter Chart</button>
+        <button class="nav-btn" (click)="goTocontactUs()">Contact Us</button>
+        <button class="nav-btn">Reports</button>
+        <div class="report-group">
+            <button class="nav-btn report-btn" (click)="goReport()">
+                Gender Distribution <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <button class="nav-btn report-btn" (click)="goToCoMorbiditiesReport()">
+                Co-morbidities <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <button class="nav-btn report-btn treatment" (click)="goTotreatmentReport()">
+                Treatment Distribution <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
 
-   <div class="report-group">
-    <button class="nav-btn report-btn" (click)="goReport()">
-        Gender Distribution <i class="fa-solid fa-chevron-right"></i>
-    </button>
-    <button class="nav-btn report-btn" (click)="goToCoMorbiditiesReport()">
-        Co-morbidities <i class="fa-solid fa-chevron-right"></i>
-    </button>
-    <button class="nav-btn report-btn treatment" (click)="goTotreatmentReport()">
-        Treatment Distribution <i class="fa-solid fa-chevron-right"></i>
-    </button>
-</div>
 
-   
-    <button class="logoutbtn" (click)="login()">Logout</button>
-</aside>
+        <button class="logoutbtn" (click)="login()">Logout</button>
+    </aside>
 
 
     <main class="main-content">
         <div class="filter-bar">
             <label for="">Start Date <input type="date" placeholder="Start Date" /></label>
             <label for="">End Date <input type="date" placeholder="End Date" /></label>
-          
-      <button class="btn">Filter Report</button>
+
+            <button class="btn" >Filter Report</button>
 
             <button class="btn">Download</button>
             <button class="btn">Reset Filter</button>
             <button class="btn">Go Back</button>
-          
+
         </div>
 
         <div class="dashboard-header">ADMIN DASHBOARD</div>
@@ -43,7 +43,7 @@
                 <div class="value green" style="background-color: #326978">
                     {{ doctorsReportList?.length ?? '0'}}
 
-            
+
                     <i class="fas fa-download excel-icon fa-lg " (click)="downLoadDoctor()" aria-hidden="true"
                         style="color: rgb(220, 165, 76);"></i>
                 </div>
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            
+
             <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
                 <div class="card orange">Incomplete Cases</div>
                 <div class="value green" style="background-color: #326978">
@@ -78,12 +78,12 @@
             </div>
 
 
-            
+
             <div class="card-row" style="background-color:rgba(85, 182, 246, 0.365)">
                 <div class="card orange">Gender</div>
                 <div class="value green small" style="background-color: #326978">
                     M: {{dashboardStats.gender.male}}<br />
-                    F: {{dashboardStats.gender.female }}<br/>
+                    F: {{dashboardStats.gender.female }}<br />
                     O : {{dashboardStats.gender.other }}
                     <i class="fas fa-download excel-icon fa-lg" (click)="downloadGenderExcel()"
                         style="color: rgb(220, 165, 76);"></i>

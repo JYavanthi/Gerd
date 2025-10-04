@@ -14,15 +14,15 @@ import { PatientService } from '../Services/patient.service';
 })
 export class ManagamentComponent {
   @Input() patientId: number | null | undefined = null
-// @Input() patientId: number | null = null;
+  // @Input() patientId: number | null = null;
   @Input() doctorId: number | null = null;
   isViewMode = false;
   isFollowUp: boolean = false;
   showConfirmation: boolean = false;
   tabId = 1;
   @Input() stage: number = 0;
-  @Input() data: any;  
-    @Input() isPrintMode: boolean = false;
+  @Input() data: any;
+  @Input() isPrintMode: boolean = false;
   isSaved: boolean = false;
 
   currentStage: any;
@@ -47,65 +47,55 @@ export class ManagamentComponent {
     if (state) {
       this.newStage = state['stage']
     }
-this.route.queryParams.subscribe((params: Params) => {
-  if (!this.patientId) {
-    this.patientId = this.patientService.getPatientId();
+    this.route.queryParams.subscribe((params: Params) => {
+      if (!this.patientId) {
+        this.patientId = this.patientService.getPatientId();
+      }
+
+      this.stage = Number(this.route.snapshot.params['stage']);
+      this.doctorId = this.userData?.doctorId;
+
+      console.log("👉 PatientId resolved:", this.patientId);
+    });
   }
 
-  this.stage = Number(this.route.snapshot.params['stage']);
-  this.doctorId = this.userData?.doctorId;
 
-  console.log("👉 PatientId resolved:", this.patientId);
-});
-  }
-
-
- ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges) {
     if (changes['data'] && this.data) {
       this.patchManagement(this.data);
     }
   }
-private patchManagement(data: any) {
-  if (!data) return;
+  private patchManagement(data: any) {
+    if (!data) return;
 
-  // Lifestyle (bitmask → checkboxes)
-  const bitmask = data.lifestyleRecommendations ?? 0;
-  this.updateLifestyleFromBitmask(bitmask);
+    // Lifestyle (bitmask → checkboxes)
+    const bitmask = data.lifestyleRecommendations ?? 0;
+    this.updateLifestyleFromBitmask(bitmask);
 
-  // Drug Therapy
-  this.drugTherapy[0] = { class: 'PPI', name: data.ppiMedicationName, dose: data.ppiDose, frequency: data.ppiFrequency };
-  this.drugTherapy[1] = { class: 'Combination of PPI + Prokinetics', name: data.prokineticsMedicationName, dose: data.prokineticsDose, frequency: data.prokineticsFrequency };
-  this.drugTherapy[2] = { class: 'Sucralfate', name: data.sucralfateMedicationName, dose: data.sucralfateDose, frequency: data.sucralfateFrequency };
-  this.drugTherapy[3] = { class: 'Alginate', name: data.alginateMedicationName, dose: data.alginateDose, frequency: data.alginateFrequency };
-  this.drugTherapy[4] = { class: 'H₂ Blockers', name: data.h2blockersMedicationName, dose: data.h2blockersDose, frequency: data.h2blockersFrequency };
-  this.drugTherapy[5] = { class: 'H₂ Blockers combinations', name: data.h2blockersCMedicationName, dose: data.h2blockersCDose, frequency: data.h2blockersCFrequency };
-  this.drugTherapy[6] = { class: 'PCAB', name: data.pcabMedicationName, dose: data.pcabDose, frequency: data.pcabFrequency };
-  this.drugTherapy[7] = { class: 'Any others', name: data.othersMedicationName, dose: data.othersDose, frequency: data.othersFrequency };
+    // Drug Therapy
+    this.drugTherapy[0] = { class: 'PPI', name: data.ppiMedicationName, dose: data.ppiDose, frequency: data.ppiFrequency };
+    this.drugTherapy[1] = { class: 'Combination of PPI + Prokinetics', name: data.prokineticsMedicationName, dose: data.prokineticsDose, frequency: data.prokineticsFrequency };
+    this.drugTherapy[2] = { class: 'Sucralfate', name: data.sucralfateMedicationName, dose: data.sucralfateDose, frequency: data.sucralfateFrequency };
+    this.drugTherapy[3] = { class: 'Alginate', name: data.alginateMedicationName, dose: data.alginateDose, frequency: data.alginateFrequency };
+    this.drugTherapy[4] = { class: 'H₂ Blockers', name: data.h2blockersMedicationName, dose: data.h2blockersDose, frequency: data.h2blockersFrequency };
+    this.drugTherapy[5] = { class: 'H₂ Blockers combinations', name: data.h2blockersCMedicationName, dose: data.h2blockersCDose, frequency: data.h2blockersCFrequency };
+    this.drugTherapy[6] = { class: 'PCAB', name: data.pcabMedicationName, dose: data.pcabDose, frequency: data.pcabFrequency };
+    this.drugTherapy[7] = { class: 'Any others', name: data.othersMedicationName, dose: data.othersDose, frequency: data.othersFrequency };
 
-  console.log("✅ Patched Management data", this.drugTherapy, this.lifestyle);
-}
-
-ngOnInit(): void {
-  const navState = history.state;
-
-  this.patientId =
-      navState?.patientId
-      || Number(this.route.snapshot.params['patientId'])
-      || Number(this.route.snapshot.queryParams['patientId'])
-      || null;
-
-  this.doctorId = this.userData?.doctorId;
-  this.stage = Number(this.route.snapshot.params['stage'] || 0);
-
-  console.log("👉 Final resolved PatientId:", this.patientId, "Stage:", this.stage);
-
-  if (this.patientId) {
-    this.getManagementDataById(this.patientId, this.stage);
-    this.patientService.setPatientId(this.patientId); // 🔹 sync to service
-  } else {
-    console.error('❌ No patientId found to fetch management data!');
+    console.log("✅ Patched Management data", this.drugTherapy, this.lifestyle);
   }
-}
+
+  ngOnInit(): void {
+    this.patientId = Number(this.route.snapshot.params['patientId']);
+    this.stage = Number(this.route.snapshot.params['stage'] || 0);
+    this.doctorId = this.patientService.getDoctorId();
+
+    console.log("👉 Final resolved PatientId:", this.patientId, "Stage:", this.stage);
+
+    if (this.patientId) {
+      this.getManagementDataById(this.patientId, this.stage);
+    } 
+  }
   lifestyleItems = [
     'Diet modification',
     'Moderation of alcohol',
@@ -126,13 +116,13 @@ ngOnInit(): void {
   ];
 
   popup() {
-     if (this.getLifestyleBitmask()===0){
-      alert ('Select atleast one Life Sytle Recomendation');
+    if (this.getLifestyleBitmask() === 0) {
+      alert('Select atleast one Life Sytle Recomendation');
       return;
     }
     this.verifyMed();
-    if(!this.valflag){
-      alert ('Enter atleast one Drug Therapy Advise');
+    if (!this.valflag) {
+      alert('Enter atleast one Drug Therapy Advise');
       return;
     }
     this.showConfirmation = true;
@@ -178,43 +168,45 @@ ngOnInit(): void {
     }
   }
 
-  valflag: boolean=false;
-  verifyMed(){
+  valflag: boolean = false;
+  verifyMed() {
     for (let i = 0; i <= 7; i++) {
-    const drug = this.drugTherapy[i];
-    
-    if (drug) {
-      // if any field is filled, then require all three
-      if (
-        (drug.name && drug.name.trim() !== '') &&
-        (drug.dose && drug.dose.trim() !== '') &&
-        (drug.frequency && drug.frequency.trim() !== '')
-      ) {
-        this.valflag=true;
-      return;}}
-      else{
-        this.valflag=false;
+      const drug = this.drugTherapy[i];
+
+      if (drug) {
+        // if any field is filled, then require all three
+        if (
+          (drug.name && drug.name.trim() !== '') &&
+          (drug.dose && drug.dose.trim() !== '') &&
+          (drug.frequency && drug.frequency.trim() !== '')
+        ) {
+          this.valflag = true;
+          return;
+        }
       }
-      
+      else {
+        this.valflag = false;
       }
-    
+
+    }
+
   }
 
   ptnstage: number = 0;
   Submit() {
-    const patientId = this.patientService.getPatientId();
-    
+    // const patientId = this.patientService.getPatientId();
+
     if (this.stage === 1) this.ptnstage = 2;
     else if (this.stage === 3) this.ptnstage = 4;
     else if (this.stage === 0) this.ptnstage = 0;
     else this.ptnstage = this.stage;
-    
-   
+
+
 
     const param = {
       stage: this.ptnstage,
       flag: 'I',
-      PatientID: this.patientId || this.patientService.getPatientId(), 
+      PatientID: this.patientId,
       lifestyleRecommendations: this.getLifestyleBitmask(),
       createdBy: this.doctorId,
       PPI_Medication_Name: this.drugTherapy[0].name,
@@ -261,15 +253,15 @@ ngOnInit(): void {
     });
   }
   stageUpdate() {
-    const PatientID = this.patientService.getPatientId();
+    // const PatientID = this.patientService.getPatientId();
     if (this.stage === 1) this.ptnstage = 2;
     else if (this.stage === 3) this.ptnstage = 4;
     else if (this.stage === 0) this.ptnstage = 0;
     else this.ptnstage = this.stage;
 
     const completeCasePayload = {
-     // patientId: PatientID,
-       patientId: this.patientId, 
+      // patientId: PatientID,
+      patientId: this.patientId,
       stage: this.ptnstage ? this.stage : 0,
       createdby: this.userData?.doctorId
     };
@@ -317,7 +309,7 @@ ngOnInit(): void {
     return value;
   }
 
-  
+
   cancelSave() {
     this.showConfirmation = false;
     this.Submit();
@@ -326,8 +318,8 @@ ngOnInit(): void {
 
   confirmSave() {
 
-     if (this.getLifestyleBitmask()===0){
-      alert ('Enter Life Sytle Recomendation');
+    if (this.getLifestyleBitmask() === 0) {
+      alert('Enter Life Sytle Recomendation');
       return;
     }
     this.showConfirmation = false;
@@ -348,7 +340,7 @@ ngOnInit(): void {
   //         isViewMode: this.isViewMode,
   //         fromNavigation: true
 
-          
+
   //       }
   //     });
   //   } else {
@@ -364,36 +356,36 @@ ngOnInit(): void {
   //   }
   // }
 
-  goback(){
-  const patientId = this.patientId || this.patientService.getPatientId();
+  goback() {
+    const patientId = this.patientId || this.patientService.getPatientId();
 
-  if (!patientId) {
-    console.error("❌ No patientId found when navigating back!");
-    return;
-  }
+    if (!patientId) {
+      console.error("❌ No patientId found when navigating back!");
+      return;
+    }
 
-  if (this.stage > 1) {
-    this.router.navigate([`/assessment/${patientId}/${this.stage}`], {
-      state: {
-        tabId: this.tabId,
-        patientId: patientId,
-        stage: this.stage,
-        isViewMode: this.isViewMode,
-        fromNavigation: true
-      }
-    });
-  } else {
-    this.router.navigate([`/diagnosis/${patientId}/${this.stage}`], {
-      state: {
-        tabId: this.tabId,
-        patientId: patientId,
-        stage: this.stage,
-        isViewMode: this.isViewMode,
-        fromNavigation: true
-      }
-    });
+    if (this.stage > 1) {
+      this.router.navigate([`/assessment/${patientId}/${this.stage}`], {
+        state: {
+          tabId: this.tabId,
+          patientId: patientId,
+          stage: this.stage,
+          isViewMode: this.isViewMode,
+          fromNavigation: true
+        }
+      });
+    } else {
+      this.router.navigate([`/diagnosis/${patientId}/${this.stage}`], {
+        state: {
+          tabId: this.tabId,
+          patientId: patientId,
+          stage: this.stage,
+          isViewMode: this.isViewMode,
+          fromNavigation: true
+        }
+      });
+    }
   }
-}
 
 
   getStatusClass(step: number): string {
@@ -410,25 +402,25 @@ ngOnInit(): void {
     return 'inactive-tab';
   }
 
-    blockInvalidKeys(event: KeyboardEvent) {
+  blockInvalidKeys(event: KeyboardEvent) {
     if ([, 'E', '+'].includes(event.key)) {
       event.preventDefault();
     }
   }
-  
-     preventNegative(event: any) {
- 
-  if (event.target.value < 0) {
-    event.target.value = 0; // reset to 0 if negative
+
+  preventNegative(event: any) {
+
+    if (event.target.value < 0) {
+      event.target.value = 0; // reset to 0 if negative
+    }
   }
-}
   allowOnlyText(event: KeyboardEvent) {
-  const pattern = /[a-zA-Z ]/;
-  const inputChar = String.fromCharCode(event.charCode);
-  if (!pattern.test(inputChar)) {
-    event.preventDefault();
+    const pattern = /[a-zA-Z ]/;
+    const inputChar = String.fromCharCode(event.charCode);
+    if (!pattern.test(inputChar)) {
+      event.preventDefault();
+    }
   }
-}
 }
 
 

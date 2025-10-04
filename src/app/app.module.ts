@@ -49,6 +49,7 @@ import { Managament3Component } from './followUpTwo/management3/management3.comp
 import { CaseStageViewComponent } from './case-stage-view/case-stage-view.component';
 import { DoctorListComponent } from './doctor-list/doctor-list.component';
 import { StageProgressComponent } from './stage-progress/stage-progress.component';
+import { FilterchartComponent } from './filterchart/filterchart.component';
 
 
 @NgModule({
@@ -97,6 +98,7 @@ import { StageProgressComponent } from './stage-progress/stage-progress.componen
     CaseStageViewComponent,
    DoctorListComponent,
    StageProgressComponent,
+   FilterchartComponent,
    
   ],
 

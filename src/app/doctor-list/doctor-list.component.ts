@@ -1,20 +1,50 @@
-
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DoctorService } from '../Services/doctor.service';
 import { CaseDataService, Case } from '../Services/case-data.services';
 import { HttpserviceService } from '../httpservice.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-doctor-list',
-  templateUrl: './doctor-list.component.html'
+  templateUrl: './doctor-list.component.html',
+  styleUrls: ['./doctor-list.component.scss']
+
 })
 export class DoctorListComponent implements OnInit {
   doctorList: any[] = [];
-  patientId!: number;
-  stage!: number;
-  stateMap: { [key: number]: string } = {};
-  cityMap: { [key: number]: string } = {};
+  filteredDoctors: any[] = [];
+  displayedDoctors: any[] = [];
+  displayedStates: string[] = [];
+  displayedStages: any[] = [];
+
+  selectedDoctorIds: string[] = [];
+  selectedStates: string[] = [];
+  selectedStages: string[] = [];
+
+  doctorSearch: string = '';
+  stateSearch: string = '';
+  stageSearch: string = '';
+
+  showDoctorDropdown: boolean = false;
+  showStateDropdown: boolean = false;
+  showStageDropdown: boolean = false;
+  stageOptions = [
+    { label: 'Baseline', value: 'baseline' },
+    { label: 'FollowUp One', value: 'followUpOne' },
+    { label: 'FollowUp Two', value: 'followUpTwo' },
+  ];
+
+  expandedDoctorId: string | null = null;
+  expandedStage: string | null = null;
+  stagePatients: Case[] = [];
+
+  dueDaysforFollowUpOne?: number;
+  dueDaysforFollowUpTwo?: number;
+
+
+
+
   constructor(
     private doctorService: DoctorService,
     private caseDataService: CaseDataService,
@@ -23,76 +53,141 @@ export class DoctorListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
-    // this.doctorService.getAllDoctorslist().subscribe({
-    //   next: (response: any) => {
-    //     if (Array.isArray(response.data)) {
-    //       // ✅ Assign doctor list first
-    //       this.doctorList = response.data.map((doctor: any) => ({
-    //         ...doctor,
-    //         baseline: 0,
-    //         followUpOne: 0,
-    //         followUpTwo: 0
-    //       }));
-
-    //       // ✅ Now subscribe to patient cases
-    //       this.caseDataService.getCases().subscribe((cases: Case[]) => {
-    //         this.doctorList.forEach((doctor: any) => {
-    //           const patientsForDoctor = cases.filter(p => p.doctorId === doctor.doctorId);
-
-    //           doctor.baseline = patientsForDoctor.filter(p => p.stage === 0).length;
-    //           doctor.followUpOne = patientsForDoctor.filter(p => p.stage === 1).length;
-    //           doctor.followUpTwo = patientsForDoctor.filter(p => p.stage === 3).length;
-    //         });
-    //       });
-
-    //     } else {
-    //       this.doctorList = [];
-    //     }
-    //   },
-    //   error: (error) => {
-    //     console.error(error);
-    //   }
-    // });
-
-    this.doctorService.getAllDoctorslist().subscribe({
-      next: (response: any) => {
-        let doctors: any[] = [];
-
-        if (Array.isArray(response.data)) {
-          doctors = response.data;
-        } else if (Array.isArray(response)) {
-          doctors = response; // 👈 your API looks like this
-        }
-
-        if (doctors.length > 0) {
-          this.doctorList = doctors.map((doctor: any) => ({
-            ...doctor,
-            baseline: 0,
-            followUpOne: 0,
-            followUpTwo: 0
-          }));
-
-          this.caseDataService.getCases().subscribe((cases: Case[]) => {
-            this.doctorList.forEach((doctor: any) => {
-              const patientsForDoctor = cases.filter(p => p.doctorId === doctor.doctorId);
-
-              doctor.baseline = patientsForDoctor.filter(p => p.stage === 0).length;
-              doctor.followUpOne = patientsForDoctor.filter(p => p.stage === 2).length;
-              doctor.followUpTwo = patientsForDoctor.filter(p => p.stage === 4).length;
-            });
-          });
-        } else {
-          this.doctorList = [];
-        }
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-
+    this.displayedStages = [...this.stageOptions];
+    this.loadDoctors();
   }
 
+  loadDoctors() {
+    this.doctorService.getAllDoctorslist().subscribe({
+      next: (response: any) => {
+        let doctors: any[] = Array.isArray(response.data) ? response.data : response;
+        doctors.sort((a, b) => a.name.localeCompare(b.name));
+
+        this.doctorList = doctors.map(d => ({
+          ...d,
+          baseline: 0,
+          followUpOne: 0,
+          followUpTwo: 0
+        }));
+
+        this.displayedDoctors = [...this.doctorList];
+        this.displayedStates = Array.from(new Set(this.doctorList.map(d => d.state))).sort();
+
+        this.caseDataService.getCases().subscribe(cases => {
+          const today = this.toDateOnly(new Date());
+          const msInDay = 1000 * 60 * 60 * 24;
+
+          this.doctorList.forEach(d => {
+            const patients = cases.filter(p => p.doctorId === d.doctorId);
+
+            // Baseline: stage 0, no due check
+            const baselinePatients = patients.filter(p => p.stage === 0);
+
+            // Follow-up 1: stage 1 and due
+            const followUpOnePatients = patients.filter(p => {
+              if (p.stage !== 1) return false;
+              const fu1 = new Date(p.createdDt);
+              fu1.setDate(fu1.getDate() + 30);
+              return fu1 <= today;
+            });
+
+            // Follow-up 2: stage 3 and due
+            const followUpTwoPatients = patients.filter(p => {
+              if (p.stage !== 3) return false;
+              const fu2 = new Date(p.createdDt);
+              fu2.setDate(fu2.getDate() + 90);
+              return fu2 <= today;
+            });
+
+            d.baseline = baselinePatients.length;
+            d.followUpOne = followUpOnePatients.length;
+            d.followUpTwo = followUpTwoPatients.length;
+          });
+
+          this.filteredDoctors = [...this.doctorList];
+        });
+
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  // Search filters
+  filterDoctorList() {
+    const search = this.doctorSearch.toLowerCase();
+    this.displayedDoctors = this.doctorList.filter(d => d.name.toLowerCase().includes(search));
+  }
+
+  filterStateList() {
+    const search = this.stateSearch.toLowerCase();
+    this.displayedStates = Array.from(new Set(
+      this.doctorList.map(d => d.state).filter(s => s.toLowerCase().includes(search))
+    )).sort();
+  }
+
+  filterStageList() {
+    const search = this.stageSearch.toLowerCase();
+    this.displayedStages = this.stageOptions.filter(stage =>
+      stage.label.toLowerCase().includes(search)
+    );
+  }
+
+  // Checkbox handlers
+  onDoctorChange(event: any, doctorId: string) {
+    if (event.target.checked) this.selectedDoctorIds.push(doctorId);
+    else this.selectedDoctorIds = this.selectedDoctorIds.filter(id => id !== doctorId);
+    this.applyFilters();
+  }
+
+  onStateChange(event: any, state: string) {
+    if (event.target.checked) this.selectedStates.push(state);
+    else this.selectedStates = this.selectedStates.filter(s => s !== state);
+    this.applyFilters();
+  }
+
+  onStageChange(event: any, stageValue: string) {
+    if (event.target.checked) this.selectedStages.push(stageValue);
+    else this.selectedStages = this.selectedStages.filter(s => s !== stageValue);
+    this.applyFilters();
+  }
+
+  // Apply filters to table
+  applyFilters() {
+    this.filteredDoctors = this.doctorList.filter(d => {
+      const matchDoctor = this.selectedDoctorIds.length === 0 || this.selectedDoctorIds.includes(d.doctorId);
+      const matchState = this.selectedStates.length === 0 || this.selectedStates.includes(d.state);
+      const matchStage = this.selectedStages.length === 0 || this.selectedStages.some(stage => d[stage] && d[stage] > 0);
+      return matchDoctor && matchState && matchStage;
+    });
+  }
+
+  // Select All / Toggle
+  allDoctorsSelected(): boolean {
+    return this.selectedDoctorIds.length === this.displayedDoctors.length;
+  }
+
+  toggleSelectAllDoctors(event: any) {
+    this.selectedDoctorIds = event.target.checked ? this.displayedDoctors.map(d => d.doctorId) : [];
+    this.applyFilters();
+  }
+
+  allStatesSelected(): boolean {
+    return this.selectedStates.length === this.displayedStates.length;
+  }
+
+  toggleSelectAllStates(event: any) {
+    this.selectedStates = event.target.checked ? [...this.displayedStates] : [];
+    this.applyFilters();
+  }
+
+  allStagesSelected(): boolean {
+    return this.selectedStages.length === this.displayedStages.length;
+  }
+
+  toggleSelectAllStages(event: any) {
+    this.selectedStages = event.target.checked ? this.displayedStages.map(s => s.value) : [];
+    this.applyFilters();
+  }
 
   viewDoctor(doctor: any): void {
     this.router.navigate(['/doctor-details'], { state: { doctor } });
@@ -100,64 +195,280 @@ export class DoctorListComponent implements OnInit {
 
 
 
-  sendTestEmail(doctor: any) {
+
+
+
+sendTestEmail(doctor: any) {
+  this.caseDataService.getCases().subscribe((cases: Case[]) => {
+    const patientsForDoctor = cases.filter(p => p.doctorId === doctor.doctorId);
+
+    if (!patientsForDoctor.length) {
+      console.warn(`❌ No patients found for Doctor ${doctor.name}`);
+      return;
+    }
+
+    const today = this.toDateOnly(new Date());
+    const msInDay = 1000 * 60 * 60 * 24;
+
+    // Filter only patients whose follow-up is due
+    const duePatients = patientsForDoctor.filter(patient => {
+      const created = this.toDateOnly(patient.createdDt);
+
+      if (patient.stage === 1) { // Follow-up 1
+        const dueDate = new Date(created);
+        dueDate.setDate(dueDate.getDate() + 30);
+        return today >= dueDate;
+      } else if (patient.stage === 3) { // Follow-up 2
+        const dueDate = new Date(created);
+        dueDate.setDate(dueDate.getDate() + 90);
+        return today >= dueDate;
+      }
+      return false;
+    });
+
+    if (!duePatients.length) {
+      console.warn(`❌ No follow-up patients due for Doctor ${doctor.name}`);
+      return;
+    }
+
+    // Collect all email observables
+    const emailObservables = duePatients.map(patient => {
+      const created = this.toDateOnly(patient.createdDt);
+      const stageText = patient.stage === 1 ? 'Follow-up1' : 'Follow-up2';
+      const dueDays = patient.stage === 1
+        ? Math.ceil((today.getTime() - (new Date(created).setDate(created.getDate() + 30))) / msInDay)
+        : Math.ceil((today.getTime() - (new Date(created).setDate(created.getDate() + 90))) / msInDay);
+
+      const payload = {
+        patientId: patient.patientId,
+        date: created.toISOString().split('T')[0],
+        stage: patient.stage,
+        email: doctor.email,
+        subject: `${stageText} Reminder`,
+        dueDays: dueDays,
+        body: `
+        <p>Dear Dr. ${doctor.name},</p>
+        <p>This is a reminder that patient <b>${patient.initial}</b> <b>${stageText}</b> is Overdue.</p>
+        <ul>
+          <li><b>Patient initial:</b> ${patient.initial}</li>
+          <li><b>Stage:</b> ${stageText}</li>
+          <li><b>Created Date:</b> ${created.toDateString()}</li>
+          <li><b>Overdue</b> ${dueDays} day(s)</li>
+        </ul>
+        <p>The first email will be sent immediately. Additional reminders are scheduled automatically.</p>
+        <br/>
+        <p>Best regards,<br/>Admin</p>
+      `
+      };
+
+      return this.http.httpPostMail('/Email', payload, { responseType: 'text' });
+    });
+
+    // Wait for all emails to finish before showing alert
+    if (emailObservables.length > 0) {
+      forkJoin(emailObservables).subscribe({
+        next: () => alert(`Follow-up email(s) sent successfully for Dr. ${doctor.name}!`),
+        error: (err) => alert(`Some email(s) failed to send for Dr. ${doctor.name}. Check console.`)
+      });
+    }
+  });
+}
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.dropdown-container')) {
+      this.showDoctorDropdown = false;
+      this.showStateDropdown = false;
+      this.showStageDropdown = false;
+    }
+  }
+
+
+
+  toggleStagePatients(doctor: any, stage: string) {
+    if (this.expandedDoctorId === doctor.doctorId && this.expandedStage === stage) {
+      this.expandedDoctorId = null;
+      this.expandedStage = null;
+      this.stagePatients = [];
+      return;
+    }
+
+    this.caseDataService.getCases().subscribe((cases: Case[]) => {
+      const today = this.toDateOnly(new Date());
+      const msInDay = 1000 * 60 * 60 * 24;
+
+      this.stagePatients = cases
+        .filter(p => p.doctorId === doctor.doctorId)
+        .filter(p => {
+          if (stage === 'baseline') return p.stage === 0;
+
+          if (stage === 'followUpOne' && p.stage === 1) {
+            const fu1 = new Date(p.createdDt);
+            fu1.setDate(fu1.getDate() + 30); // due date
+            return fu1 <= today; // only show if due
+          }
+
+          if (stage === 'followUpTwo' && p.stage === 3) {
+            const fu2 = new Date(p.createdDt);
+            fu2.setDate(fu2.getDate() + 90); // due date
+            return fu2 <= today; // only show if due
+          }
+
+          return false;
+        })
+        .map(patient => {
+          if (stage === 'followUpOne') {
+            const fu1 = new Date(patient.createdDt);
+            fu1.setDate(fu1.getDate() + 30);
+            return { ...patient, dueDaysforFollowUpOne: Math.ceil((today.getTime() - fu1.getTime()) / msInDay) };
+          }
+          if (stage === 'followUpTwo') {
+            const fu2 = new Date(patient.createdDt);
+            fu2.setDate(fu2.getDate() + 90);
+            return { ...patient, dueDaysforFollowUpTwo: Math.ceil((today.getTime() - fu2.getTime()) / msInDay) };
+          }
+          return { ...patient }; // baseline
+        });
+
+      this.expandedDoctorId = doctor.doctorId;
+      this.expandedStage = stage;
+    });
+  }
+
+
+  toDateOnly(date: any): Date {
+    const d = new Date(date);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate()); // strip time, keep valid date
+  }
+
+  onDoctorRowCheck(event: any, doctorId: string) {
+    if (event.target.checked) {
+      if (!this.selectedDoctorIds.includes(doctorId)) {
+        this.selectedDoctorIds.push(doctorId);
+      }
+    } else {
+      this.selectedDoctorIds = this.selectedDoctorIds.filter(id => id !== doctorId);
+    }
+  }
+  toggleSelectAllDoctorsTable(event: any) {
+    if (event.target.checked) {
+      this.selectedDoctorIds = this.filteredDoctors.map(d => d.doctorId);
+    } else {
+      this.selectedDoctorIds = [];
+    }
+  }
+
+  // Check if all displayed doctors are selected
+  allDoctorsSelectedTable(): boolean {
+    return this.filteredDoctors.length > 0 &&
+      this.filteredDoctors.every(d => this.selectedDoctorIds.includes(d.doctorId));
+  }
+
+
+sendNotificationToSelectedDoctors() {
+  if (this.selectedDoctorIds.length === 0) {
+    alert('Please select at least one doctor before sending notification!');
+    return;
+  }
+
+  const doctorsToNotify = this.doctorList.filter(d => this.selectedDoctorIds.includes(d.doctorId));
+  const today = this.toDateOnly(new Date());
+  const msInDay = 1000 * 60 * 60 * 24;
+  const emailObservables: any[] = [];
+
+  doctorsToNotify.forEach(doctor => {
     this.caseDataService.getCases().subscribe((cases: Case[]) => {
       const patientsForDoctor = cases.filter(p => p.doctorId === doctor.doctorId);
 
-      if (patientsForDoctor.length === 0) {
-        console.warn(`❌ No patients found for Doctor ${doctor.name}`);
-        return;
-      }
+      const duePatients = patientsForDoctor.filter(patient => {
+        const created = this.toDateOnly(patient.createdDt);
 
-      // ✅ Only follow-up patients
-      const followUpPatients = patientsForDoctor.filter(
-        p => p.stage === 1 || p.stage === 2 || p.stage === 3
-      );
+        if (patient.stage === 1) {
+          const dueDate = new Date(created);
+          dueDate.setDate(dueDate.getDate() + 30);
+          return today >= dueDate;
+        }
+        if (patient.stage === 3) {
+          const dueDate = new Date(created);
+          dueDate.setDate(dueDate.getDate() + 90);
+          return today >= dueDate;
+        }
+        return false;
+      });
+          // <p>This is a ${stageText} reminder for patient <b>${patient.initial}</b>.</p>
 
-      if (followUpPatients.length === 0) {
-        console.warn(`❌ No follow-up patients found for Doctor ${doctor.name}`);
-        return;
-      }
+      duePatients.forEach(patient => {
+        const created = this.toDateOnly(patient.createdDt);
+        let stageText = patient.stage === 1 ? 'Follow-up1' : 'Follow-up2';
+        let dueDays = patient.stage === 1
+          ? Math.ceil((today.getTime() - (new Date(created).setDate(created.getDate() + 30))) / msInDay)
+          : Math.ceil((today.getTime() - (new Date(created).setDate(created.getDate() + 90))) / msInDay);
 
-      // ✅ Call backend once per patient (backend does scheduling)
-      followUpPatients.forEach(patient => {
-        const stageText = patient.stage === 1 ? "Follow-up One" : "Follow-up Two";
-
-        console.log("patient.patientName");
         const payload = {
           patientId: patient.patientId,
-          date: patient.date,
+          date: created.toISOString().split('T')[0],
           stage: patient.stage,
           email: doctor.email,
-          subject: "Follow-up Reminder",
+          subject: `${stageText} Reminder`,
+          dueDays: dueDays,
           body: `
-          <p>Dear Dr. ${doctor.name},</p>
-          <p>This is a reminder that patient <b>${patient.initial}</b> is scheduled for <b>${stageText}</b>.</p>
-  <ul>
-            <li><b>Patient initial:</b> ${patient.initial}</li>
-            <li><b>Stage:</b> ${stageText}</li>
-            <li><b>Scheduled Date:</b> ${patient.date}</li>
-          </ul>
-          <p>The first email will be sent immediately. Additional reminders are scheduled automatically.</p>
-          <br/>
-          <p>Best regards,<br/>Admin</p>
-        `
+            <p>Dear Dr. ${doctor.name},</p>
+          <p>This is a reminder that patient <b>${patient.initial}</b> <b>${stageText}</b> is Overdue.</p>
+            <ul>
+              <li><b>Patient initial:</b> ${patient.initial}</li>
+              <li><b>Stage:</b> ${stageText}</li>
+              <li><b>Created Date:</b> ${created.toDateString()}</li>
+              <li><b>Overdue:</b> ${dueDays} day(s)</li>
+            </ul>
+            <p>This notification will be sent immediately.</p>
+          `
         };
 
-        console.log("📩 Sending payload to backend:", payload);
-
-        this.http.httpPost('/Email', payload).subscribe({
-          next: () => console.log(`✅ Email & schedule created for patient ${patient.patientId}`),
-          error: (err) => console.error(`❌ Failed for patient ${patient.patientId}`, err)
-        });
+        emailObservables.push(this.http.httpPostMail('/Email', payload, { responseType: 'text' }));
       });
+
+      // Only show alert once all emails for this doctor are done
+      if (emailObservables.length > 0) {
+        forkJoin(emailObservables).subscribe({
+          next: () => alert(' All notifications sent successfully!'),
+          error: (err) => alert(' Some emails failed to send. Check console for details.')
+        });
+      }
     });
-  }
-  getStateName(id: number): string {
-    return this.stateMap[id] || id.toString();
+  });
+}
+
+
+
+
+  login() {
+    this.router.navigate(['/login']);
   }
 
-  getCityName(id: number): string {
-    return this.cityMap[id] || id.toString();
+  goToCoMorbiditiesReport() {
+    this.router.navigate([`/CoMorbiditiesReport`]);
   }
+  goTotreatmentReport() {
+    this.router.navigate(['/treatmentReport']);
+  }
+  goDoctorlist() {
+    this.router.navigate(['/doctor-list']);
+  }
+
+  goTocontactUs() {
+    this.router.navigate(['/contact-us']);
+  }
+
+
+  goReport() {
+    this.router.navigate([`/genderReport`]);
+
+  }
+
+  goDashboard() {
+    this.router.navigate([`/admindashboard`]);
+  }
+
 }
+

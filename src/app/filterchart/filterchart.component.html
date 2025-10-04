@@ -1,0 +1,56 @@
+<div class="main-layout">
+  <aside class="sidebar">
+    <button class="nav-btn">Dashboard</button>
+    <button class="nav-btn" (click)="goDoctorlist()">View Doctors</button>
+    <button class="nav-btn">Filter Chart</button>
+    <button class="nav-btn" >Contact Us</button>
+    <button class="nav-btn">Reports</button>
+
+    <div class="report-group">
+      <button class="nav-btn report-btn" (click)="goReport()">Gender Distribution</button>
+      <button class="nav-btn report-btn" (click)="goToCoMorbiditiesReport()">Co-morbidities</button>
+      <button class="nav-btn report-btn treatment" (click)="goTotreatmentReport()">Treatment Distribution</button>
+    </div>
+    <button class="logoutbtn" (click)="login()">Logout</button>
+  </aside>
+
+  <main class="content">
+    <h1><b>Filter Chart</b></h1>
+
+    <div class="multi-dropdowns">
+      <!-- Main Dropdown -->
+      <div class="dropdown-wrapper">
+        <button class="dropdown-btn" (click)="toggleDropdown('main')">
+          {{ currentDropdownLabel }}
+          <span class="arrow">{{ openDropdowns['main'] ? '▲' : '▼' }}</span>
+        </button>
+
+        <ul *ngIf="openDropdowns['main']" class="dropdown-list">
+          <li *ngFor="let key of dropdownKeys" (click)="openNextLevel(key)">
+            {{ key }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="dropdown-wrapper" *ngIf="secondLevelKey">
+        <button class="dropdown-btn">{{ secondLevelKey }}</button>
+        <ul class="dropdown-list">
+          <li *ngFor="let item of dropdownData[secondLevelKey]" 
+              (click)="selectValue(secondLevelKey, item)">
+            {{ item }}
+          </li>
+        </ul>
+      </div>
+      
+      <div class="chart-fixed">
+      <canvas baseChart
+              [data]="pieChartData"
+              [options]="pieChartOptions"
+              [type]="pieChartType">
+      </canvas>
+    </div>
+    </div>
+
+      
+  </main>
+</div>
