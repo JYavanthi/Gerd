@@ -451,7 +451,7 @@ public partial class VwBaselineRpt
 
     public string? RefractoryToPpi { get; set; }
 
-    public bool? AdherenceToTherapy { get; set; }
+    public string? AdherenceToTherapy { get; set; }
 
     public string DietModifications { get; set; } = null!;
 
