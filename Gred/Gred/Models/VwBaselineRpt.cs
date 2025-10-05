@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace gred.Models;
@@ -441,15 +441,15 @@ public partial class VwBaselineRpt
 
     public string? BiopsyRemark { get; set; }
 
-    public bool? NewlyDiagnosed { get; set; }
+    public string? NewlyDiagnosed { get; set; }
 
-    public bool? KnownCaseOfGerd { get; set; }
+    public string? KnownCaseOfGerd { get; set; }
 
     public int? GredNoOfYear { get; set; }
 
     public string? Gerdtype { get; set; }
 
-    public bool? RefractoryToPpi { get; set; }
+    public string? RefractoryToPpi { get; set; }
 
     public bool? AdherenceToTherapy { get; set; }
 
