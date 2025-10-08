@@ -65,11 +65,8 @@
               <th>Gender</th>
               <th>DOB</th>
               <th>Baseline</th>
-              <th>BaseLineSubmitted</th>
               <th>FollowUp1</th>
-              <th>FollowUp1Submitted</th>
               <th>FollowUp2</th>
-              <th>FollowUp2Submitted</th>
               <th>Status</th>
               <th>Action</th>
               <!-- <th>View</th> -->
@@ -83,25 +80,15 @@
               <td>{{ row.gender }}</td>
               <td>{{ row.date | date : "dd-MM-yyyy"}}</td>
               <td [ngClass]="row.baselineClass" (click)="handleStageClick(row, 'baseline')">
-                {{ row.baseline }}
+                {{ row.baseline }} {{ row.blsubmitted | date : "dd-MM-yyyy"}}
               </td>
-              <td>{{ row.blsubmitted | date : "dd-MM-yyyy"}}</td>
               <td [ngClass]="row.followUp1Class" (click)="handleStageClick(row, 'followUp1')">
-                {{ row.followUp1 }}
+                {{ row.followUp1 }} {{ row.fu1submitted | date : "dd-MM-yyyy" }}
               </td>
-              <td>{{ row.fu1submitted | date : "dd-MM-yyyy" }}</td>
               <td [ngClass]="row.followUp2Class" (click)="handleStageClick(row, 'followUp2')">
-                {{ row.followUp2 }}
+                {{ row.followUp2 }} {{ row.fu2submitted | date : "dd-MM-yyyy"}}
               </td>
-              <td>{{ row.fu2submitted | date : "dd-MM-yyyy"}}</td>
-
               <td [ngClass]="row?.status?.toLowerCase()">{{ row.status }}</td>
-              <!-- <td class="download">
-                <button class="view-btn" (click)="download(row, 'baseline')" title="Download Baseline">
-                  <i class="fa-solid fa-download"></i> 
-                </button>
-              </td> -->
-
               <td class="download">
                 <button class="view-btn" (click)="downloadAllStages(row.patientId)" *ngIf="row.stage>0" title="Download All Stages">
                   <i class="fa-solid fa-download"></i>
