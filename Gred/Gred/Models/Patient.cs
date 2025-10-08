@@ -49,6 +49,12 @@ public partial class Patient
 
     public int? Stage { get; set; }
 
+    public DateTime? Blsubmitted { get; set; }
+
+    public DateTime? Fu1submitted { get; set; }
+
+    public DateTime? Fu2submitted { get; set; }
+
     public virtual ICollection<Assessment> Assessments { get; set; } = new List<Assessment>();
 
     public virtual ICollection<ChiefComplaint> ChiefComplaints { get; set; } = new List<ChiefComplaint>();

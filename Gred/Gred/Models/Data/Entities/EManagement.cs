@@ -52,5 +52,8 @@ namespace Gred.Data.Entities
     public int patientId { get; set; }
     public int stage { get; set; }
     public int createdby { get; set; }
+    public DateTime? bLSubmitted { get; set; }
+    public DateTime? fU1Submitted { get; set; }
+    public DateTime? fU2Submitted { get; set; }
   }
 }

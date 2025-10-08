@@ -28,6 +28,11 @@ export class ManagamentComponent {
   currentStage: any;
   userData: any
   newStage: any
+
+  bLSubmitted: any | null = null;
+  fU1Submitted: any |null = null
+  fU2Submitted:any |null = null
+
   constructor(
     private formValidation: FormvalidationService,
     private http: HttpserviceService,
@@ -254,16 +259,23 @@ export class ManagamentComponent {
   }
   stageUpdate() {
     // const PatientID = this.patientService.getPatientId();
+    const currentDateTime = new Date().toISOString(); // "YYYY-MM-DD HH:mm:ss"
     if (this.stage === 1) this.ptnstage = 2;
     else if (this.stage === 3) this.ptnstage = 4;
-    else if (this.stage === 0) this.ptnstage = 0;
+    else if (this.stage === 0) this.ptnstage = 0, this.bLSubmitted = currentDateTime;
+    else if (this.stage === 2) this.fU1Submitted = currentDateTime;
+    else if (this.stage === 4) this.fU2Submitted = currentDateTime;
     else this.ptnstage = this.stage;
 
     const completeCasePayload = {
       // patientId: PatientID,
       patientId: this.patientId,
       stage: this.ptnstage ? this.stage : 0,
-      createdby: this.userData?.doctorId
+      createdby: this.userData?.doctorId,
+      bLSubmitted: this.bLSubmitted || null,
+      fU1Submitted: this.fU1Submitted || null,  
+      fU2Submitted: this.fU2Submitted || null,
+  
     };
 
     this.http.httpPost(API_URLS.MANAGEMENT_CompleteCase, completeCasePayload).subscribe(

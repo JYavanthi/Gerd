@@ -65,8 +65,11 @@
               <th>Gender</th>
               <th>DOB</th>
               <th>Baseline</th>
-              <th>Follow Up 1</th>
-              <th>Follow Up 2</th>
+              <th>BaseLineSubmitted</th>
+              <th>FollowUp1</th>
+              <th>FollowUp1Submitted</th>
+              <th>FollowUp2</th>
+              <th>FollowUp2Submitted</th>
               <th>Status</th>
               <th>Action</th>
               <!-- <th>View</th> -->
@@ -82,12 +85,15 @@
               <td [ngClass]="row.baselineClass" (click)="handleStageClick(row, 'baseline')">
                 {{ row.baseline }}
               </td>
+              <td>{{ row.blsubmitted | date : "dd-MM-yyyy"}}</td>
               <td [ngClass]="row.followUp1Class" (click)="handleStageClick(row, 'followUp1')">
                 {{ row.followUp1 }}
               </td>
+              <td>{{ row.fu1submitted | date : "dd-MM-yyyy" }}</td>
               <td [ngClass]="row.followUp2Class" (click)="handleStageClick(row, 'followUp2')">
                 {{ row.followUp2 }}
               </td>
+              <td>{{ row.fu2submitted | date : "dd-MM-yyyy"}}</td>
 
               <td [ngClass]="row?.status?.toLowerCase()">{{ row.status }}</td>
               <!-- <td class="download">

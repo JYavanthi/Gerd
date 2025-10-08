@@ -139,6 +139,9 @@ namespace Gred.Repositories
           cmd.Parameters.AddWithValue("@Stage", stageUodateObj.stage);
           cmd.Parameters.AddWithValue("@PatientID", stageUodateObj.patientId);
           cmd.Parameters.AddWithValue("@CreatedBy", stageUodateObj.createdby);
+          cmd.Parameters.AddWithValue("@BLSubmitted", (object?)stageUodateObj.bLSubmitted ?? DBNull.Value);
+          cmd.Parameters.AddWithValue("@FU1Submitted", (object?)stageUodateObj.fU1Submitted ?? DBNull.Value);
+          cmd.Parameters.AddWithValue("@FU2Submitted", (object?)stageUodateObj.fU2Submitted ?? DBNull.Value);
 
           using (var da = new SqlDataAdapter(cmd))
           {

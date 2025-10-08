@@ -48,4 +48,10 @@ public partial class VwPatient
     public DateTime? ModifiedDt { get; set; }
 
     public int? Stage { get; set; }
+
+    public DateTime? Blsubmitted { get; set; }
+
+    public DateTime? Fu1submitted { get; set; }
+
+    public DateTime? Fu2submitted { get; set; }
 }
