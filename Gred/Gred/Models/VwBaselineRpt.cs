@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace gred.Models;
@@ -391,13 +391,13 @@ public partial class VwBaselineRpt
 
     public string? DyspepticDysmotilitySymptom { get; set; }
 
-    public bool? Heartburn { get; set; }
+    public string Heartburn { get; set; } = null!;
 
-    public bool? Regurgitation { get; set; }
+    public string Regurgitation { get; set; } = null!;
 
-    public bool? RetrosternalPain { get; set; }
+    public string RetrosternalPain { get; set; } = null!;
 
-    public bool? AcidTasteInMouth { get; set; }
+    public string AcidTasteInMouth { get; set; } = null!;
 
     public int? TotalSymptomScoreTssInGerdPatients { get; set; }
 
@@ -441,17 +441,17 @@ public partial class VwBaselineRpt
 
     public string? BiopsyRemark { get; set; }
 
-    public string? NewlyDiagnosed { get; set; }
+    public string NewlyDiagnosed { get; set; } = null!;
 
-    public string? KnownCaseOfGerd { get; set; }
+    public string KnownCaseOfGerd { get; set; } = null!;
 
     public int? GredNoOfYear { get; set; }
 
     public string? Gerdtype { get; set; }
 
-    public string? RefractoryToPpi { get; set; }
+    public string RefractoryToPpi { get; set; } = null!;
 
-    public string? AdherenceToTherapy { get; set; }
+    public string AdherenceToTherapy { get; set; } = null!;
 
     public string DietModifications { get; set; } = null!;
 
