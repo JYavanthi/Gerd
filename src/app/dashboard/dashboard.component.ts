@@ -68,7 +68,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     },
     scales: {
       x: {},
-      y: { beginAtZero: true }
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1 // Ensure y-axis increases in steps of 1
+        }
+      }
     }
   };
 
@@ -202,9 +207,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.pieChartData = {
       labels: this.pieChartLabels,
       datasets: [{
-        data: [this.completedCases,  this.pendingCases],
-        backgroundColor: ['#76e4f7', '#ef476f'], 
-      hoverBackgroundColor: ['#76e4f7', '#ef476f']
+        data: [this.completedCases, this.pendingCases],
+        backgroundColor: ['#76e4f7', '#ef476f'],
+        hoverBackgroundColor: ['#76e4f7', '#ef476f']
       }]
     };
 

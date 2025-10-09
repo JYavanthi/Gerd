@@ -9,11 +9,23 @@ public partial class VwComorbitiesRpt
 
     public string? SubjectNo { get; set; }
 
+    public DateTime? Date { get; set; }
+
+    public int? Age { get; set; }
+
     public string? Gender { get; set; }
 
-    public int? State { get; set; }
+    public string? FamilyIncome { get; set; }
 
-    public int? City { get; set; }
+    public string? Occupation { get; set; }
+
+    public string? Education { get; set; }
+
+    public int? Pincode { get; set; }
+
+    public string City { get; set; } = null!;
+
+    public string State { get; set; } = null!;
 
     public string? HtPresent { get; set; }
 

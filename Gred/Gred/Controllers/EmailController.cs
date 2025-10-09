@@ -139,10 +139,10 @@ namespace Gred.Controllers
         From = new MailAddress("akashdey1718@gmail.com", "Akash Dey"),
         Subject = caseModel.Subject ?? $"Case Update - Patient ID {caseModel.PatientId}",
         Body =
-              $"<p><b>Patient ID:</b> {caseModel.PatientId}</p>" +
-              $"<p><b>Date:</b> {caseModel.Date?.ToString("yyyy-MM-dd")}</p>" +
-              $"<p><b>Stage:</b> {(caseModel.Stage == 1 ? "Follow-up One" : caseModel.Stage == 2 || caseModel.Stage == 3 ? "Follow-up Two" : "Baseline")}</p>" +
-              $"<hr/>" +
+              //$"<p><b>Patient ID:</b> {caseModel.PatientId}</p>" +
+              //$"<p><b>Date:</b> {caseModel.Date?.ToString("yyyy-MM-dd")}</p>" +
+              //$"<p><b>Stage:</b> {(caseModel.Stage == 1 ? "Follow-up One" : caseModel.Stage == 2 || caseModel.Stage == 3 ? "Follow-up Two" : "Baseline")}</p>" +
+              //$"<hr/>" +
               $"<p>{caseModel.Body}</p>",
         IsBodyHtml = true
       };

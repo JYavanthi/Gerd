@@ -42,7 +42,7 @@ namespace Gred.Controllers
     {
       CommonRsult cmnRes = new CommonRsult();
      
-      var Data = await _context.VwCompletedRpts.ToListAsync();
+      var Data = await _context.VwPatients.ToListAsync();
 
       cmnRes.Data = Data;
       return Ok(cmnRes);

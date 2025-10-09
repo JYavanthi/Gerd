@@ -130,7 +130,7 @@ export class DemographicComponent implements OnInit {
           // save city id for later
           this.cityid = data.city;
           this.subjectno = data.subjectNo;
-          this.pincode =data.pincode
+          this.pincode = data.pincode
           // patch form without city (yet)
           this.demographicForm.patchValue({
             patientName: data.initial || '',
@@ -203,10 +203,25 @@ export class DemographicComponent implements OnInit {
   }
 
   Submit() {
+
+    const socio = this.demographicForm.get('socioeconomic')?.value;
+    const income = this.demographicForm.get('annualFamilyIncome')?.value;
+
+    console.log('Socioeconomic:', socio, 'Income:', income);
+
+    if (socio === 'Below Poverty Line' && income !== 'Less than 1 Lakh') {
+      alert('Select Annual Family Income Less than 1 Lakh');
+      return;
+    }
     if (!this.formValidation.validateForm(this.demographicForm)) {
       this.demographicForm.markAllAsTouched();
       return;
     }
+    if (this.demographicForm.controls['age'].value > 120) {
+      this.formValidation.showAlert('Please enter valid Age', 'danger');
+    }
+
+
     let user: any = localStorage.getItem('doctor')
     this.userData = JSON.parse(user);
     this.patientService.setDoctorId(this.userData?.doctorId);
@@ -233,6 +248,10 @@ export class DemographicComponent implements OnInit {
       diet: this.demographicForm.controls['diet'].value,
       createdBy: this.patientService.getDoctorId()
     };
+
+    // Save it to localStorage
+      const ageValue = this.demographicForm.controls['age'].value;
+      localStorage.setItem('Age', JSON.stringify({ age: ageValue }));
 
     this.http.httpPost('/PatientReg/SavePatient', param).subscribe((res: any) => {
       if (res.type === 'S') {

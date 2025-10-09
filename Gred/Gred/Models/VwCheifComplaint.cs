@@ -5,6 +5,28 @@ namespace gred.Models;
 
 public partial class VwCheifComplaint
 {
+    public string? Initial { get; set; }
+
+    public string? SubjectNo { get; set; }
+
+    public DateTime? Date { get; set; }
+
+    public int? Age { get; set; }
+
+    public string? Gender { get; set; }
+
+    public string? FamilyIncome { get; set; }
+
+    public string? Occupation { get; set; }
+
+    public string? Education { get; set; }
+
+    public int? Pincode { get; set; }
+
+    public string City { get; set; } = null!;
+
+    public string State { get; set; } = null!;
+
     public int CheifCompliantId { get; set; }
 
     public int? PatientId { get; set; }
@@ -51,9 +73,9 @@ public partial class VwCheifComplaint
 
     public int? ModifiedBy { get; set; }
 
-    public string? ModifiedByName { get; set; }
-
-    public DateTime? ModifiedDt { get; set; }
-
     public int? Stage { get; set; }
+
+    public string? Name { get; set; }
+
+    public string Zone { get; set; } = null!;
 }

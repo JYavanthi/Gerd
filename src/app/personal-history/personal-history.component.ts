@@ -26,7 +26,7 @@ export class PersonalHistoryComponent {
   @Input() data: any;
   @Input() isPrintMode: boolean = false;
   userData: any;
-
+  ageInYears: number = 0;
   intakeStates: { [key: string]: boolean | undefined } = {
     aerated: undefined,
     coffee: undefined,
@@ -89,8 +89,8 @@ export class PersonalHistoryComponent {
     private router: Router,
     private route: ActivatedRoute,
     private historyService: HistoryService, private patientService: PatientService,
-  ) { 
-    
+  ) {
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -155,7 +155,7 @@ export class PersonalHistoryComponent {
     });
   }
 
-  
+
   ngOnInit(): void {
 
     this.patientId = Number(this.route.snapshot.params['patientId'] || this.patientService.getPatientId());
@@ -167,10 +167,19 @@ export class PersonalHistoryComponent {
       }
       this.loadExistingData(Number(this.patientId), this.stage);
       this.isViewMode = this.isViewMode ?? false;
-      
+
     });
 
+    // Age is stored in localStorage from Demographic component
+    const storedAge = localStorage.getItem('Age');
+    if (storedAge) {
+      const age = JSON.parse(storedAge).age; // age in years
+      this.ageInYears = age ;            // age in years
+      console.log('Age in Years:', this.ageInYears);
+    }
+
   }
+
   private loadExistingData(id: number, stage: number): void {
     this.http.httpGet(`/PersonalHistory/GetPersonalHistoryById/${id}/${stage}`).subscribe({
       next: (res: any) => {
@@ -180,14 +189,14 @@ export class PersonalHistoryComponent {
 
         console.log("data", data);
         // Update intakeStates (now using `data`)
-        this.intakeStates['aerated'] = data.aeratedIntake===true;
-        this.intakeStates['coffee'] = data.coffeeIntake===true;
-        this.intakeStates['tea'] = data.teaIntake===true;
-        this.intakeStates['spicy'] = data.spicyIntake===true;
-        this.intakeStates['alcohol'] = data.alcoholIntake===true;
-        this.intakeStates['sweets'] = data.sweetsIntake===true;
-        this.intakeStates['smoking'] = data.smokingIntake===true;
-        this.intakeStates['tobacco'] = data.tobaccoIntake===true;
+        this.intakeStates['aerated'] = data.aeratedIntake === true;
+        this.intakeStates['coffee'] = data.coffeeIntake === true;
+        this.intakeStates['tea'] = data.teaIntake === true;
+        this.intakeStates['spicy'] = data.spicyIntake === true;
+        this.intakeStates['alcohol'] = data.alcoholIntake === true;
+        this.intakeStates['sweets'] = data.sweetsIntake === true;
+        this.intakeStates['smoking'] = data.smokingIntake === true;
+        this.intakeStates['tobacco'] = data.tobaccoIntake === true;
 
         this.formData.patchValue({
           aerated: {
@@ -256,128 +265,148 @@ export class PersonalHistoryComponent {
     });
   }
 
-  
+
   validateFlds(): boolean {
-  const missingVal: string[] = [];
+    const missingVal: string[] = [];
 
-  for (const key of Object.keys(this.intakeStates)) {
-    const state = this.intakeStates[key];
+    for (const key of Object.keys(this.intakeStates)) {
+      const state = this.intakeStates[key];
 
-   
-    if (state === null || state === undefined) {
-      alert('Please select Yes/No for ' + key);
-      return false;  
-    }
 
-   if (state === true) {
-      const group = this.formData.get(key) as FormGroup;
-
-      if (!group) {
-        continue;
+      if (state === null || state === undefined) {
+        alert('Please select Yes/No for ' + key);
+        return false;
       }
 
-      const { frequency, quantity, duration } = group.value;
+      if (state === true) {
+        const group = this.formData.get(key) as FormGroup;
 
-      if (!frequency || !quantity || !duration) {
-        missingVal.push(key);
+        if (!group) {
+          continue;
+        }
+
+        const { frequency, quantity, duration } = group.value;
+
+        if (!frequency || !quantity || !duration) {
+          missingVal.push(key);
+        }
       }
     }
-  }
 
-  if (missingVal.length > 0) {
-    alert("Please fill frequency, quantity and duration fields for: " + missingVal.join(", "));
-    return false;
-  }
+    if (missingVal.length > 0) {
+      alert("Please fill frequency, quantity and duration fields for: " + missingVal.join(", "));
+      return false;
+    }
 
-  return true;
-}
+    return true;
+  }
 
 
   Submit(): void {
     this.doctorId = this.patientService.getDoctorId();
     if (this.validateFlds()) {
-      
 
-    const payload = {
-      flag: 'I',
-      stage: this.stage,
-      personalHistoryId: 0,
-      doctorId: this.doctorId,
-      patientId: this.patientId,
-      createdBy: this.doctorId,
-      aeratedIntake: this.intakeStates['aerated'],
-      aeratedFrequency: this.formData.get('aerated.frequency')?.value?.toString() || '' ,
-      aeratedQuantity: this.formData.get('aerated.quantity')?.value?.toString() || '',
-      aeratedDuration: this.formData.get('aerated.duration')?.value?.toString() || '',
 
-      coffeeIntake: this.intakeStates['coffee'],
-      coffeeFrequency: this.formData.get('coffee.frequency')?.value?.toString() || '',
-      coffeeQuantity: this.formData.get('coffee.quantity')?.value?.toString() || '',
-      coffeeDuration: this.formData.get('coffee.duration')?.value?.toString() || '',
+      const payload = {
+        flag: 'I',
+        stage: this.stage,
+        personalHistoryId: 0,
+        doctorId: this.doctorId,
+        patientId: this.patientId,
+        createdBy: this.doctorId,
+        aeratedIntake: this.intakeStates['aerated'],
+        aeratedFrequency: this.formData.get('aerated.frequency')?.value?.toString() || '',
+        aeratedQuantity: this.formData.get('aerated.quantity')?.value?.toString() || '',
+        aeratedDuration: this.formData.get('aerated.duration')?.value?.toString() || '',
 
-      teaIntake: this.intakeStates['tea'],
-      teaFrequency: this.formData.get('tea.frequency')?.value?.toString() || '',
-      teaQuantity: this.formData.get('tea.quantity')?.value?.toString() || '',
-      teaDuration: this.formData.get('tea.duration')?.value?.toString() || '',
+        coffeeIntake: this.intakeStates['coffee'],
+        coffeeFrequency: this.formData.get('coffee.frequency')?.value?.toString() || '',
+        coffeeQuantity: this.formData.get('coffee.quantity')?.value?.toString() || '',
+        coffeeDuration: this.formData.get('coffee.duration')?.value?.toString() || '',
 
-      spicyIntake: this.intakeStates['spicy'],
-      spicyFrequency: this.formData.get('spicy.frequency')?.value?.toString() || '',
-      spicyQuantity: this.formData.get('spicy.quantity')?.value?.toString() || '',
-      spicyDuration: this.formData.get('spicy.duration')?.value?.toString() || '',
+        teaIntake: this.intakeStates['tea'],
+        teaFrequency: this.formData.get('tea.frequency')?.value?.toString() || '',
+        teaQuantity: this.formData.get('tea.quantity')?.value?.toString() || '',
+        teaDuration: this.formData.get('tea.duration')?.value?.toString() || '',
 
-      alcoholIntake: this.intakeStates['alcohol'],
-      alcoholFrequency: this.formData.get('alcohol.frequency')?.value?.toString() || '',
-      alcoholQuantity: this.formData.get('alcohol.quantity')?.value?.toString() || '',
-      alcoholDuration: this.formData.get('alcohol.duration')?.value?.toString() || '',
+        spicyIntake: this.intakeStates['spicy'],
+        spicyFrequency: this.formData.get('spicy.frequency')?.value?.toString() || '',
+        spicyQuantity: this.formData.get('spicy.quantity')?.value?.toString() || '',
+        spicyDuration: this.formData.get('spicy.duration')?.value?.toString() || '',
 
-      sweetsIntake: this.intakeStates['sweets'],
-      sweetsFrequency: this.formData.get('sweets.frequency')?.value?.toString() || '',
-      sweetsQuantity: this.formData.get('sweets.quantity')?.value?.toString() || '',
-      sweetsDuration: this.formData.get('sweets.duration')?.value?.toString() || '',
+        alcoholIntake: this.intakeStates['alcohol'],
+        alcoholFrequency: this.formData.get('alcohol.frequency')?.value?.toString() || '',
+        alcoholQuantity: this.formData.get('alcohol.quantity')?.value?.toString() || '',
+        alcoholDuration: this.formData.get('alcohol.duration')?.value?.toString() || '',
 
-      smokingIntake: this.intakeStates['smoking'],
-      smokingFrequency: this.formData.get('smoking.frequency')?.value?.toString() || '',
-      smokingQuantity: this.formData.get('smoking.quantity')?.value?.toString() || '',
-      smokingDuration: this.formData.get('smoking.duration')?.value?.toString() || '',
+        sweetsIntake: this.intakeStates['sweets'],
+        sweetsFrequency: this.formData.get('sweets.frequency')?.value?.toString() || '',
+        sweetsQuantity: this.formData.get('sweets.quantity')?.value?.toString() || '',
+        sweetsDuration: this.formData.get('sweets.duration')?.value?.toString() || '',
 
-      tobaccoIntake: this.intakeStates['tobacco'],
-      tobaccoFrequency: this.formData.get('tobacco.frequency')?.value?.toString() || '',
-      tobaccoQuantity: this.formData.get('tobacco.quantity')?.value?.toString() || '',
-      tobaccoDuration: this.formData.get('tobacco.duration')?.value?.toString() || ''
-    };
-    
+        smokingIntake: this.intakeStates['smoking'],
+        smokingFrequency: this.formData.get('smoking.frequency')?.value?.toString() || '',
+        smokingQuantity: this.formData.get('smoking.quantity')?.value?.toString() || '',
+        smokingDuration: this.formData.get('smoking.duration')?.value?.toString() || '',
 
-    this.http.httpPost('/PersonalHistory/SavePersonalHistory', payload).subscribe({
-      next: () => {
-        alert('Saved Successfully'); // ← Test this
-        this.formValidation.showAlert('Saved Successfully', 'success');
-        this.isSaved = true;
-      },
+        tobaccoIntake: this.intakeStates['tobacco'],
+        tobaccoFrequency: this.formData.get('tobacco.frequency')?.value?.toString() || '',
+        tobaccoQuantity: this.formData.get('tobacco.quantity')?.value?.toString() || '',
+        tobaccoDuration: this.formData.get('tobacco.duration')?.value?.toString() || ''
+      };
 
-      error: (err) => {
-        console.error('Failed to save personal history:', err);
-        this.formValidation.showAlert('Failed to save personal history.', 'danger');
+      const enteredaeratedDurationMonths = Number(payload.aeratedDuration);
+      const enteredrcoffeeDurationMonths = Number(payload.coffeeDuration);
+      const entereteaDurationMonths = Number(payload.teaDuration);
+      const enteredalcoholDurationMonths = Number(payload.alcoholDuration);
+      const enteredsweetsDurationMonths = Number(payload.sweetsDuration);
+      const enteredsmokingDurationMonths = Number(payload.smokingDuration);
+      const enteredtobaccoDurationMonths = Number(payload.tobaccoDuration);
+
+      if (
+        enteredaeratedDurationMonths > this.ageInYears ||
+        enteredrcoffeeDurationMonths > this.ageInYears ||
+        entereteaDurationMonths > this.ageInYears ||
+        enteredalcoholDurationMonths > this.ageInYears ||
+        enteredsweetsDurationMonths > this.ageInYears ||
+        enteredsmokingDurationMonths > this.ageInYears ||
+        enteredtobaccoDurationMonths > this.ageInYears
+      ) {
+
+        alert('One or more durations exceed the age in months! Please correct the values.');
+        return;
       }
-    });
+      this.http.httpPost('/PersonalHistory/SavePersonalHistory', payload).subscribe({
+        next: () => {
+          alert('Saved Successfully'); // ← Test this
+          this.formValidation.showAlert('Saved Successfully', 'success');
+          this.isSaved = true;
+        },
+
+        error: (err) => {
+          console.error('Failed to save personal history:', err);
+          this.formValidation.showAlert('Failed to save personal history.', 'danger');
+        }
+      });
     }
-    else{
+    else {
       return;
     }
-    } 
+  }
   blockInvalidKeys(event: KeyboardEvent) {
-  if (['e', 'E', '+', '-','.'].includes(event.key)) {
-    event.preventDefault();
+    if (['e', 'E', '+', '-', '.'].includes(event.key)) {
+      event.preventDefault();
+    }
   }
-}
-preventNegative(event: any) {
- 
-  if (event.target.value < 0) {
-    event.target.value = 0; 
-  }
-}
+  preventNegative(event: any) {
 
-   
-  
+    if (event.target.value < 0) {
+      event.target.value = 0;
+    }
+  }
+
+
+
   onNext(): void {
     const patientHistoryId = this.historyService.getPatientHistoryID();
     this.router.navigate([`sleep/${this.patientId}/${this.stage}`], {

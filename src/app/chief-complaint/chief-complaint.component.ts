@@ -41,7 +41,7 @@ export class ChiefComplaintComponent implements OnInit {
     this.chiefComplaintForm = this.fb.group({
       heartburnDuration: [null, Validators.required],
       heartburnFrequency: [null, Validators.required],
-      postural_heartburn: [null, Validators.required ],
+      postural_heartburn: [null, Validators.required],
       nocturnal_heartburn: [null, Validators.required],
 
       regurgitationDuration: [null, Validators.required],
@@ -63,14 +63,15 @@ export class ChiefComplaintComponent implements OnInit {
   }
 
   doctorId: number = 0;
+  ageInMonths: number = 0;
   ngOnInit(): void {
 
     this.patientId = Number(this.route.snapshot.params['patientId']);
     this.stage = Number(this.route.snapshot.params['stage'] || 0);
     this.doctorId = this.patientService.getDoctorId();
-    if (this.stage===2) {this.cctext='Data seen here is as per  information keyed  in baseline. To be edited as per the current complaint'}
-    else if(this.stage===4){this.cctext='Data seen here is as per  information keyed  in follow-up1. To be edited as per the current complaint'}
-    else{this.cctext='' }
+    if (this.stage === 2) { this.cctext = 'Data seen here is as per  information keyed  in baseline. To be edited as per the current complaint' }
+    else if (this.stage === 4) { this.cctext = 'Data seen here is as per  information keyed  in follow-up1. To be edited as per the current complaint' }
+    else { this.cctext = '' }
 
     const allowedWithoutSave = [1, 3, 5];
     if (allowedWithoutSave.includes(this.stage)) {
@@ -79,14 +80,22 @@ export class ChiefComplaintComponent implements OnInit {
 
     if (this.patientId !== 0)
       this.fetchChiefComplaintData(this.patientId);
+
+    // Age is stored in localStorage from Demographic component
+    const storedAge = localStorage.getItem('Age');
+    if (storedAge) {
+      const age = JSON.parse(storedAge).age; // age in years
+      this.ageInMonths = age * 12;            // convert years → months
+      console.log('Age in months:', this.ageInMonths);
+    }
   }
 
-  
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && this.data) {
-        this.patchForm(this.data);
+      this.patchForm(this.data);
     }
-}
+  }
   private patchForm(data: any): void {
     this.chiefComplaintForm.patchValue({
       heartburnDuration: data.hbDuration,
@@ -110,15 +119,15 @@ export class ChiefComplaintComponent implements OnInit {
 
   stageval: number = 0;
   cctext: string = '';
-  setStage: number=0;
+  setStage: number = 0;
   fetchChiefComplaintData(patientId: number): void {
-  if (this.setStage===1) return;
+    if (this.setStage === 1) return;
 
     this.chiefComplaintService.getChiefComplaintByPatientId(patientId, this.stage).subscribe({
       next: (res: any) => {
         if (this.stage === 2 || this.stage === 4) this.stageval = this.stage;
         if (res.type === 'S' && res.data) {
-         // this.isSaved = false;
+          // this.isSaved = false;
           const data = res.data;
           // console.log('✅ Chief Complaint data:', data);
           this.stage = data.stage;
@@ -147,7 +156,7 @@ export class ChiefComplaintComponent implements OnInit {
           if (this.stageval === 4) this.stage = 3
           // console.log('this.stageval', this.stageval, this.stage)
           this.fetchChiefComplaintData(Number(this.patientId));
-          this.setStage=1;
+          this.setStage = 1;
           setTimeout(() => {
 
             this.stage = this.stageval;
@@ -163,33 +172,31 @@ export class ChiefComplaintComponent implements OnInit {
   }
 
   blockInvalidKeys(event: KeyboardEvent) {
-  if (['e', 'E', '+', '-','.'].includes(event.key)) {
-    event.preventDefault();
+    if (['e', 'E', '+', '-', '.'].includes(event.key)) {
+      event.preventDefault();
+    }
+
   }
-  
-}
 
 
-preventNegative(event: any) {
- 
-  if (event.target.value < 0) {
-    event.target.value = 0; // reset to 0 if negative
+  preventNegative(event: any) {
+
+    if (event.target.value < 0) {
+      event.target.value = 0; // reset to 0 if negative
+    }
   }
-}
 
   onCodeFocus(): void {
     this.showCodeMessage = true;
   }
 
   Submit(): void {
-   
+
     if (!this.formValidation.validateForm(this.chiefComplaintForm)) {
       this.chiefComplaintForm.markAllAsTouched();
       alert('Enter all fields');
       return;
     }
-
-    
 
     if (this.patientId === null) {
       this.formValidation.showAlert('Patient ID is missing', 'danger');
@@ -230,23 +237,40 @@ preventNegative(event: any) {
 
     console.log('Submitting Chief Complaint Payload:', param);
 
+    const enteredHBDurationMonths = param.hB_Duration;
+    const enteredrDurationMonths = param.r_Duration;
+    const enteredrPDurationMonths = param.rP_Duration;
+    const enteredaTDurationMonths = param.aT_Duration;
+
+    if (
+      enteredHBDurationMonths > this.ageInMonths ||
+      enteredrDurationMonths > this.ageInMonths ||
+      enteredrPDurationMonths > this.ageInMonths ||
+      enteredaTDurationMonths > this.ageInMonths
+    ) {
+
+      alert('One or more durations exceed the age in months! Please correct the values.');
+      return;
+    }
+
     this.http.httpPost(API_URLS.CHEIF_COMPLAINT_SAVE, param).subscribe(
       (res: any) => {
         if (res.type === 'S') {
           this.isSaved = true;
           this.formValidation.showAlert('Chief complaint saved successfully', 'success');
-              alert('Saved Successfully');
+          alert('Saved Successfully');
 
-              this.router.navigate([], {
-                queryParams: {
-                  patientId: this.patientId,
-                  stage: this.stage
-              }});
+          this.router.navigate([], {
+            queryParams: {
+              patientId: this.patientId,
+              stage: this.stage
+            }
+          });
 
-            // } else {
-            //   this.formValidation.showAlert('Unable to fetch Patient ID after save', 'danger');
-            //   alert(' Unable to fetch Patient ID after save');
-            // }
+          // } else {
+          //   this.formValidation.showAlert('Unable to fetch Patient ID after save', 'danger');
+          //   alert(' Unable to fetch Patient ID after save');
+          // }
           //});
         } else {
           const errorMsg = `Error: ${res.message || 'Unknown error'}`;
@@ -325,5 +349,5 @@ preventNegative(event: any) {
 
     return 'inactive-tab';
   }
-  
+
 }

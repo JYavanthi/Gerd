@@ -42,6 +42,8 @@ export interface Case {
   followUp2Class?: string;
   patientName?: string;
   createdDt: Date;
+  blsubmitted: Date;
+  fu1submitted: Date;
   state?: string;
   city?: string;
 
