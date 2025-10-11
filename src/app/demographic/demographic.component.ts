@@ -219,6 +219,7 @@ export class DemographicComponent implements OnInit {
     }
     if (this.demographicForm.controls['age'].value > 120) {
       this.formValidation.showAlert('Please enter valid Age', 'danger');
+      return;
     }
 
 

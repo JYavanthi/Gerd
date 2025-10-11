@@ -263,7 +263,7 @@ export class DiagnosisComponent implements OnInit {
 
     if (enteredgreD_NoOfYear > this.ageInYears) {
 
-      alert('Entered number of Year exceed the age in months! Please correct the value.');
+      alert('Entered number of Year exceeds the person’s age (' + this.ageInYears + ' years). Please enter valid values.');
       return;
     }
 

@@ -373,7 +373,7 @@ export class PersonalHistoryComponent {
         enteredtobaccoDurationMonths > this.ageInYears
       ) {
 
-        alert('One or more durations exceed the age in months! Please correct the values.');
+        alert('Entered duration exceeds the person’s age (' + this.ageInYears + ' years). Please enter valid values.');
         return;
       }
       this.http.httpPost('/PersonalHistory/SavePersonalHistory', payload).subscribe({
@@ -408,19 +408,20 @@ export class PersonalHistoryComponent {
 
 
   onNext(): void {
-    const patientHistoryId = this.historyService.getPatientHistoryID();
+   // const patientHistoryId = this.historyService.getPatientHistoryID();
     this.router.navigate([`sleep/${this.patientId}/${this.stage}`], {
 
       state: {
         tabId: this.tabId,
         stage: this.stage,
+        patienId:this.patientId,
         isViewMode: this.isViewMode
 
       }
     });
   }
   OnNext(): void {
-    const patientHistoryId = this.historyService.getPatientHistoryID();
+    //const patientHistoryId = this.historyService.getPatientHistoryID();
     this.router.navigate([`/sleep/${this.patientId}/${this.stage}`], {
 
       state: {

@@ -361,6 +361,8 @@ export class GadgetComponent implements OnInit {
     const enteredcomputerDurationYears = Number(payload.computerDurationYears);
     const enteredsmartphoneDurationYears = Number(payload.smartphoneDurationYears);
     const enteredtotalWorkingYears = Number(payload.totalWorkingYears);
+    const enteredcomputerFrequency = Number(payload.computerFrequency);
+    const enteredsmartphoneFrequency = Number(payload.smartphoneFrequency);
 
 
     if (
@@ -368,7 +370,13 @@ export class GadgetComponent implements OnInit {
       enteredsmartphoneDurationYears > this.ageInYears ||
       enteredtotalWorkingYears > this.ageInYears
     ) {
-      alert('One or more years exceed the age in months! Please correct the values.');
+      alert('Entered duration exceeds the person’s age (' + this.ageInYears + ' years). Please enter valid values.');
+      return;
+    }
+
+    //the maximum possible hours per day = 24
+    if (enteredcomputerFrequency || enteredsmartphoneFrequency > 24) {
+      alert('Entered frequency exceeds the total hours/day . Please enter valid values.');
       return;
     }
    

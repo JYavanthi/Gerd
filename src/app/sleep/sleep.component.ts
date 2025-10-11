@@ -467,6 +467,7 @@ export class SleepComponent implements OnInit {
     };
 
     const enteredsleepApneaDuration = Number(param.sleepApneaDuration);
+    const sleepApneaFrequency = Number(param.sleepApneaFrequency);
     const enteredjoggingDuration = Number(param.joggingDuration);
     const enteredgymDuration = Number(param.gymDuration);
     const enteredyogaDuration = Number(param.yogaDuration);
@@ -474,7 +475,28 @@ export class SleepComponent implements OnInit {
     const enteredaerobicsDuration = Number(param.aerobicsDuration);
     const enteredzumbaDuration = Number(param.zumbaDuration);
     const enteredothersDuration = Number(param.othersDuration);
+    const enteredjoggingFrequency = Number(param.joggingFrequency);
+    const enteredgymFrequency = Number(param.gymFrequency);
+    const enteredyogaFrequency = Number(param.yogaFrequency);
+    const enteredwalkingFrequency = Number(param.walkingFrequency);
+    const enteredaerobicsFrequency = Number(param.aerobicsFrequency);
+    const enteredzumbaFrequency = Number(param.zumbaFrequency);
+    const enteredothersFrequency = Number(param.othersFrequency);
 
+      //maximum possible hours per week = 24*7=168
+    if (sleepApneaFrequency > 168 || 
+      enteredjoggingFrequency > 168 ||
+      enteredgymFrequency > 168 ||
+      enteredyogaFrequency > 168 ||
+      enteredwalkingFrequency > 168 ||
+      enteredaerobicsFrequency > 168 ||
+      enteredzumbaFrequency > 168 ||
+      enteredothersFrequency > 168
+    ) {
+      alert('Entered Frequency cannot exceed the maximum possible hours per week 168 . Please correct the value.');
+      return;
+    }
+    // Check if any entered duration exceeds age in years
     if (
       enteredsleepApneaDuration > this.ageInYears ||
       enteredjoggingDuration > this.ageInYears ||
@@ -482,11 +504,11 @@ export class SleepComponent implements OnInit {
       enteredyogaDuration > this.ageInYears ||
       enteredwalkingDuration > this.ageInYears ||
       enteredaerobicsDuration > this.ageInYears ||
-      enteredzumbaDuration > this.ageInYears||
-      enteredothersDuration > this.ageInYears 
+      enteredzumbaDuration > this.ageInYears ||
+      enteredothersDuration > this.ageInYears
     ) {
 
-      alert('One or more Years exceed the age in months! Please correct the values.');
+      alert('Entered duration exceeds the person’s age (' + this.ageInYears + ' years). Please enter valid values.');
       return;
     }
 
@@ -509,7 +531,7 @@ export class SleepComponent implements OnInit {
 
 
   onNext(): void {
-    const pid = this.patientService.getPatientId();
+    //const pid = this.patientService.getPatientId();
     this.router.navigate([`/gadget/${this.patientId}/${this.stage}`], {
       state: {
         patientId: this.patientId,
@@ -519,7 +541,7 @@ export class SleepComponent implements OnInit {
     });
   }
   OnNext(): void {
-    const pid = this.patientService.getPatientId();
+    //const pid = this.patientService.getPatientId();
     this.router.navigate([`/gadget/${this.patientId}/${this.stage}`], {
       state: {
         patientId: this.patientId,
