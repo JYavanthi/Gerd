@@ -30,6 +30,7 @@ import { CaseStageViewComponent } from './case-stage-view/case-stage-view.compon
 import { DoctorListComponent } from './doctor-list/doctor-list.component';
 import { StageProgressComponent } from './stage-progress/stage-progress.component';
 import { FilterchartComponent } from './filterchart/filterchart.component';
+import { AllReportsComponentComponent } from './all-reports-component/all-reports-component.component';
 
 
 
@@ -40,6 +41,7 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   // { path: 'contact', component: ContactComponent },
   { path: 'demographic', component: DemographicComponent },
+  { path: 'allReport', component: AllReportsComponentComponent },
    { path: 'demographic/:patientId/:stage', component: DemographicComponent },
     {path:'stageProgress',component:StageProgressComponent},
   { path: 'history', component: HistoryComponent },

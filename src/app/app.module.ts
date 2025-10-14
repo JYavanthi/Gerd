@@ -50,6 +50,7 @@ import { CaseStageViewComponent } from './case-stage-view/case-stage-view.compon
 import { DoctorListComponent } from './doctor-list/doctor-list.component';
 import { StageProgressComponent } from './stage-progress/stage-progress.component';
 import { FilterchartComponent } from './filterchart/filterchart.component';
+import { AllReportsComponentComponent } from './all-reports-component/all-reports-component.component';
 
 
 @NgModule({
@@ -99,6 +100,7 @@ import { FilterchartComponent } from './filterchart/filterchart.component';
    DoctorListComponent,
    StageProgressComponent,
    FilterchartComponent,
+   AllReportsComponentComponent,
    
   ],
 

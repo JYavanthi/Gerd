@@ -44,6 +44,16 @@ export interface Case {
   createdDt: Date;
   state?: string;
   city?: string;
+  age?: number;
+  education?: string;
+  occupation?: string;
+  pincode?: number;
+  placeType?: string;
+  socioeconomicStatus?: string;
+  familyIncome?: string;
+  pastHistory?: string;
+  diet?: string;
+  zone?: string;
 
   // 👇 Add this to allow indexing by string
   [key: string]: any;

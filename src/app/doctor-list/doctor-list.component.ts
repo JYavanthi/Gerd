@@ -466,9 +466,12 @@ sendNotificationToSelectedDoctors() {
 
   }
 
-  goDashboard() {
+  goDashboard(){
     this.router.navigate([`/admindashboard`]);
   }
 
+  goFilterCharts() {
+    this.router.navigate([`/allReport`]);
+  }
 }
 
