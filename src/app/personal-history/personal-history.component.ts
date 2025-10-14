@@ -174,7 +174,7 @@ export class PersonalHistoryComponent {
     const storedAge = localStorage.getItem('Age');
     if (storedAge) {
       const age = JSON.parse(storedAge).age; // age in years
-      this.ageInYears = age ;            // age in years
+      this.ageInYears = age;            // age in years
       console.log('Age in Years:', this.ageInYears);
     }
 
@@ -355,6 +355,63 @@ export class PersonalHistoryComponent {
         tobaccoDuration: this.formData.get('tobacco.duration')?.value?.toString() || ''
       };
 
+      const MAX_HOURS_PER_DAY = 24;
+      const MAX_HOURS_PER_WEEK = 24 * 7; // 168
+
+      const MAX_QUANTITY = {
+        ml: 10000,      // max per day/week
+        g: 1000,        // grams
+        packs: 10,      // cigarettes packs per day
+        quantity: 100   // generic unit
+      };
+
+      const personalHistoryConfig = {
+        aerated: { frequencyUnit: '/day', quantityUnit: 'ml' },
+        coffee: { frequencyUnit: '/day', quantityUnit: 'ml' },
+        tea: { frequencyUnit: '/day', quantityUnit: 'ml' },
+        spicy: { frequencyUnit: '/week', quantityUnit: 'quantity' },
+        alcohol: { frequencyUnit: '/week', quantityUnit: 'ml' },
+        sweets: { frequencyUnit: '/week', quantityUnit: 'g' },
+        smoking: { frequencyUnit: '/day', quantityUnit: 'packs' },
+        tobacco: { frequencyUnit: '/day', quantityUnit: 'quantity' }
+      };
+
+      // Define types for safety
+      type PersonalHistoryKey = keyof typeof personalHistoryConfig;
+      type QuantityUnit = keyof typeof MAX_QUANTITY; // e.g., 'ml' | 'packs'
+
+      // Loop over the keys of the config
+      (Object.keys(personalHistoryConfig) as PersonalHistoryKey[]).forEach((key) => {
+        const config = personalHistoryConfig[key];
+
+        const frequencyValue = Number(this.formData.get(`${key}.frequency`)?.value);
+        const quantityValue = Number(this.formData.get(`${key}.quantity`)?.value);
+
+        // Skip if intake is 'No'
+        if (!this.intakeStates[key]) return;
+
+        // Frequency validation
+        if (config.frequencyUnit === '/day' && frequencyValue > MAX_HOURS_PER_DAY) {
+          alert(`Entered frequency for ${key} exceeds the maximum per day (${MAX_HOURS_PER_DAY}).`);
+          return;
+        }
+
+        if (config.frequencyUnit === '/week' && frequencyValue > MAX_HOURS_PER_WEEK) {
+          alert(`Entered frequency for ${key} exceeds the maximum per week (${MAX_HOURS_PER_WEEK}).`);
+          return;
+        }
+
+        // Quantity validation
+        const quantityUnit = config.quantityUnit as QuantityUnit; // type-safe cast
+        const maxQty = MAX_QUANTITY[quantityUnit];
+
+        if (quantityValue > maxQty) {
+          alert(`Entered quantity for ${key} exceeds the maximum allowed (${maxQty} ${quantityUnit}).`);
+          return;
+        }
+      });
+
+
       const enteredaeratedDurationMonths = Number(payload.aeratedDuration);
       const enteredrcoffeeDurationMonths = Number(payload.coffeeDuration);
       const entereteaDurationMonths = Number(payload.teaDuration);
@@ -408,13 +465,13 @@ export class PersonalHistoryComponent {
 
 
   onNext(): void {
-   // const patientHistoryId = this.historyService.getPatientHistoryID();
+    // const patientHistoryId = this.historyService.getPatientHistoryID();
     this.router.navigate([`sleep/${this.patientId}/${this.stage}`], {
 
       state: {
         tabId: this.tabId,
         stage: this.stage,
-        patienId:this.patientId,
+        patienId: this.patientId,
         isViewMode: this.isViewMode
 
       }

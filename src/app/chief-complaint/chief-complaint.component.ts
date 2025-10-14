@@ -241,6 +241,10 @@ export class ChiefComplaintComponent implements OnInit {
     const enteredrDurationMonths = param.r_Duration;
     const enteredrPDurationMonths = param.rP_Duration;
     const enteredaTDurationMonths = param.aT_Duration;
+    const enteredhB_Frequency = param.hB_Frequency;
+    const enteredr_Frequency = param.r_Frequency;
+    const enteredrP_Frequency = param.rP_Frequency; 
+    const enteredaT_Frequency= param.aT_Frequency
 
     if (
       enteredHBDurationMonths > this.ageInMonths ||
@@ -249,7 +253,17 @@ export class ChiefComplaintComponent implements OnInit {
       enteredaTDurationMonths > this.ageInMonths
     ) {
 
-      alert('One or more durations exceed the age in months! Please correct the values.');
+      alert('The entered number of months exceeds the person’s age of (' + this.ageInMonths + ' ) in months. Please enter valid values.');
+      return;
+    }
+
+       //maximum possible hours per week = 24*7=168
+    if (enteredhB_Frequency > 168 || 
+      enteredr_Frequency > 168 ||
+      enteredrP_Frequency > 168 ||
+      enteredaT_Frequency > 168 
+    ) {
+      alert('Entered Frequency cannot exceed the maximum possible hours per week 168 . Please correct the value.');
       return;
     }
 

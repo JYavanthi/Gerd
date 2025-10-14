@@ -1,65 +1,5 @@
-
-
-
-//using Microsoft.AspNetCore.Mvc;
-//using System.Net;
-//using System.Net.Mail;
-//using Gred.Models;
-
-
-//namespace Gred.Controllers
-//{
-//  [Route("api/[controller]")]
-//  [ApiController]
-//  public class EmailController : ControllerBase
-//  {
-//    [HttpPost]
-//    public IActionResult SendEmail([FromBody] Case caseModel)
-//    {
-//      try
-//      {
-//        using var smtpClient = new SmtpClient("smtp.gmail.com", 587)
-//        {
-//          UseDefaultCredentials = false,
-//          EnableSsl = true,
-//          Credentials = new NetworkCredential(
-//                "akashdey1718@gmail.com",  // Gmail
-//                "frtl lphl kust uopj"      // Gmail App Password
-//            ),
-//          Timeout = 20000
-//        };
-
-//        var mailMessage = new MailMessage
-//        {
-//          From = new MailAddress("akashdey1718@gmail.com", "Akash Dey"),
-//          Subject = caseModel.Subject ?? $"Case Update - Patient ID {caseModel.PatientId}",
-//          Body =
-//                $"<p><b>Patient ID:</b> {caseModel.PatientId}</p>" +
-//                $"<p><b>Date:</b> {caseModel.Date?.ToString("yyyy-MM-dd")}</p>" +
-//                $"<p><b>Stage:</b> {(caseModel.Stage == 1 ? "Follow-up One" : caseModel.Stage == 2 || caseModel.Stage == 3 ? "Follow-up Two" : "Baseline")}</p>" +
-//                $"<hr/>" +
-//                $"<p>{caseModel.Body}</p>",
-//          IsBodyHtml = true
-//        };
-
-//        // Recipient email
-//        mailMessage.To.Add(!string.IsNullOrWhiteSpace(caseModel.Email)
-//            ? caseModel.Email
-//            : "akashdeypersonal17@gmail.com");
-
-//        smtpClient.Send(mailMessage);
-
-//        return Ok("Email sent successfully.");
-//      }
-//      catch (Exception ex)
-//      {
-//        return StatusCode(500, $"Failed to send email: {ex.Message}");
-//      }
-//    }
-//  }
-//}
-
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
 using Gred.Models;
@@ -70,6 +10,15 @@ namespace Gred.Controllers
   [ApiController]
   public class EmailController : ControllerBase
   {
+
+    private static IConfiguration _config;
+    private static string smtpServer = "";
+    private static int smtpPort = 0;
+    private static string smtpUser = "";
+    private static string smtpPass = "";
+    private static bool enableSsl;
+
+
     [HttpPost]
     public IActionResult SendEmail([FromBody] Case caseModel)
     {
@@ -91,19 +40,6 @@ namespace Gred.Controllers
           ScheduleMail(caseModel, TimeSpan.FromDays(180));
         }
 
-        //if (caseModel.Stage == 1) // Follow-up One
-        //{
-        //  ScheduleMail(caseModel, TimeSpan.FromMinutes(1));   // instead of 20 days
-        //  ScheduleMail(caseModel, TimeSpan.FromMinutes(2));   // instead of 40 days
-        //  ScheduleMail(caseModel, TimeSpan.FromMinutes(3));   // instead of 60 days
-        //}
-        //else if (caseModel.Stage == 2 || caseModel.Stage == 3) // Follow-up Two
-        //{
-        //  ScheduleMail(caseModel, TimeSpan.FromMinutes(1));   // instead of 90 days
-        //  ScheduleMail(caseModel, TimeSpan.FromMinutes(2));   // instead of 180 days
-        //}
-
-
         return Ok("Emails scheduled (in-memory).");
       }
       catch (Exception ex)
@@ -123,33 +59,48 @@ namespace Gred.Controllers
 
     private void SendMail(Case caseModel)
     {
-      using var smtpClient = new SmtpClient("smtp.gmail.com", 587)
+      _config = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory) // <-- Here
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+      smtpServer = _config["Smtp:Server"];
+      smtpPort = int.Parse(_config["Smtp:Port"]);
+      smtpUser = _config["Smtp:User"];
+      smtpPass = _config["Smtp:Pass"];
+      enableSsl = bool.Parse(_config["Smtp:EnableSsl"]);
+
+      Console.WriteLine("SMTP Server: " + smtpServer);
+      Console.WriteLine("smtpPort: " + smtpPort);
+      Console.WriteLine("smtpUser: " + smtpUser);
+      Console.WriteLine("smtpPass: " + smtpPass);
+      Console.WriteLine("enableSsl: " + enableSsl);
+
+      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+      using var smtpClient = new SmtpClient(smtpServer, smtpPort)
       {
         UseDefaultCredentials = false,
-        EnableSsl = true,
-        Credentials = new NetworkCredential(
-                "akashdey1718@gmail.com",
-                "frtl lphl kust uopj"  // Gmail App Password
-            ),
-        Timeout = 20000
+        EnableSsl = enableSsl,
+        Credentials = new NetworkCredential(smtpUser, smtpPass),
+        Timeout = 50000
       };
 
       var mailMessage = new MailMessage
       {
-        From = new MailAddress("akashdey1718@gmail.com", "Akash Dey"),
+        From = new MailAddress(smtpUser),
         Subject = caseModel.Subject ?? $"Case Update - Patient ID {caseModel.PatientId}",
         Body =
-              //$"<p><b>Patient ID:</b> {caseModel.PatientId}</p>" +
-              //$"<p><b>Date:</b> {caseModel.Date?.ToString("yyyy-MM-dd")}</p>" +
-              //$"<p><b>Stage:</b> {(caseModel.Stage == 1 ? "Follow-up One" : caseModel.Stage == 2 || caseModel.Stage == 3 ? "Follow-up Two" : "Baseline")}</p>" +
-              //$"<hr/>" +
+              $"<p><b>Patient ID:</b> {caseModel.PatientId}</p>" +
+              $"<p><b>Date:</b> {caseModel.Date?.ToString("yyyy-MM-dd")}</p>" +
+              $"<p><b>Stage:</b> {(caseModel.Stage == 1 ? "Follow-up One" : caseModel.Stage == 2 || caseModel.Stage == 3 ? "Follow-up Two" : "Baseline")}</p>" +
+              $"<hr/>" +
               $"<p>{caseModel.Body}</p>",
         IsBodyHtml = true
       };
 
       mailMessage.To.Add(!string.IsNullOrWhiteSpace(caseModel.Email)
           ? caseModel.Email
-          : "akashdeypersonal17@gmail.com");
+          : smtpUser);
 
       smtpClient.Send(mailMessage);
     }

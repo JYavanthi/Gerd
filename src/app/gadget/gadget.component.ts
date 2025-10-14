@@ -375,7 +375,8 @@ export class GadgetComponent implements OnInit {
     }
 
     //the maximum possible hours per day = 24
-    if (enteredcomputerFrequency || enteredsmartphoneFrequency > 24) {
+    if (enteredcomputerFrequency > 24 ||
+      enteredsmartphoneFrequency > 24) {
       alert('Entered frequency exceeds the total hours/day . Please enter valid values.');
       return;
     }
