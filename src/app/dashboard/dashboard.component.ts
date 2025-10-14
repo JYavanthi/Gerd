@@ -339,7 +339,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   downloadAllStages(patientID: any) {
-    this.router.navigate([`/case-stage-view/${patientID}`]);
-  }
+  // Create a router URL for the case-stage-view route
+  const urlTree = this.router.createUrlTree([`/case-stage-view/${patientID}`]);
+  const serializedUrl = this.router.serializeUrl(urlTree);
 
+  // Build full URL using current app origin (important!)
+  const fullUrl = `${window.location.origin}${serializedUrl}`;
+
+  // Open that route in a new tab
+  window.open(fullUrl, '_blank');
+}
 }
