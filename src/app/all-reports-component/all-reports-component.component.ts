@@ -1,0 +1,655 @@
+import { Component } from '@angular/core';
+import { API_URLS } from '../shared/API-URLs';
+import { HttpserviceService } from '../httpservice.service';
+import { ChartData, ChartOptions, ChartType } from 'chart.js';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Case, CaseDataService } from '../Services/case-data.services';
+import { forkJoin, Subscription } from 'rxjs';
+
+type DropdownData = {
+  [key: string]: string[];
+};
+
+interface State {
+  id: number;
+  name: string;
+}
+
+interface City {
+  id: number;
+  name: string;
+  stateId: number;
+}
+
+@Component({
+  selector: 'app-all-reports-component',
+  templateUrl: './all-reports-component.component.html',
+  styleUrls: ['./all-reports-component.component.css']
+
+})
+export class AllReportsComponentComponent {
+  age: number = 0;
+  caseSub!: Subscription;
+  tableData: any[] = [];
+  doctorlist: any[] = [];
+  // patient: any[] = [];
+  isViewMode = false;
+  Math = Math;
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalItems = 0;
+  paginatedData: Case[] = [];
+  totalPages = 0;
+  pageNumbers: number[] = [];
+  // selectedState: string = '';
+  userData: any;
+  patient: any;
+  stage: number = 0;
+  patientId: number = 0;
+  totalCases = 0;
+  completedCases = 0;
+  incompleteCases = 0;
+  pendingCases = 0;
+  maleCount = 0;
+  femaleCount = 0;
+  otherCount = 0;
+  baseline: any;
+  followup1: any;
+  followup2: any;
+
+  selectedCategory: string | null = null;
+  selectedOption: string | null = null;
+  availableOptions: string[] = [];
+
+  data: DropdownData = {
+    "Age": ["18-30", "31-40", "41-50", "51-60", "61-70", "71-80", ">80"],
+    "Education": ["Above Tenth standard", "Below Tenth standard"],
+    "Occupation": ["Sedentary", "Non sedentary"],
+    "Place Type": ["urban", "sub urban", "rural"],
+    "Socioeconomic Status": ["Above poverty line", "Below poverty line"],
+    "Annual Family Income (Rupees)": ["< 1 lakh", "1-5 lakhs", "> 5 lakhs"],
+    "Chief complaints": ["Heartburn", "Regurgitation", "Retrosternal Pain", "Acid Taste in mouth"],
+    "Heartburn": ["Postural", "Nocturnal"],
+    "Regurgitation": ["Postural", "Nocturnal"],
+    "Retrosternal Pain": ["Postural", "Nocturnal"],
+    "Acid Taste in mouth": ["Postural", "Nocturnal"],
+    "COMORBIDITIES": ["Hypertension", "Diabetes", "Dyslipidemia", "Chronic liver disease", "Neurological Disorder", "Cardiovascular disorders", "Hypothyroidism", "Hyperthyroidism", "Behavioural disorders", "Chronic kidney disease", "Asthma", "Osteoarthritis", "Rheumatoid arthritis", "Systemic Sclerosis", "Cancer", "Others"],
+    "Diet": ["Vegetarian", "Non-Vegetarian"],
+    "Patient Personal History": ["Aerated Drinks", "Coffee", "Tea", "Spicy food", "Alcohol", "Chocolates/ sweets", "Smoking (cigarettes/day)", "Tobacco (other forms/day)"],
+    "Sleep Apnea": ["Yes", "No"],
+    "Exercise": ["Walking", "Jogging", "Gym", "Yoga", "Aerobics", "Zumba", "Others"],
+    "Computer Use": ["Yes", "No"],
+    "Computer Usage (hrs/day)": ["<1 hr", "<2 hrs", "3-4 hrs", "4-6 hrs", "6-8 hrs", "8-10 hrs"],
+    "Computer Usage Duration (years)": ["<1 year", "2-5 years", "6-10 years", "11-15 years", "16-20 years", ">20 years"],
+    "Smartphone Use": ["Yes", "No"],
+    "Smartphone Usage (hrs/day)": ["<1 hr", "<2 hrs", "3-4 hrs", "4-6 hrs", "6-8 hrs", "8-10 hrs"],
+    "Smartphone Usage Duration (years)": ["<1 year", "2-5 years", "6-10 years", "11-15 years", "16-20 years", ">20 years"],
+    "Working Hours (Occupation)": ["4.00 am to 12.00 noon (Early Morning shift)", "6.00 am to 3.00 pm (Morning shift)", "9.00 am to 6.00 pm (General shift)", "12.00 noon to 8.00 pm (Afternoon shift)", "8.00 pm to 8.00 am (Night shift)"],
+    "Job/ Occupation type": ["Sedentary", "Non sedentary"],
+    "Duration (No. of years in the above working hours)": ["<1 year", "2-5 years", "6-10 years", "11-15 years", "16-20 years", ">20 years"],
+    "Family History of GERD": ["Yes", "No"],
+    "Family History of Esophago-gastric Cancer": ["Yes", "No"],
+    "PPI Usage": ["Yes", "No"],
+    "History of Endoscopy": ["Yes", "No"],
+    "History of Gastro-surgery": ["Yes", "No"],
+    "Bariatric Surgery": ["Yes", "No"],
+    "Fundoplication Surgery": ["Yes", "No"],
+    "Gastric POEM Surgery": ["Yes", "No"],
+    "Gastrojejunostomy": ["Yes", "No"],
+    "Other Gastro Surgery": ["Yes", "No"],
+    "Current Medications": ["PPI", "Combination of PPI + Prokinetics", "Sucralfate", "Alginate", "H₂ Blockers", "H₂ Blockers combinations", "PCAB", "Any others"],
+    "Los Angeles Grade": ["Grade A", "Grade B", "Grade C", "Grade D"],
+    "Hill’s classification Grade": ["Grade 1", "Grade 2", "Grade 3", "Grade 4"],
+    "Newly Diagnosed": ["Yes", "No"],
+    "Newly Diagnosed (Gender)": ["Male", "Female"],
+    "Known case of GERD": ["Yes", "No"],
+    "Known case of GERD (Gender)": ["Male", "Female"],
+    "GERDType": ["Erosive GERD", "Non-Erosive GERD"],
+    "RefractorytoPPI": ["Yes", "No"],
+    "AdherencetoTherapy": ["Yes", "No"],
+    "Lifestyle Recommendations": ["Diet modification", "Moderation of alcohol", "Weight loss", "Regular exercise", "Stop Tobacco use"],
+    "Drug Therapy Advised": ["PPI", "Combination of PPI + Prokinetics", "Sucralfate", "Alginate", "H₂ Blockers", "H₂ Blockers combinations", "PCAB", "Any others"]
+  };
+  mainKeys = Object.keys(this.data);
+
+
+  showCategoryDropdown = true;
+  showOptionDropdown = false;
+
+  zones: string[] = ["North", "South", "East", "West"];
+  genders: string[] = ["Male", "Female", "Others"];
+  states: State[] = [];
+  cities: City[] = [];
+
+  selectedZone: string = '';
+  selectedState: State | null = null;
+  selectedCity: City | null = null;
+  selectedGender: string = '';
+  zoneMatch: string[] = [];
+
+
+  pieChartType: 'pie' = 'pie';
+  pieChartData: ChartData<'pie', number[], string | string[]> = {
+    labels: ['Red', 'Blue', 'Yellow'],
+    datasets: [
+      {
+        data: [300, 500, 700],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+      }
+    ]
+  };
+  pieChartOptions: ChartOptions<'pie'> = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' }
+    }
+  };
+
+  barChartType: 'bar' = 'bar';
+  barChartData: ChartData<'bar'> = {
+    labels: ['January', 'February', 'March', 'April', 'May'],
+    datasets: [
+      { label: 'Sales', data: [65, 59, 80, 81, 56], backgroundColor: '#36A2EB' }
+    ]
+  };
+  barChartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    scales: {
+      y: { beginAtZero: true }
+    },
+    plugins: {
+      legend: { position: 'top' }
+    }
+  };
+  constructor(private https: HttpClient, private http: HttpserviceService, private router: Router, private caseDataService: CaseDataService
+  ) { }
+
+  ngOnInit() {
+    this.selectedCategory = null;
+    this.selectedOption = null;
+    //this.availableOptions = [];
+    this.getStates();
+    this.getCities();
+    this.getPatientList();
+
+  }
+
+
+  getStage(c: Case): number {
+    const bl = Number(c['blsubmitted'] ?? 0);
+    const fu1 = Number(c['fu1submitted'] ?? 0);
+    const fu2 = Number(c['fu2submitted'] ?? 0);
+
+    if (fu2 === 1) return 5;
+    if (fu1 === 1) return 3;
+    if (bl === 1) return 1;
+    return 0;
+  }
+  onCategorySelect(category: string) {
+    this.selectedCategory = category;
+    this.availableOptions = this.data[category];
+    this.selectedOption = null;
+    this.showOptionDropdown = true;
+
+    this.loadPiechar(category);
+  }
+
+  onOptionSelect(option: string) {
+    this.selectedOption = option;
+    console.log(`Selected: ${this.selectedCategory} → ${option}`); // <-- use backticks
+
+    if (this.selectedCategory && this.selectedOption) {
+      this.loadPiechar(this.selectedCategory, this.selectedOption);
+    }
+  }
+
+
+  toggleSelection(item: any, type: string) {
+    switch (type) {
+      case 'zone':
+        this.selectedZone = item;
+        this.selectedState = null;
+        this.selectedCity = null;
+        this.getStates();
+        this.cities = [];
+        break;
+
+      case 'state':
+        this.selectedState = item;
+        this.selectedCity = null;
+        this.getCities();
+        break;
+
+      case 'city':
+        this.selectedCity = item;
+        break;
+
+      case 'gender':
+        this.selectedGender = item;
+        break;
+    }
+
+    this.dropdownOpen = {
+      Zones: false,
+      States: false,
+      Cities: false,
+      Gender: false
+    };
+  }
+
+  dropdownOpen: Record<string, boolean> = {
+    'Category': false,
+    'Option': false,
+    Zones: false,
+    States: false,
+    Cities: false,
+    Gender: false
+  };
+
+
+
+  toggleDropdown(dropdown: string) {
+    Object.keys(this.dropdownOpen).forEach(key => {
+      if (key !== dropdown) this.dropdownOpen[key] = false;
+    });
+    this.dropdownOpen[dropdown] = !this.dropdownOpen[dropdown];
+  }
+
+  get selectedStateName() {
+    return this.selectedState ? this.selectedState.name : '';
+  }
+
+  get selectedCityName() {
+    return this.selectedCity ? this.selectedCity.name : '';
+  }
+  getStates() {
+    if (!this.selectedZone) {
+      this.http.httpGet(API_URLS.STATE_GET).subscribe({
+        next: (res: State[]) => {
+          this.states = res;
+        },
+        error: (err) => {
+          console.error('Error fetching states', err);
+        }
+      });
+      return;
+    }
+
+    this.http.httpGet(API_URLS.STATE_GET).subscribe({
+      next: (res: State[]) => {
+        switch (this.selectedZone) {
+          case 'North':
+            this.states = res.filter(s =>
+              [4007, 4015, 4016, 4020, 4021, 4022, 4029, 4031, 4040, 4852].includes(s.id)
+            );
+            break;
+
+          case 'South':
+            this.states = res.filter(s =>
+              [4011, 4012, 4017, 4019, 4023, 4026, 4028, 4035].includes(s.id)
+            );
+            break;
+
+          case 'East':
+            this.states = res.filter(s =>
+              [4006, 4010, 4013, 4018, 4024, 4025, 4027, 4034, 4036, 4037, 4038, 4853].includes(s.id)
+            );
+            break;
+
+          case 'West':
+            this.states = res.filter(s =>
+              [4008, 4009, 4014, 4030, 4033, 4039].includes(s.id)
+            );
+            break;
+
+          default:
+            this.states = res;
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching states', err);
+      }
+    });
+  }
+
+  selectCity(city: City) {
+    this.selectedCity = city;
+    this.dropdownOpen['Cities'] = false;
+  }
+  getCities() {
+    if (!this.selectedState) {
+      this.cities = [];
+      return;
+    }
+
+    this.http.httpGet(API_URLS.CITY_GET_VIEW).subscribe({
+      next: (res: City[]) => {
+        this.cities = res.filter(c => c.stateId === this.selectedState!.id);
+      },
+      error: err => console.error('Error fetching cities', err)
+    });
+  }
+
+  getPatientList() {
+    this.caseSub = this.http.httpGet('/PatientReg/GetPatient').subscribe((res: any) => {
+      if (res?.data && Array.isArray(res.data)) {
+        // Sort by date descending
+        this.tableData = res.data.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        this.updatePagination();
+      }
+    });
+  }
+
+
+  updatePagination() {
+    this.totalPages = Math.ceil(this.tableData.length / this.itemsPerPage);
+    this.updatePaginatedData();
+    this.generatePageNumbers();
+  }
+
+  updatePaginatedData() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    this.paginatedData = this.tableData.slice(start, start + this.itemsPerPage);
+  }
+
+  generatePageNumbers() {
+    this.pageNumbers = [];
+    const maxVisiblePages = 5;
+    let start = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let end = Math.min(this.totalPages, start + maxVisiblePages - 1);
+    if (end - start + 1 < maxVisiblePages) start = Math.max(1, end - maxVisiblePages + 1);
+    for (let i = start; i <= end; i++) this.pageNumbers.push(i);
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePaginatedData();
+      this.generatePageNumbers();
+    }
+  }
+
+  goToPrevious() { if (this.currentPage > 1) this.goToPage(this.currentPage - 1); }
+  goToNext() { if (this.currentPage < this.totalPages) this.goToPage(this.currentPage + 1); }
+  onItemsPerPageChange(event: any) { this.itemsPerPage = +event.target.value; this.currentPage = 1; this.updatePagination(); }
+
+
+  navigateToAddCase() { this.router.navigate([`/demographic/0/0`]); }
+
+  ngOnDestroy() { this.caseSub?.unsubscribe(); }
+
+
+  downloadAllStages(patientID: any) {
+    this.router.navigate([`/case-stage-view/${patientID}`]);
+  }
+
+  categoryPropMap: Record<string, string> = {
+    "Age": "age",
+    "Education": "education",
+    "Occupation": "occupation",
+    "Place Type": "placeType",
+    "Socioeconomic Status": "socioeconomicStatus",
+    "Annual Family Income (Rupees)": "familyIncome",
+    "Chief complaints": "chiefComplaint",
+    "Heartburn": "rNocturnal",
+    "Regurgitation": "rNocturnalq",
+    "Retrosternal Pain": "retrosternalPain",
+    "Acid Taste in mouth": "acidTasteInMouth",
+    "Diet": "Diet",
+  };
+
+
+  urlStr: string = '';
+
+  patients: any[] = [];
+  loadPiechar(category: string, option?: string) {
+    let apiUrl = '';
+
+    switch (category) {
+      case 'Age':
+      case 'Education':
+      case 'Occupation':
+      case 'Place Type':
+      case 'Socioeconomic Status':
+      case 'Annual Family Income (Rupees)':
+        apiUrl = API_URLS.PATIENT_REG_GET;
+        break;
+
+      case 'Chief complaints':
+      case 'Heartburn':
+      case 'Regurgitation':
+      case 'Retrosternal Pain':
+      case 'Acid Taste in mouth':
+        apiUrl = API_URLS.CHEIF_COMPLAINT_GET;
+        break;
+
+      case 'COMORBIDITIES':
+        apiUrl = API_URLS.COMORBIDITIES_GET;
+        break;
+
+      case 'Diet':
+        apiUrl = API_URLS.HISTORYGET;
+        break;
+
+
+      case 'Patient Personal History':
+        apiUrl = API_URLS.PERSONAL_HISTORY_GET;
+        break;
+
+      case 'Sleep Apnea':
+      case 'Exercise':
+        apiUrl = API_URLS.SLEEP_GET;
+        break;
+
+      case 'Computer Use':
+      case 'Computer Usage (hrs/day)':
+      case 'Computer Usage Duration (years)':
+      case 'Smartphone Use':
+      case 'Smartphone Usage (hrs/day)':
+      case 'Smartphone Usage Duration (years)':
+      case 'Working Hours (Occupation)':
+      case 'Job/ Occupation type':
+      case 'Duration (No. of years in the above working hours)':
+        apiUrl = API_URLS.GADGET_GET;
+        break;
+
+      case 'Family History of GERD':
+      case 'Family History of Esophago-gastric Cancer':
+      case 'PPI Usage':
+        apiUrl = API_URLS.FAMILY_HISTORY_GET;
+        break;
+
+      default:
+        console.warn('No API for this category');
+        return;
+    }
+
+    this.http.httpGet(apiUrl).subscribe({
+      next: (res: any) => {
+        const data = res?.data || [];
+
+        const normalizeValue = (category: string, val: any) => {
+          if (category === 'Education') {
+            if (val === "10th Std & Above") return "Above Tenth standard";
+            if (val === "Below 10th") return "Below Tenth standard";
+          }
+
+          const symptomMap: Record<string, Record<string, string>> = {
+            'Heartburn': { 'Postural': 'hbPostural', 'Nocturnal': 'hbNocturnal' },
+            'Regurgitation': { 'Postural': 'rPostural', 'Nocturnal': 'rNocturnal' },
+            'Retrosternal Pain': { 'Postural': 'rpPostural', 'Nocturnal': 'rpNocturnal' },
+            'Acid Taste in mouth': { 'Postural': 'atPostural', 'Nocturnal': 'atNocturnal' },
+          };
+
+          const comorbiditiesMap: Record<string, string> = {
+            'Hypertension': 'htPresent',
+            'Diabetes': 'dbPresent',
+            'Hyperlipidemia': 'hlPresent',
+            'Obesity': 'oPresent',
+            'Asthma': 'aPresent',
+            'COPD': 'cPresent',
+            'Heart Disease': 'hPresent',
+            'Kidney Disease': 'ckdPresent',
+            'Liver Disease': 'cldPresent',
+            'Thyroid Disorder': 'htdPresent',
+            'Rheumatoid Arthritis': 'raPresent',
+            'Sickle Cell': 'ssPresent',
+            'Congenital Disease': 'cmoPresent',
+            'Other': 'bdPresent'
+          };
+
+          const dietMap: Record<string, string> = {
+            'Vegetarian': 'dietVegetarian',
+            'Non-Vegetarian': 'dietNonVegetarian'
+          };
+
+          const personalHistoryMap: Record<string, string> = {
+            'Aerated Drinks': 'aeratedIntake',
+            'Coffee': 'coffeeIntake',
+            'Tea': 'teaIntake',
+            'Spicy food': 'spicyIntake',
+            'Alcohol': 'alcoholIntake',
+            'Chocolates/ sweets': 'sweetsIntake',
+            'Smoking (cigarettes/day)': 'smokingIntake',
+            'Tobacco (other forms/day)': 'tobaccoIntake'
+          };
+
+
+          const SleepMap: Record<string, string> = {
+            'Sleep Apnea (Yes)': 'sleepApneayes',
+            'Sleep Apnea (No)': 'sleepApneano',
+            'Exercise (Yes)': 'exerciseIntakeyes',
+            'Exercise (No)': 'exerciseIntakeno',
+            'Jogging': 'joggingSelectedyes',
+            'Gym': 'gymSelectedyes',
+            'Yoga': 'yogaSelectedyes',
+            'Walking': 'walkingSelectedyes',
+            'Aerobics': 'aerobicsyes',
+            'Zumba': 'zumbayes',
+            'Others': 'othersyes'
+          };
+
+
+
+
+          if (category === 'COMORBIDITIES') return comorbiditiesMap[val] || val;
+          if (category === 'Diet') return dietMap[val] || val;
+          if (category === 'Patient Personal History') return personalHistoryMap[val] || val;
+          if (category === 'Exercise') return SleepMap[val] || val;
+          return symptomMap[category]?.[val] || val;
+        };
+
+        const normalizedOptions = this.availableOptions.map(opt => normalizeValue(category, opt));
+
+        const optionCounts: Record<string, number> = {};
+        normalizedOptions.forEach(opt => (optionCounts[opt] = 0));
+
+        // Count occurrences
+        const booleanCategories = ['COMORBIDITIES', 'Diet', 'Patient Personal History'];
+
+        data.forEach((item: any) => {
+          normalizedOptions.forEach(opt => {
+            if (booleanCategories.includes(category)) {
+              if (item[opt] === true || item[opt] === 'true') optionCounts[opt]++;
+            } else {
+              if (item[opt] === 'Yes') optionCounts[opt]++;
+            }
+          });
+        });
+
+        // Prepare pie chart data
+        this.pieChartData = {
+          labels: option ? [option] : Object.keys(optionCounts),
+          datasets: [{
+            data: option ? [0] : Object.values(optionCounts),
+            backgroundColor: option ? ['#36A2EB'] : [
+              '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+              '#9966FF', '#FF9F40', '#FF7F50', '#87CEEB'
+            ]
+          }]
+        };
+
+        // Filter table if option is selected
+        if (option) {
+          const normalizedOption = normalizeValue(category, option);
+
+          if (booleanCategories.includes(category)) {
+            this.tableData = data.filter((item: any) => item[normalizedOption] === true || item[normalizedOption] === 'true');
+          } else {
+            this.tableData = data.filter((item: any) => item[normalizedOption] === 'Yes');
+          }
+
+          if (this.tableData.length) {
+            this.pieChartData.datasets[0].data = [this.tableData.length];
+          } else {
+            alert('No data found for selected option');
+            this.pieChartData = { labels: [], datasets: [] };
+            this.tableData = [];
+            return;
+          }
+        } else {
+          this.tableData = data;
+        }
+
+        this.updatePagination();
+      },
+      error: err => console.error('Error fetching data', err)
+    });
+  }
+
+  normalize(str: string | undefined) {
+    if (!str) return '';
+    return str.toString().toLowerCase().replace(/\s+/g, '');
+  } updatePieChart() {
+    const labels: string[] = [];
+    const counts: number[] = [];
+
+    this.tableData.forEach((item: any) => {
+      const key = this.selectedOption || 'Unknown';
+      labels.push(key);
+      counts.push(1);
+    });
+
+    this.pieChartData = {
+      labels,
+      datasets: [{ data: counts, backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'] }]
+    };
+  }
+
+
+
+      login(){
+    this.router.navigate(['/login']);
+  }
+
+    goToCoMorbiditiesReport(){
+    this.router.navigate([`/CoMorbiditiesReport`]);
+  }
+  goTotreatmentReport(){
+    this.router.navigate(['/treatmentReport']);
+  }
+    goDoctorlist(){  
+    this.router.navigate(['/doctor-list']); 
+  }
+
+    goTocontactUs(){
+    this.router.navigate(['/contact-us']);
+  }
+
+  goTofilterchart(){
+    this.router.navigate(['/allReport']);
+  }
+
+
+  goDashboard(){
+    this.router.navigate([`/admindashboard`]);
+  
+}
+
+ goReport() {
+    this.router.navigate([`/genderReport`]);
+
+  }
+}
+

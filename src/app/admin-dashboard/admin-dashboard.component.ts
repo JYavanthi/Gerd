@@ -442,6 +442,6 @@ downloadCompleted2List(): void {
   }
 
   goTofilterchart(){
-    this.router.navigate(['/filterchartComponent']);
+    this.router.navigate(['/allReport']);
   }
 }

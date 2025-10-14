@@ -91,7 +91,7 @@
               <select formControlName="education" class="form-select" (change)="onEducationChange($event)">
                 <option value="" disabled hidden selected></option>
                 <option value="10th Std & Above">10th Std & Above</option>
-                <option value="Below 10th">Below 10th</option>
+                <option value="Below 10th Std">Below 10th Std</option>
               </select>
               <label class="form-label">Education</label>
               <div *ngIf="demographicForm.get('education')?.touched && demographicForm.get('education')?.invalid"
@@ -161,7 +161,7 @@
           </div>
           <div class="form-row mb-3">
 
-<div class="form-group col-md-4">
+            <div class="form-group col-md-4">
               <select formControlName="pincode" class="form-select">
                 <option value="" disabled> Select Pincode </option>
                 <option *ngFor="let pin of pincode" [value]="pin.pincode">

@@ -21,6 +21,8 @@ export const API_URLS = {
   FAMILY_HISTORY_SAVE: '/FamiyHistory/SaveFamilyHistory',
   FAMILY_HISTORY_GET_BY_ID: '/FamiyHistory/GetFamilyHistoryById/',
 
+
+  HISTORYGET:'/History/GetHistory',
   MedicationY_SAVE: '/Medication/SaveMedication',
   MEDICATION_GET_BY_ID: '/Medication/GetMedicationByPatientId/{patientId}/{stage}',
 
@@ -51,6 +53,7 @@ export const API_URLS = {
 
   STATE_GET: '/State/GetState',
   CITY_GET: '/City/GetCitiesById',
+  CITY_GET_VIEW: '/City/GetCities',
 
   PERSONAL_HISTORY_SAVE: '/PersonalHistory/SavePersonalHistory',
   PERSONAL_HISTORY_GET: '/PersonalHistory/GetPersonalHistory',
