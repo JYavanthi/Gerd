@@ -23,9 +23,11 @@ public partial class VwPatient
 
     public string? Occupation { get; set; }
 
-    public int? State { get; set; }
+    public string Zone { get; set; } = null!;
 
-    public int? City { get; set; }
+    public string State { get; set; } = null!;
+
+    public string City { get; set; } = null!;
 
     public int? Pincode { get; set; }
 

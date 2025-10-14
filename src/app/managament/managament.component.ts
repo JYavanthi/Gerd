@@ -47,21 +47,21 @@ export class ManagamentComponent {
     this.userData = JSON.parse(user);
 
     const navigation = this.router.getCurrentNavigation();
-    const state = navigation?.extras?.state;
+    // const state = navigation?.extras?.state;
 
-    if (state) {
-      this.newStage = state['stage']
-    }
-    this.route.queryParams.subscribe((params: Params) => {
-      if (!this.patientId) {
-        this.patientId = this.patientService.getPatientId();
-      }
+    // if (state) {
+    //   this.newStage = state['stage']
+    // }
+    // this.route.queryParams.subscribe((params: Params) => {
+    //   if (!this.patientId) {
+    //     this.patientId = this.patientService.getPatientId();
+    //   }
 
-      this.stage = Number(this.route.snapshot.params['stage']);
-      this.doctorId = this.userData?.doctorId;
+    //   this.stage = Number(this.route.snapshot.params['stage']);
+    //   this.doctorId = this.userData?.doctorId;
 
-      console.log("👉 PatientId resolved:", this.patientId);
-    });
+     // console.log("👉 PatientId resolved:", this.patientId);
+   // });
   }
 
 
@@ -87,7 +87,7 @@ export class ManagamentComponent {
     this.drugTherapy[6] = { class: 'PCAB', name: data.pcabMedicationName, dose: data.pcabDose, frequency: data.pcabFrequency };
     this.drugTherapy[7] = { class: 'Any others', name: data.othersMedicationName, dose: data.othersDose, frequency: data.othersFrequency };
 
-    console.log("✅ Patched Management data", this.drugTherapy, this.lifestyle);
+    console.log("Patched Management data", this.drugTherapy, this.lifestyle);
   }
 
   ngOnInit(): void {
@@ -270,8 +270,8 @@ export class ManagamentComponent {
     const completeCasePayload = {
       // patientId: PatientID,
       patientId: this.patientId,
-      stage: this.ptnstage ? this.stage : 0,
-      createdby: this.userData?.doctorId,
+      stage: this.ptnstage,
+      createdby: this.doctorId,
       bLSubmitted: this.bLSubmitted || null,
       fU1Submitted: this.fU1Submitted || null,  
       fU2Submitted: this.fU2Submitted || null,
@@ -289,7 +289,7 @@ export class ManagamentComponent {
             drug.frequency = '';
           });
 
-          // ✅ Navigate and force reload after short delay
+          // Navigate and force reload after short delay
           setTimeout(() => {
             this.router.navigate(['/dashboard']).then(() => {
               window.location.reload();
@@ -298,7 +298,7 @@ export class ManagamentComponent {
         }
       },
       error => {
-        console.error('❌ Error calling CompleteCase:', error);
+        console.error('Error calling CompleteCase:', error);
         alert('Submitted, but failed to update stage. Try again later.');
       }
     );

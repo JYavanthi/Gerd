@@ -27,6 +27,7 @@ export class SleepComponent implements OnInit {
   @Input() data: any;
   // patientId: any;
   @Input() isPrintMode: boolean = false;
+  ageInYears: number = 0;
 
   constructor(
     private router: Router,
@@ -79,7 +80,13 @@ export class SleepComponent implements OnInit {
       if (allowedWithoutSave.includes(this.stage)) {
         this.isSaved = true;
       }
-
+      // Age is stored in localStorage from Demographic component
+      const storedAge = localStorage.getItem('Age');
+      if (storedAge) {
+        const age = JSON.parse(storedAge).age; // age in years
+        this.ageInYears = age;            // age in years
+        console.log('Age in months:', this.ageInYears);
+      }
       if (value === 'No') {
         this.sleepForm.patchValue({
           patientId: this.patientId,
@@ -165,16 +172,16 @@ export class SleepComponent implements OnInit {
 
 
   blockInvalidKeys(event: KeyboardEvent) {
-    if (['e', 'E', '+', '-','.'].includes(event.key)) {
+    if (['e', 'E', '+', '-', '.'].includes(event.key)) {
       event.preventDefault();
     }
   }
-   preventNegative(event: any) {
- 
-  if (event.target.value < 0) {
-    event.target.value = 0; // reset to 0 if negative
+  preventNegative(event: any) {
+
+    if (event.target.value < 0) {
+      event.target.value = 0; // reset to 0 if negative
+    }
   }
-}
 
   fetchSleepData(patientId: number, stage: number): void {
     this.sleepForm.reset();
@@ -371,7 +378,7 @@ export class SleepComponent implements OnInit {
   //   });
   // }
 
-   onSave() {
+  onSave() {
 
     if (!this.formValidation.validateForm(this.sleepForm)) {
       this.sleepForm.markAllAsTouched();
@@ -426,13 +433,13 @@ export class SleepComponent implements OnInit {
       exerciseIntakeyes: f.exerciseIntake === 'Yes' ? 'Yes' : '',
       exerciseIntakeno: f.exerciseIntake === 'No' ? 'No' : '',
       joggingSelectedyes: f.jogging === 'Yes' ? 'Yes' : '',
-      joggingSelectedno: f.jogging === 'No' ? 'No' : '',      
+      joggingSelectedno: f.jogging === 'No' ? 'No' : '',
       joggingFrequency: f.joggingFrequency ? String(f.joggingFrequency) : '',
       joggingDuration: f.joggingDuration ? String(f.joggingDuration) : '',
       gymSelectedyes: f.gym === 'Yes' ? 'Yes' : '',
       gymSelectedno: f.gym === 'No' ? 'No' : '',
-      gymFrequency: f.gymFrequency  ? String(f.gymFrequency) : '',
-      gymDuration: f.gymDuration  ? String(f.gymDuration) : '',
+      gymFrequency: f.gymFrequency ? String(f.gymFrequency) : '',
+      gymDuration: f.gymDuration ? String(f.gymDuration) : '',
       yogaSelectedyes: f.yoga === 'Yes' ? 'Yes' : '',
       yogaSelectedno: f.yoga === 'No' ? 'No' : '',
       yogaFrequency: f.yogaFrequency ? String(f.yogaFrequency) : '',
@@ -458,6 +465,53 @@ export class SleepComponent implements OnInit {
       CreatedAt: now,
       ModifiedDt: now
     };
+
+    const enteredsleepApneaDuration = Number(param.sleepApneaDuration);
+    const sleepApneaFrequency = Number(param.sleepApneaFrequency);
+    const enteredjoggingDuration = Number(param.joggingDuration);
+    const enteredgymDuration = Number(param.gymDuration);
+    const enteredyogaDuration = Number(param.yogaDuration);
+    const enteredwalkingDuration = Number(param.walkingDuration);
+    const enteredaerobicsDuration = Number(param.aerobicsDuration);
+    const enteredzumbaDuration = Number(param.zumbaDuration);
+    const enteredothersDuration = Number(param.othersDuration);
+    const enteredjoggingFrequency = Number(param.joggingFrequency);
+    const enteredgymFrequency = Number(param.gymFrequency);
+    const enteredyogaFrequency = Number(param.yogaFrequency);
+    const enteredwalkingFrequency = Number(param.walkingFrequency);
+    const enteredaerobicsFrequency = Number(param.aerobicsFrequency);
+    const enteredzumbaFrequency = Number(param.zumbaFrequency);
+    const enteredothersFrequency = Number(param.othersFrequency);
+
+      //maximum possible hours per week = 24*7=168
+    if (sleepApneaFrequency > 168 || 
+      enteredjoggingFrequency > 168 ||
+      enteredgymFrequency > 168 ||
+      enteredyogaFrequency > 168 ||
+      enteredwalkingFrequency > 168 ||
+      enteredaerobicsFrequency > 168 ||
+      enteredzumbaFrequency > 168 ||
+      enteredothersFrequency > 168
+    ) {
+      alert('Entered Frequency cannot exceed the maximum possible hours per week 168 . Please correct the value.');
+      return;
+    }
+    // Check if any entered duration exceeds age in years
+    if (
+      enteredsleepApneaDuration > this.ageInYears ||
+      enteredjoggingDuration > this.ageInYears ||
+      enteredgymDuration > this.ageInYears ||
+      enteredyogaDuration > this.ageInYears ||
+      enteredwalkingDuration > this.ageInYears ||
+      enteredaerobicsDuration > this.ageInYears ||
+      enteredzumbaDuration > this.ageInYears ||
+      enteredothersDuration > this.ageInYears
+    ) {
+
+      alert('Entered duration exceeds the person’s age (' + this.ageInYears + ' years). Please enter valid values.');
+      return;
+    }
+
     this.http.httpPost(API_URLS.SLEEP_SAVE, param).subscribe({
       next: (res: any) => {
         if (res.type === 'S') {
@@ -477,7 +531,7 @@ export class SleepComponent implements OnInit {
 
 
   onNext(): void {
-    const pid = this.patientService.getPatientId();
+    //const pid = this.patientService.getPatientId();
     this.router.navigate([`/gadget/${this.patientId}/${this.stage}`], {
       state: {
         patientId: this.patientId,
@@ -487,7 +541,7 @@ export class SleepComponent implements OnInit {
     });
   }
   OnNext(): void {
-    const pid = this.patientService.getPatientId();
+    //const pid = this.patientService.getPatientId();
     this.router.navigate([`/gadget/${this.patientId}/${this.stage}`], {
       state: {
         patientId: this.patientId,
@@ -555,6 +609,6 @@ export class SleepComponent implements OnInit {
   }
 
 
-  
+
 }
 

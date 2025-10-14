@@ -20,7 +20,7 @@ public class CityController : ControllerBase
   {
     try
     {
-      var data = await _context.Cities.Where(m => stateId == m.StateId).ToListAsync();
+      var data = await _context.VwCities.Where(m => stateId == m.StateId).ToListAsync();
       return Ok(data);
     }
     catch (Exception ex)

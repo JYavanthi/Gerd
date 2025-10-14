@@ -1,0 +1,151 @@
+--------------------------------------------------
+Task started at: 14-10-2025 11:02:23
+API URL: http://localhost:5058/api
+SMTP Server: smtp.gmail.com
+---- Daily Reminder Job Started ----
+ Error: No connection could be made because the target machine actively refused it. (localhost:5058)
+--------------------------------------------------
+Task started at: 14-10-2025 11:07:45
+API URL: http://localhost:5058/api
+SMTP Server: smtp.gmail.com
+---- Daily Reminder Job Started ----
+Added 333 (Baseline) for Dr. Rushikesh - Reminder #2
+Added fff (Baseline) for Dr. Rushikesh - Reminder #2
+Added eee (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added 333 (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added aaa (Baseline) for Dr. Rushikesh - Reminder #2
+Added 222 (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added qqq (Baseline) for Dr. Rushikesh - Reminder #2
+ SMTP Error: Failure sending mail.
+ Error: Failure sending mail.
+--------------------------------------------------
+Task started at: 14-10-2025 11:10:34
+API URL: http://localhost:5058/api
+SMTP Server: smtp.gmail.com
+---- Daily Reminder Job Started ----
+Added 444 (Follow-up 1) for Dr. RRR - Reminder #2
+Added ddd (Baseline) for Dr. RRR - Reminder #2
+ SMTP Error: Failure sending mail.
+ Error: Failure sending mail.
+--------------------------------------------------
+Task started at: 14-10-2025 11:12:06
+API URL: http://localhost:5058/api
+SMTP Server: smtp.gmail.com
+---- Daily Reminder Job Started ----
+Added 333 (Baseline) for Dr. Rushikesh - Reminder #2
+Added fff (Baseline) for Dr. Rushikesh - Reminder #2
+Added eee (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added 333 (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added aaa (Baseline) for Dr. Rushikesh - Reminder #2
+Added 222 (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added qqq (Baseline) for Dr. Rushikesh - Reminder #2
+ Email sent successfully to nagalakshmi.v@techvaraha.com
+ Sent one combined email to Dr. Rushikesh (7 patients)
+Added 444 (Follow-up 1) for Dr. RRR - Reminder #2
+Added ddd (Baseline) for Dr. RRR - Reminder #2
+ Email sent successfully to nagalakshmi.v@techvaraha.com
+ Sent one combined email to Dr. RRR (2 patients)
+Added wwe (Baseline) for Dr. Shraddha - Reminder #2
+ Email sent successfully to shraddha@gmail.com
+ Sent one combined email to Dr. Shraddha (1 patients)
+---- Reminder Job Completed Successfully ----14-10-2025 11:12:28
+--------------------------------------------------
+Task started at: 14-10-2025 11:43:13
+API URL: http://localhost:5058/api
+SMTP Server: smtp.gmail.com
+---- Daily Reminder Job Started ----
+---- Reminder Job Completed Successfully ----14-10-2025 11:43:13
+--------------------------------------------------
+Task started at: 14-10-2025 11:43:46
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+--------------------------------------------------
+Task started at: 14-10-2025 11:47:09
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+---- Reminder Job Completed Successfully ----14-10-2025 11:47:10
+--------------------------------------------------
+Task started at: 14-10-2025 11:48:27
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+Added 333 (Baseline) for Dr. Rushikesh - Reminder #2
+Added 222 (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added qqq (Baseline) for Dr. Rushikesh - Reminder #2
+Added aaa (Baseline) for Dr. Rushikesh - Reminder #2
+Added 333 (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added eee (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added fff (Baseline) for Dr. Rushikesh - Reminder #2
+ SMTP Error: The operation has timed out.
+ Error: The operation has timed out.
+--------------------------------------------------
+Task started at: 14-10-2025 11:58:52
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+Added 444 (Follow-up 1) for Dr. RRR - Reminder #2
+Added ddd (Baseline) for Dr. RRR - Reminder #2
+--------------------------------------------------
+Task started at: 14-10-2025 11:59:40
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+ Error: No connection could be made because the target machine actively refused it. (localhost:5058)
+--------------------------------------------------
+Task started at: 14-10-2025 12:02:13
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+ Error: No connection could be made because the target machine actively refused it. (localhost:5058)
+--------------------------------------------------
+Task started at: 14-10-2025 13:57:01
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+Added 333 (Baseline) for Dr. Rushikesh - Reminder #2
+Added fff (Baseline) for Dr. Rushikesh - Reminder #2
+Added eee (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added 333 (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added aaa (Baseline) for Dr. Rushikesh - Reminder #2
+Added 222 (Follow-up 2) for Dr. Rushikesh - Reminder #2
+Added qqq (Baseline) for Dr. Rushikesh - Reminder #2
+ SMTP Error: The operation has timed out.
+ Error: The operation has timed out.
+--------------------------------------------------
+Task started at: 14-10-2025 14:00:15
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+Added 444 (Follow-up 1) for Dr. RRR - Reminder #2
+Added ddd (Baseline) for Dr. RRR - Reminder #2
+ SMTP Error: The operation has timed out.
+ Error: The operation has timed out.
+--------------------------------------------------
+Task started at: 14-10-2025 14:01:16
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+Added wwe (Baseline) for Dr. Shraddha - Reminder #2
+--------------------------------------------------
+Task started at: 14-10-2025 14:01:50
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+---- Reminder Job Completed Successfully ----14-10-2025 14:01:50
+--------------------------------------------------
+Task started at: 14-10-2025 14:01:55
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+---- Reminder Job Completed Successfully ----14-10-2025 14:01:55
+--------------------------------------------------
+Task started at: 14-10-2025 14:02:47
+API URL: http://localhost:5058/api
+SMTP Server: smtp.titan.email
+---- Daily Reminder Job Started ----
+smtpPort: 465
+smtpUser: info@gerdregistryofindia.com
+smtpPass: MicroGerd@0610
+enableSsl: True

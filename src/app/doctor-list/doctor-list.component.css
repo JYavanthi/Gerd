@@ -138,6 +138,7 @@ tr:hover {
   color: white !important;
   width: 255px !important;
     height: 44px !important;
+    margin-top: 28px;
 }
 
 .bg-white {
@@ -153,4 +154,10 @@ tr:hover {
     width: 140px;
     height: 40px;
     margin-top: 15px;
+}
+
+.Filter{
+  display: flex;
+  margin-bottom: 20px;
+  align-items: center;
 }

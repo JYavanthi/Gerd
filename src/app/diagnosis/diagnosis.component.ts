@@ -26,7 +26,7 @@ export class DiagnosisComponent implements OnInit {
   formData: any;
   @Input() isPrintMode = false;
   userData: any;
-
+  ageInYears: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -49,58 +49,68 @@ export class DiagnosisComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  this.patientId = Number(this.route.snapshot.params['patientId']) || null;
-  this.stage = Number(this.route.snapshot.params['stage']) || 0;
+    this.patientId = Number(this.route.snapshot.params['patientId']) || null;
+    this.stage = Number(this.route.snapshot.params['stage']) || 0;
 
-  const allowedWithoutSave = [1, 3, 5];
-  if (allowedWithoutSave.includes(this.stage)) {
-    this.isSaved = true;
-  }
-
-  this.isViewMode = this.isViewMode ?? false;
-
-  if (this.patientId) {
-    this.fetchAndStorePatientId(this.patientId);
-  }
-
-  this.diagnosisForm.get('newlyDiagnosed')?.valueChanges.subscribe(value => {
-    const knownCase = this.diagnosisForm.get('knownCase');
-    const years = this.diagnosisForm.get('yearsKnown');
-
-    if (value === 'No') {
-      knownCase?.enable();
-    } else {
-      knownCase?.disable();
-      knownCase?.setValue('');
-      years?.disable();
-      years?.setValue('');
+    const allowedWithoutSave = [1, 3, 5];
+    if (allowedWithoutSave.includes(this.stage)) {
+      this.isSaved = true;
     }
-  });
 
-  this.diagnosisForm.get('knownCase')?.valueChanges.subscribe(value => {
-    const years = this.diagnosisForm.get('yearsKnown');
-    if (value === 'Yes' && this.diagnosisForm.get('newlyDiagnosed')?.value === 'No') {
-      years?.enable();
-    } else {
-      years?.disable();
-      years?.setValue('');
+    // Age is stored in localStorage from Demographic component
+    const storedAge = localStorage.getItem('Age');
+    if (storedAge) {
+      const age = JSON.parse(storedAge).age; // age in years
+      this.ageInYears = age;            // age in years
+      console.log('Age in months:', this.ageInYears);
     }
-  });
 
-  const newlyDiagnosedInitial = this.diagnosisForm.get('newlyDiagnosed')?.value;
-  const knownCaseInitial = this.diagnosisForm.get('knownCase')?.value;
+    this.isViewMode = this.isViewMode ?? false;
 
-  if (newlyDiagnosedInitial === 'No') {
-    this.diagnosisForm.get('knownCase')?.enable();
-  } else {
-    this.diagnosisForm.get('knownCase')?.disable();
-    this.diagnosisForm.get('knownCase')?.setValue('');
+    if (this.patientId) {
+      this.fetchAndStorePatientId(this.patientId);
+    }
+
+    this.diagnosisForm.get('newlyDiagnosed')?.valueChanges.subscribe(value => {
+      const knownCase = this.diagnosisForm.get('knownCase');
+      const years = this.diagnosisForm.get('yearsKnown');
+
+      if (value === 'No') {
+        knownCase?.enable();
+        knownCase?.setValue('Yes');
+        knownCase?.disable();
+      } else {
+        knownCase?.disable();
+        knownCase?.setValue('');
+        years?.disable();
+        years?.setValue('');
+      }
+    });
+
+    this.diagnosisForm.get('knownCase')?.valueChanges.subscribe(value => {
+      const years = this.diagnosisForm.get('yearsKnown');
+      if (value === 'Yes' && this.diagnosisForm.get('newlyDiagnosed')?.value === 'No') {
+        years?.enable();
+      } else {
+        years?.disable();
+        years?.setValue('');
+      }
+    });
+
+    const newlyDiagnosedInitial = this.diagnosisForm.get('newlyDiagnosed')?.value;
+    const knownCaseInitial = this.diagnosisForm.get('knownCase')?.value;
+
+    if (newlyDiagnosedInitial === 'No') {
+      this.diagnosisForm.get('knownCase')?.enable();
+    } else {
+      this.diagnosisForm.get('knownCase')?.disable();
+      this.diagnosisForm.get('knownCase')?.setValue('');
+    }
+
+    if (knownCaseInitial !== 'Yes') {
+      this.diagnosisForm.get('yearsKnown')?.disable();
+    }
   }
-
-  if (knownCaseInitial !== 'Yes') {
-    this.diagnosisForm.get('yearsKnown')?.disable();
-  }
-}
 
 
   fetchAndStorePatientId(patientId: number): void {
@@ -108,7 +118,7 @@ export class DiagnosisComponent implements OnInit {
       next: (res: any) => {
         if (res.type === 'S' && res.data) {
           const data = res.data;
-         
+
           //this.stage = data.stage;
           this.diagnosisForm.patchValue({
             patientID: data.patientId,
@@ -130,38 +140,38 @@ export class DiagnosisComponent implements OnInit {
     });
   }
 
-showDiag() {
-  const newlyDiagnosed = this.diagnosisForm.get('newlyDiagnosed')?.value;
-  const knownCaseControl = this.diagnosisForm.get('knownCase');
-  const yearsControl = this.diagnosisForm.get('yearsKnown');
+  showDiag() {
+    const newlyDiagnosed = this.diagnosisForm.get('newlyDiagnosed')?.value;
+    const knownCaseControl = this.diagnosisForm.get('knownCase');
+    const yearsControl = this.diagnosisForm.get('yearsKnown');
 
-  if (newlyDiagnosed === 'Yes') {
-    // Disable both if newly diagnosed = Yes
-    knownCaseControl?.setValue('');
-    knownCaseControl?.disable();
-    yearsControl?.setValue('');
-    yearsControl?.disable();
-  } 
-  else if (newlyDiagnosed === 'No') {
-    // Enable knownCase when No
-    knownCaseControl?.enable();
+    if (newlyDiagnosed === 'Yes') {
+      // Disable both if newly diagnosed = Yes
+      knownCaseControl?.setValue('');
+      knownCaseControl?.disable();
+      yearsControl?.setValue('');
+      yearsControl?.disable();
+    }
+    else if (newlyDiagnosed === 'No') {
+      // Enable knownCase when No
+      knownCaseControl?.enable();
 
-    // yearsKnown depends on knownCase value
-    if (knownCaseControl?.value === 'Yes') {
-      yearsControl?.enable();
-    } else {
+      // yearsKnown depends on knownCase value
+      if (knownCaseControl?.value === 'Yes') {
+        yearsControl?.enable();
+      } else {
+        yearsControl?.disable();
+        yearsControl?.setValue('');
+      }
+    }
+    else {
+      // Default state
+      knownCaseControl?.disable();
+      knownCaseControl?.setValue('');
       yearsControl?.disable();
       yearsControl?.setValue('');
     }
-  } 
-  else {
-    // Default state
-    knownCaseControl?.disable();
-    knownCaseControl?.setValue('');
-    yearsControl?.disable();
-    yearsControl?.setValue('');
   }
-}
 
   onSubmit(): void {
     if (this.diagnosisForm.valid) {
@@ -171,57 +181,57 @@ showDiag() {
       this.diagnosisForm.markAllAsTouched();
     }
   }
-validateFields(): boolean {
-  const form = this.diagnosisForm;
+  validateFields(): boolean {
+    const form = this.diagnosisForm;
 
-  // Newly Diagnosed
-  if (!form.get('newlyDiagnosed')?.value) {
-    alert('Please select Newly Diagnosed');
-    return false;
+    // Newly Diagnosed
+    if (!form.get('newlyDiagnosed')?.value) {
+      alert('Please select Newly Diagnosed');
+      return false;
+    }
+
+    // Known Case (only required if Newly Diagnosed = No)
+    if (form.get('newlyDiagnosed')?.value === 'No' && !form.get('knownCase')?.value) {
+      alert('Please select Known Case of GERD');
+      return false;
+    }
+
+    // Years Known (only required if Known Case = Yes and Newly Diagnosed = No)
+    if (
+      form.get('newlyDiagnosed')?.value === 'No' &&
+      form.get('knownCase')?.value === 'Yes' &&
+      !form.get('yearsKnown')?.value
+    ) {
+      alert('Please enter number of years Known');
+      return false;
+    }
+
+    // GERD Type
+    if (!form.get('gerdType')?.value) {
+      alert('Please select GERD Type');
+      return false;
+    }
+
+    // Refractory
+    if (!form.get('refractory')?.value) {
+      alert('Please select Refractory to PPI');
+      return false;
+    }
+
+    // Adherence
+    if (!form.get('adherence')?.value) {
+      alert('Please select Adherence to Therapy');
+      return false;
+    }
+
+    return true; // All validations passed
   }
-
-  // Known Case (only required if Newly Diagnosed = No)
-  if (form.get('newlyDiagnosed')?.value === 'No' && !form.get('knownCase')?.value) {
-    alert('Please select Known Case of GERD');
-    return false;
-  }
-
-  // Years Known (only required if Known Case = Yes and Newly Diagnosed = No)
-  if (
-    form.get('newlyDiagnosed')?.value === 'No' &&
-    form.get('knownCase')?.value === 'Yes' &&
-    !form.get('yearsKnown')?.value
-  ) {
-    alert('Please enter number of years Known');
-    return false;
-  }
-
-  // GERD Type
-  if (!form.get('gerdType')?.value) {
-    alert('Please select GERD Type');
-    return false;
-  }
-
-  // Refractory
-  if (!form.get('refractory')?.value) {
-    alert('Please select Refractory to PPI');
-    return false;
-  }
-
-  // Adherence
-  if (!form.get('adherence')?.value) {
-    alert('Please select Adherence to Therapy');
-    return false;
-  }
-
-  return true; // All validations passed
-}
 
   Submit(): void {
 
     if (!this.validateFields()) {
-    return; 
-  }
+      return;
+    }
 
     if (!this.formValidation.validateForm(this.diagnosisForm)) {
       this.diagnosisForm.markAllAsTouched();
@@ -230,8 +240,8 @@ validateFields(): boolean {
 
     // const patientID = this.patientService.getPatientId();
     const doctorID = this.patientService.getDoctorId();
-   // let user: any = localStorage.getItem('doctor')
-   // this.userData = JSON.parse(user);
+    // let user: any = localStorage.getItem('doctor')
+    // this.userData = JSON.parse(user);
 
     const param = {
       flag: 'I',
@@ -247,6 +257,15 @@ validateFields(): boolean {
       stage: this.stage,
       createdBy: doctorID,
     };
+
+    const enteredgreD_NoOfYear = Number(param.greD_NoOfYear);
+
+
+    if (enteredgreD_NoOfYear > this.ageInYears) {
+
+      alert('Entered number of Year exceeds the person’s age (' + this.ageInYears + ' years). Please enter valid values.');
+      return;
+    }
 
     this.http.httpPost(API_URLS.DIAGNOSIS_SAVE, param).subscribe((res: any) => {
       if (res.type === 'S') {
@@ -270,7 +289,7 @@ validateFields(): boolean {
         tabId: this.tabId,
         patientId: this.patientId,
         isViewMode: this.isViewMode,
-       fromNavigation: true
+        fromNavigation: true
 
       }
     });
@@ -320,8 +339,8 @@ validateFields(): boolean {
     if (this.stage === 5 && step === 3) return 'baseline-green';
 
     return 'inactive-tab';
-  }   
+  }
 
-  
+
 }
 

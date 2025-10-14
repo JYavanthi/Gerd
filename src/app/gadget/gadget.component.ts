@@ -31,6 +31,8 @@ export class GadgetComponent implements OnInit {
   isFollowUp: boolean = false;
   id: any;
   userData: any;
+  ageInYears: number = 0;
+  workingHours:number =24;
   gadgetUsage = {
     computers: {
       used: '',
@@ -132,6 +134,14 @@ export class GadgetComponent implements OnInit {
     const allowedWithoutSave = [1, 3, 5];
     if (allowedWithoutSave.includes(this.stage)) {
       this.isSaved = true;
+    }
+
+    // Age is stored in localStorage from Demographic component
+    const storedAge = localStorage.getItem('Age');
+    if (storedAge) {
+      const age = JSON.parse(storedAge).age; // age in years
+      this.ageInYears = age;            // age in years
+      console.log('Age in Years:', this.ageInYears);
     }
 
     this.gadgetForm = this.fb.group({
@@ -348,7 +358,29 @@ export class GadgetComponent implements OnInit {
       createdBy: this.doctorId?.toString() ?? null
     };
 
+    const enteredcomputerDurationYears = Number(payload.computerDurationYears);
+    const enteredsmartphoneDurationYears = Number(payload.smartphoneDurationYears);
+    const enteredtotalWorkingYears = Number(payload.totalWorkingYears);
+    const enteredcomputerFrequency = Number(payload.computerFrequency);
+    const enteredsmartphoneFrequency = Number(payload.smartphoneFrequency);
 
+
+    if (
+      enteredcomputerDurationYears > this.ageInYears ||
+      enteredsmartphoneDurationYears > this.ageInYears ||
+      enteredtotalWorkingYears > this.ageInYears
+    ) {
+      alert('Entered duration exceeds the person’s age (' + this.ageInYears + ' years). Please enter valid values.');
+      return;
+    }
+
+    //the maximum possible hours per day = 24
+    if (enteredcomputerFrequency > 24 ||
+      enteredsmartphoneFrequency > 24) {
+      alert('Entered frequency exceeds the total hours/day . Please enter valid values.');
+      return;
+    }
+   
     this.http.httpPost(API_URLS.GADGET_SAVE, payload).subscribe({
       next: (res: any) => {
         if (res.type === 'S') {
@@ -469,7 +501,7 @@ export class GadgetComponent implements OnInit {
 
 
   blockInvalidKeys(event: KeyboardEvent) {
-    if (['e', 'E', '+', '-','.'].includes(event.key)) {
+    if (['e', 'E', '+', '-', '.'].includes(event.key)) {
       event.preventDefault();
     }
   }
