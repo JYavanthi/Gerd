@@ -80,14 +80,14 @@ export class AllReportsComponentComponent {
     "Sleep Apnea": ["Yes", "No"],
     "Exercise": ["Walking", "Jogging", "Gym", "Yoga", "Aerobics", "Zumba", "Others"],
     "Computer Use": ["Yes", "No"],
-    "Computer Usage (hrs/day)": ["<1 hr", "<2 hrs", "3-4 hrs", "4-6 hrs", "6-8 hrs", "8-10 hrs"],
-    "Computer Usage Duration (years)": ["<1 year", "2-5 years", "6-10 years", "11-15 years", "16-20 years", ">20 years"],
+    "Computer Usage (hrs/day)": ["0-1", "1-2", "2-3",  "3-4","4-6", "6-8", "8-10","10-24"],
+    "Computer Usage Duration (years)": ["0-1", "1-5", "5-10", "10-15", "15-20", "20-100"],
     "Smartphone Use": ["Yes", "No"],
-    "Smartphone Usage (hrs/day)": ["<1 hr", "<2 hrs", "3-4 hrs", "4-6 hrs", "6-8 hrs", "8-10 hrs"],
-    "Smartphone Usage Duration (years)": ["<1 year", "2-5 years", "6-10 years", "11-15 years", "16-20 years", ">20 years"],
+    "Smartphone Usage (hrs/day)": ["0-1", "1-2", "2-3",  "3-4","4-6", "6-8", "8-10","10-24"],
+    "Smartphone Usage Duration (years)": ["0-1", "1-5", "5-10", "10-15", "15-20", "20-100"],
     "Working Hours (Occupation)": ["4.00 am to 12.00 noon (Early Morning shift)", "6.00 am to 3.00 pm (Morning shift)", "9.00 am to 6.00 pm (General shift)", "12.00 noon to 8.00 pm (Afternoon shift)", "8.00 pm to 8.00 am (Night shift)"],
     "Job/ Occupation type": ["Sedentary", "Non sedentary"],
-    "Duration (No. of years in the above working hours)": ["<1 year", "2-5 years", "6-10 years", "11-15 years", "16-20 years", ">20 years"],
+    "Duration (No. of years in the above working hours)": ["0-1", "1-5", "5-10", "10-15", "15-20", "20-100"],
     "Family History of GERD": ["Yes", "No"],
     "Family History of Esophago-gastric Cancer": ["Yes", "No"],
     "PPI Usage": ["Yes", "No"],
@@ -504,9 +504,25 @@ export class AllReportsComponentComponent {
         console.warn('No API for this category');
         return;
     }
+
+
+    const fieldMap: Record<string, string> = {
+      "PPI": "nsaidsMolecule",
+      "Combination of PPI + Prokinetics": "bisphosphonatesMolecule",
+      "Sucralfate": "steroidsMolecule",
+      "Alginate": "antiplateletMolecule",
+      "H₂ Blockers": "othersMolecule",
+      // Add more if needed
+    };
+
+    const field = this.categoryPropMap[category] || category;
+
     this.http.httpGet(apiUrl).subscribe({
       next: (res: any) => {
         const data = res?.data || [];
+
+        
+
 
         const normalizeValue = (category: string, val: any) => {
           if (category === 'Education') {
@@ -586,6 +602,9 @@ export class AllReportsComponentComponent {
             'Other Gastro Surgery': 'gsOther'
           };
 
+
+
+
           if (category === 'COMORBIDITIES') return comorbiditiesMap[val] || val;
           if (category === 'Diet') return dietMap[val] || val;
           if (category === 'Patient Personal History') return personalHistoryMap[val] || val;
@@ -618,7 +637,17 @@ export class AllReportsComponentComponent {
 
         data.forEach((item: any) => {
           normalizedOptions.forEach(opt => {
-            const value = item[opt];
+            let value = item[opt];
+
+            if (category === 'Current Medications') {
+              const field = fieldMap[opt]; // get actual field
+              value = item[field];
+              if (value && value.toString().trim() !== '') {
+                optionCounts[opt]++;
+              }
+              return; // skip rest of the logic
+            }
+
             if (booleanCategoriesNormalized.includes(opt)) {
               if (isYes(value)) optionCounts[opt]++;
             } else if (category.includes('Usage') || category.includes('Working Hours')) {
@@ -628,6 +657,8 @@ export class AllReportsComponentComponent {
             }
           });
         });
+
+
 
         this.pieChartData = {
           labels: option ? [option] : Object.keys(optionCounts),
@@ -641,11 +672,84 @@ export class AllReportsComponentComponent {
         };
 
         if (option) {
-          const normalizedOption = normalizeValue(category, option);
-          if (booleanCategoriesNormalized.includes(normalizedOption)) {
-            this.tableData = data.filter((item: any) => isYes(item[normalizedOption]));
+          
+          if (category === 'Current Medications') {
+            const field = fieldMap[option];
+            this.tableData = data.filter((item: any) => item[field] && item[field].trim() !== '');
+          }
+          else if (category === 'Age') {
+
+          if (option && option.includes('-')) {
+            const agegrp = option.split('-').map(x => x.trim()); // remove spaces
+
+            if (agegrp.length === 2) {
+              const minAge = parseInt(agegrp[0], 10);
+              const maxAge = parseInt(agegrp[1], 10);
+              if (!isNaN(minAge) && !isNaN(maxAge)) {
+
+                const filteredData = data.filter((r: any) => r.age >= Number(minAge) && r.age <= Number(maxAge));
+                this.tableData = filteredData; // overwrite res if needed
+              } else {
+                console.error('Invalid age numbers in range:', agegrp);
+              }
+            } else {
+              console.error('Age range does not have two numbers:', agegrp);
+            }
           } else {
-            this.tableData = data.filter((item: any) => item[normalizedOption] === 'Yes');
+            console.error('Option is empty or invalid:', option);
+          }
+        }
+
+         else if (category === 'Computer Usage (hrs/day)') {
+
+          if (option && option.includes('-')) {
+            const computerFrequencygrp = option.split('-').map(x => x.trim()); // remove spaces
+
+            if (computerFrequencygrp.length === 2) {
+              const mincomputerFrequency = parseInt(computerFrequencygrp[0], 10);
+              const maxcomputerFrequency = parseInt(computerFrequencygrp[1], 10);
+              if (!isNaN(mincomputerFrequency) && !isNaN(maxcomputerFrequency)) {
+
+                const filteredData = data.filter((r: any) => r.computerFrequency >= Number(mincomputerFrequency) && r.computerFrequency <= Number(maxcomputerFrequency));
+                this.tableData  = filteredData; // overwrite res if needed
+              } else {
+                console.error('Invalid age numbers in range:', computerFrequencygrp);
+              }
+            } else {
+              console.error('Age range does not have two numbers:', computerFrequencygrp);
+            }
+          } else {
+            console.error('Option is empty or invalid:', option);
+          }
+        }
+         else if (category === 'Smartphone Usage (hrs/day)') {
+
+          if (option && option.includes('-')) {
+            const smartphoneFrequencygrp = option.split('-').map(x => x.trim()); // remove spaces
+
+            if (smartphoneFrequencygrp.length === 2) {
+              const minsmartphoneFrequencygrp = parseInt(smartphoneFrequencygrp[0], 10);
+              const maxsmartphoneFrequencygrp = parseInt(smartphoneFrequencygrp[1], 10);
+              if (!isNaN(minsmartphoneFrequencygrp) && !isNaN(maxsmartphoneFrequencygrp)) {
+                const filteredData = data.filter((r: any) => r.smartphoneFrequency >= Number(minsmartphoneFrequencygrp) && r.smartphoneFrequency <= Number(maxsmartphoneFrequencygrp));
+                this.tableData  = filteredData; // overwrite res if needed
+              } else {
+                console.error('Invalid smartphoneFrequencygrp numbers in range:', smartphoneFrequencygrp);
+              }
+            } else {
+              console.error('smartphoneFrequencygrp range does not have two numbers:', smartphoneFrequencygrp);
+            }
+          } else {
+            console.error('Option is empty or invalid:', option);
+          }
+        }
+          else {
+            const normalizedOption = normalizeValue(category, option);
+            if (booleanCategoriesNormalized.includes(normalizedOption)) {
+              this.tableData = data.filter((item: any) => isYes(item[normalizedOption]));
+            } else {
+              this.tableData = data.filter((item: any) => item[normalizedOption] === 'Yes');
+            }
           }
 
           if (this.tableData.length) {
