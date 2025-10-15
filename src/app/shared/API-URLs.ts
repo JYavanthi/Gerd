@@ -3,7 +3,12 @@ export const API_URLS = {
 
  BASE_URL: 'http://localhost:5058/api',
  
+
+
   KEY: 'TSSACPAPI73263707',
+
+
+  ASSISMENT:'/Assessment/GetAssessment',
   CHEIF_COMPLAINT_SAVE: '/CheifComplaint/SaveCheifComplaint',
   CHEIF_COMPLAINT_GET: '/CheifComplaint/GetCheifComplaint',
 
