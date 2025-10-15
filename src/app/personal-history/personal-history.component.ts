@@ -355,61 +355,68 @@ export class PersonalHistoryComponent {
         tobaccoDuration: this.formData.get('tobacco.duration')?.value?.toString() || ''
       };
 
-      const MAX_HOURS_PER_DAY = 24;
-      const MAX_HOURS_PER_WEEK = 24 * 7; // 168
+      // const MAX_FREQUENCY = {
+      //   '/day': 24,   // Max 24 times per day
+      //   '/week': 70   // Max 70 times per week
+      // };
 
-      const MAX_QUANTITY = {
-        ml: 10000,      // max per day/week
-        g: 1000,        // grams
-        packs: 10,      // cigarettes packs per day
-        quantity: 100   // generic unit
-      };
+      // const MAX_QUANTITY = {
+      //   ml: 10000,      // max per day/week
+      //   g: 10000,        // grams
+      //   packs: 10,      // cigarettes packs per day
+      //   quantity: 100   // generic unit
+      // };
 
-      const personalHistoryConfig = {
-        aerated: { frequencyUnit: '/day', quantityUnit: 'ml' },
-        coffee: { frequencyUnit: '/day', quantityUnit: 'ml' },
-        tea: { frequencyUnit: '/day', quantityUnit: 'ml' },
-        spicy: { frequencyUnit: '/week', quantityUnit: 'quantity' },
-        alcohol: { frequencyUnit: '/week', quantityUnit: 'ml' },
-        sweets: { frequencyUnit: '/week', quantityUnit: 'g' },
-        smoking: { frequencyUnit: '/day', quantityUnit: 'packs' },
-        tobacco: { frequencyUnit: '/day', quantityUnit: 'quantity' }
-      };
+      // const personalHistoryConfig = {
+      //   aerated: { frequencyUnit: '/day', quantityUnit: 'ml' },
+      //   coffee: { frequencyUnit: '/day', quantityUnit: 'ml' },
+      //   tea: { frequencyUnit: '/day', quantityUnit: 'ml' },
+      //   spicy: { frequencyUnit: '/week', quantityUnit: 'quantity' },
+      //   alcohol: { frequencyUnit: '/week', quantityUnit: 'ml' },
+      //   sweets: { frequencyUnit: '/week', quantityUnit: 'g' },
+      //   smoking: { frequencyUnit: '/day', quantityUnit: 'packs' },
+      //   tobacco: { frequencyUnit: '/day', quantityUnit: 'quantity' }
+      // };
 
-      // Define types for safety
-      type PersonalHistoryKey = keyof typeof personalHistoryConfig;
-      type QuantityUnit = keyof typeof MAX_QUANTITY; // e.g., 'ml' | 'packs'
+      // // Define types for safety
+      // type PersonalHistoryKey = keyof typeof personalHistoryConfig;
+      // type QuantityUnit = keyof typeof MAX_QUANTITY; // e.g., 'ml' | 'packs'
 
-      // Loop over the keys of the config
-      (Object.keys(personalHistoryConfig) as PersonalHistoryKey[]).forEach((key) => {
-        const config = personalHistoryConfig[key];
+      // for (const key of Object.keys(personalHistoryConfig) as PersonalHistoryKey[]) {
+      //   const config = personalHistoryConfig[key];
 
-        const frequencyValue = Number(this.formData.get(`${key}.frequency`)?.value);
-        const quantityValue = Number(this.formData.get(`${key}.quantity`)?.value);
+      //   const frequencyValue = Number(this.formData.get(`${key}.frequency`)?.value);
+      //   const quantityValue = Number(this.formData.get(`${key}.quantity`)?.value);
 
-        // Skip if intake is 'No'
-        if (!this.intakeStates[key]) return;
+      //   if (!this.intakeStates[key]) continue;
 
-        // Frequency validation
-        if (config.frequencyUnit === '/day' && frequencyValue > MAX_HOURS_PER_DAY) {
-          alert(`Entered frequency for ${key} exceeds the maximum per day (${MAX_HOURS_PER_DAY}).`);
-          return;
-        }
+      //   // Numeric validation
+      //   if (isNaN(frequencyValue) || frequencyValue < 0) {
+      //     alert(`Please enter a valid numeric frequency for ${key}.`);
+      //     return;
+      //   }
 
-        if (config.frequencyUnit === '/week' && frequencyValue > MAX_HOURS_PER_WEEK) {
-          alert(`Entered frequency for ${key} exceeds the maximum per week (${MAX_HOURS_PER_WEEK}).`);
-          return;
-        }
+      //   if (isNaN(quantityValue) || quantityValue < 0) {
+      //     alert(`Please enter a valid numeric quantity for ${key}.`);
+      //     return;
+      //   }
 
-        // Quantity validation
-        const quantityUnit = config.quantityUnit as QuantityUnit; // type-safe cast
-        const maxQty = MAX_QUANTITY[quantityUnit];
+      //   // Frequency validation based on times per day/week
+      //   const maxFreq = MAX_FREQUENCY[config.frequencyUnit as keyof typeof MAX_FREQUENCY];
+      //   if (frequencyValue > maxFreq) {
+      //     alert(`Entered frequency for ${key} exceeds the maximum allowed (${maxFreq} times ${config.frequencyUnit}).`);
+      //     return;
+      //   }
 
-        if (quantityValue > maxQty) {
-          alert(`Entered quantity for ${key} exceeds the maximum allowed (${maxQty} ${quantityUnit}).`);
-          return;
-        }
-      });
+      //   // Quantity validation
+      //   const quantityUnit = config.quantityUnit as QuantityUnit;
+      //   const maxQty = MAX_QUANTITY[quantityUnit];
+
+      //   if (quantityValue > maxQty) {
+      //     alert(`Entered quantity for ${key} exceeds the maximum allowed (${maxQty} ${quantityUnit}).`);
+      //     return;
+      //   }
+      // }
 
 
       const enteredaeratedDurationMonths = Number(payload.aeratedDuration);
@@ -435,7 +442,7 @@ export class PersonalHistoryComponent {
       }
       this.http.httpPost('/PersonalHistory/SavePersonalHistory', payload).subscribe({
         next: () => {
-          alert('Saved Successfully'); // ← Test this
+          alert('Saved Successfully'); 
           this.formValidation.showAlert('Saved Successfully', 'success');
           this.isSaved = true;
         },
@@ -451,7 +458,7 @@ export class PersonalHistoryComponent {
     }
   }
   blockInvalidKeys(event: KeyboardEvent) {
-    if (['e', 'E', '+', '-', '.'].includes(event.key)) {
+    if (['e', 'E', '+', '-', '.', ')','(','*','&','%','$','#', '@', '!', '~', '^'].includes(event.key)) {
       event.preventDefault();
     }
   }

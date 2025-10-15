@@ -4,7 +4,7 @@
 
 
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ChiefComplaintService } from '../Services/chief-complaint.service';
 import { ComorbiditiesService } from '../Services/comorbidities.service';
 import { PatientHistoryService } from '../Services/patient-history.service';
@@ -56,9 +56,9 @@ export class CaseStageViewComponent implements OnInit {
 
   baselineCurrentMedication: any = null
 
-loadStageData1 = true;
-loadStageData2= true;
-loadStageData3 =true;
+  loadStageData1 = true;
+  loadStageData2 = true;
+  loadStageData3 = true;
   constructor(
     private route: ActivatedRoute,
     private chiefComplaintService: ChiefComplaintService,
@@ -71,7 +71,8 @@ loadStageData3 =true;
     private assessmentService: AssessmentService,
     private managementService: ManagementService,
     private personalHistoryService: PersonalHistoryService,
-    private currentMedicationsService: CurrentMedicationsService
+    private currentMedicationsService: CurrentMedicationsService,
+    private router: Router
 
 
   ) { }
@@ -87,13 +88,11 @@ loadStageData3 =true;
         return;
       }
 
-    
-      
-       // Load all 3 stages
+      // Load all 3 stages
       this.loadStageData(1); // baseline
       this.loadStageData(3); // follow-up 1
       this.loadStageData(5); // follow-up 2
-  
+
     });
   }
 
@@ -109,15 +108,15 @@ loadStageData3 =true;
           switch (stage) {
             case 1:
               this.baselineData = res.data;
-              this.loadStageData1 =false
+              this.loadStageData1 = false
               break;
             case 3:
               this.followUp1Data = res.data;
-              this.loadStageData2 =false
+              this.loadStageData2 = false
               break;
             case 5:
               this.followUp2Data = res.data;
-              this.loadStageData3 =false
+              this.loadStageData3 = false
               break;
           }
         } else {
@@ -374,4 +373,7 @@ loadStageData3 =true;
     window.print();
   }
 
+  goback() {
+    this.router.navigate([`/dashboard`]);
+    }
 }
