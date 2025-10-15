@@ -401,8 +401,9 @@ export class AllReportsComponentComponent {
 
 
   urlStr: string = '';
-
   patients: any[] = [];
+
+
   loadPiechar(category: string, option?: string) {
     let apiUrl = '';
 
@@ -460,11 +461,49 @@ export class AllReportsComponentComponent {
         apiUrl = API_URLS.FAMILY_HISTORY_GET;
         break;
 
+
+      case 'History of Endoscopy':
+      case 'History of Gastro-surgery':
+      case 'Bariatric Surgery':
+      case 'Fundoplication Surgery':
+      case 'Gastric POEM Surgery':
+      case 'Gastrojejunostomy':
+      case 'Other Gastro Surgery':
+        apiUrl = API_URLS.GERD_HISTORY_GET;
+        break;
+
+      case 'Current Medications':
+        apiUrl = API_URLS.CURRENT_MEDICATION_GET;
+        break;
+
+      case 'Los Angeles Grade':
+      case 'Hill’s classification Grade':
+        apiUrl = API_URLS.ASSISMENT;
+        break;
+
+      case 'Newly Diagnosed':
+      case 'Newly Diagnosed (Gender)':
+      case 'Known case of GERD':
+      case 'Known case of GERD (Gender)':
+      case 'GERDType':
+      case 'RefractorytoPPI':
+      case 'AdherencetoTherapy':
+        apiUrl = `${API_URLS.BASE_URL}${API_URLS.DIAGNOSIS_GET_DOCTOR}`;
+        break;
+
+      case 'Lifestyle Recommendations':
+        apiUrl = `${API_URLS.BASE_URL}${API_URLS.MANAGEMENT_CompleteCase}`;
+        break;
+
+      case 'Drug Therapy Advised':
+        apiUrl = API_URLS.MANAGEMENT_CompleteCase;
+        break;
+
+
       default:
         console.warn('No API for this category');
         return;
     }
-
     this.http.httpGet(apiUrl).subscribe({
       next: (res: any) => {
         const data = res?.data || [];
@@ -483,26 +522,14 @@ export class AllReportsComponentComponent {
           };
 
           const comorbiditiesMap: Record<string, string> = {
-            'Hypertension': 'htPresent',
-            'Diabetes': 'dbPresent',
-            'Hyperlipidemia': 'hlPresent',
-            'Obesity': 'oPresent',
-            'Asthma': 'aPresent',
-            'COPD': 'cPresent',
-            'Heart Disease': 'hPresent',
-            'Kidney Disease': 'ckdPresent',
-            'Liver Disease': 'cldPresent',
-            'Thyroid Disorder': 'htdPresent',
-            'Rheumatoid Arthritis': 'raPresent',
-            'Sickle Cell': 'ssPresent',
-            'Congenital Disease': 'cmoPresent',
+            'Hypertension': 'htPresent', 'Diabetes': 'dbPresent', 'Hyperlipidemia': 'hlPresent',
+            'Obesity': 'oPresent', 'Asthma': 'aPresent', 'COPD': 'cPresent', 'Heart Disease': 'hPresent',
+            'Kidney Disease': 'ckdPresent', 'Liver Disease': 'cldPresent', 'Thyroid Disorder': 'htdPresent',
+            'Rheumatoid Arthritis': 'raPresent', 'Sickle Cell': 'ssPresent', 'Congenital Disease': 'cmoPresent',
             'Other': 'bdPresent'
           };
 
-          const dietMap: Record<string, string> = {
-            'Vegetarian': 'dietVegetarian',
-            'Non-Vegetarian': 'dietNonVegetarian'
-          };
+          const dietMap: Record<string, string> = { 'Vegetarian': 'dietVegetarian', 'Non-Vegetarian': 'dietNonVegetarian' };
 
           const personalHistoryMap: Record<string, string> = {
             'Aerated Drinks': 'aeratedIntake',
@@ -514,7 +541,6 @@ export class AllReportsComponentComponent {
             'Smoking (cigarettes/day)': 'smokingIntake',
             'Tobacco (other forms/day)': 'tobaccoIntake'
           };
-
 
           const SleepMap: Record<string, string> = {
             'Sleep Apnea (Yes)': 'sleepApneayes',
@@ -530,35 +556,79 @@ export class AllReportsComponentComponent {
             'Others': 'othersyes'
           };
 
+          const GadgetMap: Record<string, string> = {
+            'Computer Use (Yes)': 'computerUsed',
+            'Computer Use (No)': 'computerNotUsed',
+            'Smartphone Use (Yes)': 'smartphoneUsed',
+            'Smartphone Use (No)': 'smartphoneNotUsed',
+            'Computer Usage (hrs/day)': 'computerFrequency',
+            'Computer Usage Duration (years)': 'computerDurationYears',
+            'Smartphone Usage (hrs/day)': 'smartphoneFrequency',
+            'Smartphone Usage Duration (years)': 'smartphoneDurationYears',
+            'Working Hours (Occupation)': 'workingHours',
+            'Job/ Occupation type': 'jobType',
+            'Duration (No. of years in the above working hours)': 'totalWorkingYears'
+          };
 
+          const familyHistoryMap: Record<string, string> = {
+            'Family History of GERD': 'fhGred',
+            'Family History of Esophago-gastric Cancer': 'fhEgc',
+            'PPI Usage': 'ghPpi'
+          };
 
+          const GERDGISTORYMAP: Record<string, string> = {
+            'History of Endoscopy': 'historyofEndoscopy',
+            'History of Gastro-surgery': 'historyofGs',
+            'Bariatric Surgery': 'gsBariatricSurgery',
+            'Fundoplication Surgery': 'gsFundoplicationSurgery',
+            'Gastric POEM Surgery': 'gsGastricPoemsurgery',
+            'Gastrojejunostomy': 'gsGastrojejunostomy',
+            'Other Gastro Surgery': 'gsOther'
+          };
 
           if (category === 'COMORBIDITIES') return comorbiditiesMap[val] || val;
           if (category === 'Diet') return dietMap[val] || val;
           if (category === 'Patient Personal History') return personalHistoryMap[val] || val;
           if (category === 'Exercise') return SleepMap[val] || val;
+          if (category === 'Sleep Apnea') return SleepMap[val] || val;
+          if (GERDGISTORYMAP[category]) return GERDGISTORYMAP[category];
+          if (['Computer Use', 'Smartphone Use'].includes(category)) return GadgetMap[`${category} (${val})`] || val;
+          if (familyHistoryMap[category]) return familyHistoryMap[category];
           return symptomMap[category]?.[val] || val;
         };
+
+        const isYes = (value: any) => value === true || value === 'true' || value?.toString().toLowerCase() === 'yes';
 
         const normalizedOptions = this.availableOptions.map(opt => normalizeValue(category, opt));
 
         const optionCounts: Record<string, number> = {};
-        normalizedOptions.forEach(opt => (optionCounts[opt] = 0));
+        normalizedOptions.forEach(opt => optionCounts[opt] = 0);
 
-        // Count occurrences
-        const booleanCategories = ['COMORBIDITIES', 'Diet', 'Patient Personal History'];
+        // --- count using normalizedOption for booleans ---
+        const booleanCategoriesNormalized = [
+          'htPresent', 'dbPresent', 'hlPresent', 'oPresent', 'aPresent', 'cPresent', 'hPresent',
+          'ckdPresent', 'cldPresent', 'htdPresent', 'raPresent', 'ssPresent', 'cmoPresent', 'bdPresent',
+          'dietVegetarian', 'dietNonVegetarian',
+          'aeratedIntake', 'coffeeIntake', 'teaIntake', 'spicyIntake', 'alcoholIntake', 'sweetsIntake', 'smokingIntake', 'tobaccoIntake',
+          'sleepApneayes', 'sleepApneano', 'exerciseIntakeyes', 'exerciseIntakeno', 'joggingSelectedyes', 'gymSelectedyes', 'yogaSelectedyes', 'walkingSelectedyes', 'aerobicsyes', 'zumbayes', 'othersyes',
+          'computerUsed', 'computerNotUsed', 'smartphoneUsed', 'smartphoneNotUsed',
+          'fhGred', 'fhEgc', 'ghPpi',
+          'historyofEndoscopy', 'historyofGs', 'gsBariatricSurgery', 'gsFundoplicationSurgery', 'gsGastricPoemsurgery', 'gsGastrojejunostomy', 'gsOther'
+        ];
 
         data.forEach((item: any) => {
           normalizedOptions.forEach(opt => {
-            if (booleanCategories.includes(category)) {
-              if (item[opt] === true || item[opt] === 'true') optionCounts[opt]++;
+            const value = item[opt];
+            if (booleanCategoriesNormalized.includes(opt)) {
+              if (isYes(value)) optionCounts[opt]++;
+            } else if (category.includes('Usage') || category.includes('Working Hours')) {
+              if (value && normalizedOptions.includes(value)) optionCounts[value]++;
             } else {
-              if (item[opt] === 'Yes') optionCounts[opt]++;
+              if (value === 'Yes') optionCounts[opt]++;
             }
           });
         });
 
-        // Prepare pie chart data
         this.pieChartData = {
           labels: option ? [option] : Object.keys(optionCounts),
           datasets: [{
@@ -570,12 +640,10 @@ export class AllReportsComponentComponent {
           }]
         };
 
-        // Filter table if option is selected
         if (option) {
           const normalizedOption = normalizeValue(category, option);
-
-          if (booleanCategories.includes(category)) {
-            this.tableData = data.filter((item: any) => item[normalizedOption] === true || item[normalizedOption] === 'true');
+          if (booleanCategoriesNormalized.includes(normalizedOption)) {
+            this.tableData = data.filter((item: any) => isYes(item[normalizedOption]));
           } else {
             this.tableData = data.filter((item: any) => item[normalizedOption] === 'Yes');
           }
@@ -619,35 +687,35 @@ export class AllReportsComponentComponent {
 
 
 
-      login(){
+  login() {
     this.router.navigate(['/login']);
   }
 
-    goToCoMorbiditiesReport(){
+  goToCoMorbiditiesReport() {
     this.router.navigate([`/CoMorbiditiesReport`]);
   }
-  goTotreatmentReport(){
+  goTotreatmentReport() {
     this.router.navigate(['/treatmentReport']);
   }
-    goDoctorlist(){  
-    this.router.navigate(['/doctor-list']); 
+  goDoctorlist() {
+    this.router.navigate(['/doctor-list']);
   }
 
-    goTocontactUs(){
+  goTocontactUs() {
     this.router.navigate(['/contact-us']);
   }
 
-  goTofilterchart(){
+  goTofilterchart() {
     this.router.navigate(['/allReport']);
   }
 
 
-  goDashboard(){
+  goDashboard() {
     this.router.navigate([`/admindashboard`]);
-  
-}
 
- goReport() {
+  }
+
+  goReport() {
     this.router.navigate([`/genderReport`]);
 
   }
