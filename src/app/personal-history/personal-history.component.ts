@@ -355,69 +355,49 @@ export class PersonalHistoryComponent {
         tobaccoDuration: this.formData.get('tobacco.duration')?.value?.toString() || ''
       };
 
-      // const MAX_FREQUENCY = {
-      //   '/day': 24,   // Max 24 times per day
-      //   '/week': 70   // Max 70 times per week
-      // };
+      type PersonalHistoryKey = 'aerated' | 'coffee' | 'tea' | 'spicy' | 'alcohol' | 'sweets' | 'smoking' | 'tobacco';
 
-      // const MAX_QUANTITY = {
-      //   ml: 10000,      // max per day/week
-      //   g: 10000,        // grams
-      //   packs: 10,      // cigarettes packs per day
-      //   quantity: 100   // generic unit
-      // };
+      const itemLimits: Record<PersonalHistoryKey, { maxFreq: number | null, freqUnit: string, maxQty: number | null, qtyUnit: string }> = {
+        aerated: { maxFreq: 24, freqUnit: '/day', maxQty: 2000, qtyUnit: 'ml' },
+        coffee: { maxFreq: 24, freqUnit: '/day', maxQty: 1500, qtyUnit: 'ml' },
+        tea: { maxFreq: 24, freqUnit: '/day', maxQty: 1500, qtyUnit: 'ml' },
+        spicy: { maxFreq: 7, freqUnit: '/week', maxQty: 70, qtyUnit: 'gram' },
+        alcohol: { maxFreq: 25, freqUnit: '/week', maxQty: 3500, qtyUnit: 'ml' },
+        sweets: { maxFreq: 24, freqUnit: '/week', maxQty: 1000, qtyUnit: 'g' },
+        smoking: { maxFreq: 100, freqUnit: '/day', maxQty: 10, qtyUnit: 'packs' },
+        tobacco: { maxFreq: 24, freqUnit: '/day', maxQty: 1000, qtyUnit: 'quantity' }
+      };
 
-      // const personalHistoryConfig = {
-      //   aerated: { frequencyUnit: '/day', quantityUnit: 'ml' },
-      //   coffee: { frequencyUnit: '/day', quantityUnit: 'ml' },
-      //   tea: { frequencyUnit: '/day', quantityUnit: 'ml' },
-      //   spicy: { frequencyUnit: '/week', quantityUnit: 'quantity' },
-      //   alcohol: { frequencyUnit: '/week', quantityUnit: 'ml' },
-      //   sweets: { frequencyUnit: '/week', quantityUnit: 'g' },
-      //   smoking: { frequencyUnit: '/day', quantityUnit: 'packs' },
-      //   tobacco: { frequencyUnit: '/day', quantityUnit: 'quantity' }
-      // };
+      // Validate frequency and quantity against rules
+      for (const key of Object.keys(itemLimits) as PersonalHistoryKey[]) {
+        if (!this.intakeStates[key]) continue; // Only check if intake is true
 
-      // // Define types for safety
-      // type PersonalHistoryKey = keyof typeof personalHistoryConfig;
-      // type QuantityUnit = keyof typeof MAX_QUANTITY; // e.g., 'ml' | 'packs'
+        const freqValue = Number(this.formData.get(`${key}.frequency`)?.value);
+        const qtyValue = Number(this.formData.get(`${key}.quantity`)?.value);
+        const { maxFreq, freqUnit, maxQty, qtyUnit } = itemLimits[key];
 
-      // for (const key of Object.keys(personalHistoryConfig) as PersonalHistoryKey[]) {
-      //   const config = personalHistoryConfig[key];
-
-      //   const frequencyValue = Number(this.formData.get(`${key}.frequency`)?.value);
-      //   const quantityValue = Number(this.formData.get(`${key}.quantity`)?.value);
-
-      //   if (!this.intakeStates[key]) continue;
-
-      //   // Numeric validation
-      //   if (isNaN(frequencyValue) || frequencyValue < 0) {
-      //     alert(`Please enter a valid numeric frequency for ${key}.`);
-      //     return;
-      //   }
-
-      //   if (isNaN(quantityValue) || quantityValue < 0) {
-      //     alert(`Please enter a valid numeric quantity for ${key}.`);
-      //     return;
-      //   }
-
-      //   // Frequency validation based on times per day/week
-      //   const maxFreq = MAX_FREQUENCY[config.frequencyUnit as keyof typeof MAX_FREQUENCY];
-      //   if (frequencyValue > maxFreq) {
-      //     alert(`Entered frequency for ${key} exceeds the maximum allowed (${maxFreq} times ${config.frequencyUnit}).`);
-      //     return;
-      //   }
-
-      //   // Quantity validation
-      //   const quantityUnit = config.quantityUnit as QuantityUnit;
-      //   const maxQty = MAX_QUANTITY[quantityUnit];
-
-      //   if (quantityValue > maxQty) {
-      //     alert(`Entered quantity for ${key} exceeds the maximum allowed (${maxQty} ${quantityUnit}).`);
-      //     return;
-      //   }
-      // }
-
+        // For items with limits, validate both frequency and quantity
+        if (maxFreq !== null) {
+          if (isNaN(freqValue) || freqValue < 0) {
+            alert(`Please enter a valid numeric frequency for ${key}.`);
+            return;
+          }
+          if (freqValue > maxFreq) {
+            alert(`Frequency for ${key} exceeds the maximum (${maxFreq} ${freqUnit}).`);
+            return;
+          }
+        }
+        if (maxQty !== null) {
+          if (isNaN(qtyValue) || qtyValue < 0) {
+            alert(`Please enter a valid numeric quantity for ${key}.`);
+            return;
+          }
+          if (qtyValue > maxQty) {
+            alert(`Quantity for ${key} exceeds the maximum (${maxQty} ${qtyUnit}).`);
+            return;
+          }
+        }
+      }
 
       const enteredaeratedDurationMonths = Number(payload.aeratedDuration);
       const enteredrcoffeeDurationMonths = Number(payload.coffeeDuration);
@@ -430,7 +410,7 @@ export class PersonalHistoryComponent {
       if (
         enteredaeratedDurationMonths > this.ageInYears ||
         enteredrcoffeeDurationMonths > this.ageInYears ||
-        entereteaDurationMonths > this.ageInYears ||
+        entereteaDurationMonths > this.ageInYears || 
         enteredalcoholDurationMonths > this.ageInYears ||
         enteredsweetsDurationMonths > this.ageInYears ||
         enteredsmokingDurationMonths > this.ageInYears ||
@@ -442,7 +422,7 @@ export class PersonalHistoryComponent {
       }
       this.http.httpPost('/PersonalHistory/SavePersonalHistory', payload).subscribe({
         next: () => {
-          alert('Saved Successfully'); 
+          alert('Saved Successfully');
           this.formValidation.showAlert('Saved Successfully', 'success');
           this.isSaved = true;
         },
@@ -458,7 +438,7 @@ export class PersonalHistoryComponent {
     }
   }
   blockInvalidKeys(event: KeyboardEvent) {
-    if (['e', 'E', '+', '-', '.', ')','(','*','&','%','$','#', '@', '!', '~', '^'].includes(event.key)) {
+    if (['e', 'E', '+', '-', '.', ')', '(', '*', '&', '%', '$', '#', '@', '!', '~', '^'].includes(event.key)) {
       event.preventDefault();
     }
   }
