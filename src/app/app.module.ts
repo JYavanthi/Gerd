@@ -51,6 +51,8 @@ import { DoctorListComponent } from './doctor-list/doctor-list.component';
 import { StageProgressComponent } from './stage-progress/stage-progress.component';
 import { FilterchartComponent } from './filterchart/filterchart.component';
 import { AllReportsComponentComponent } from './all-reports-component/all-reports-component.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 
 @NgModule({
@@ -101,6 +103,8 @@ import { AllReportsComponentComponent } from './all-reports-component/all-report
    StageProgressComponent,
    FilterchartComponent,
    AllReportsComponentComponent,
+   ForgotPasswordComponent,
+   ResetPasswordComponent,
    
   ],
 
