@@ -4,7 +4,7 @@ import { DoctorService } from '../Services/doctor.service';
 import { CaseDataService, Case } from '../Services/case-data.services';
 import { HttpserviceService } from '../httpservice.service';
 import { forkJoin } from 'rxjs';
-
+import jsPDF from 'jspdf';
 @Component({
   selector: 'app-doctor-list',
   templateUrl: './doctor-list.component.html',
@@ -12,6 +12,15 @@ import { forkJoin } from 'rxjs';
 
 })
 export class DoctorListComponent implements OnInit {
+ Math = Math; // ✅ expose global Math object to the template
+
+  currentPage: number = 1;
+  itemsPerPage: number = 10;  // you can adjust as needed
+  totalItems: number = 0;
+  totalPages: number = 0;
+
+  
+  pageNumbers: number[] = []
   doctorList: any[] = [];
   filteredDoctors: any[] = [];
   displayedDoctors: any[] = [];
@@ -112,6 +121,10 @@ export class DoctorListComponent implements OnInit {
           });
 
           this.filteredDoctors = [...this.doctorList];
+
+          this.totalItems = this.filteredDoctors.length;
+          this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+          this.updateDisplayedDoctors();
         });
 
       },
@@ -166,6 +179,11 @@ export class DoctorListComponent implements OnInit {
       const matchStage = this.selectedStages.length === 0 || this.selectedStages.some(stage => d[stage] && d[stage] > 0);
       return matchDoctor && matchState && matchStage;
     });
+
+     this.totalItems = this.filteredDoctors.length;
+  this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+  this.currentPage = 1; // reset to first page
+  this.updateDisplayedDoctors();
   }
 
   // Select All / Toggle
@@ -262,7 +280,7 @@ export class DoctorListComponent implements OnInit {
         }
 
         else if (patient.stage === 1) {
-        if (!patient.blsubmitted) return false;
+          if (!patient.blsubmitted) return false;
           stageText = 'Follow-up1';
           const dueDate = new Date(patient.blsubmitted);
           dueDate.setDate(dueDate.getDate() + 46);
@@ -418,73 +436,73 @@ export class DoctorListComponent implements OnInit {
 
 
   sendNotificationToSelectedDoctors() {
-  if (this.selectedDoctorIds.length === 0) {
-    alert('Please select at least one doctor before sending notification!');
-    return;
-  }
+    if (this.selectedDoctorIds.length === 0) {
+      alert('Please select at least one doctor before sending notification!');
+      return;
+    }
 
-  const doctorsToNotify = this.doctorList.filter(d =>
-    this.selectedDoctorIds.includes(d.doctorId)
-  );
-  const today = this.toDateOnly(new Date());
-  const msInDay = 1000 * 60 * 60 * 24;
+    const doctorsToNotify = this.doctorList.filter(d =>
+      this.selectedDoctorIds.includes(d.doctorId)
+    );
+    const today = this.toDateOnly(new Date());
+    const msInDay = 1000 * 60 * 60 * 24;
 
-  this.caseDataService.getCases().subscribe((cases: Case[]) => {
+    this.caseDataService.getCases().subscribe((cases: Case[]) => {
 
-    const emailObservables: any[] = [];
+      const emailObservables: any[] = [];
 
-    doctorsToNotify.forEach(doctor => {
-      const patientsForDoctor = cases.filter(p => p.doctorId === doctor.doctorId);
+      doctorsToNotify.forEach(doctor => {
+        const patientsForDoctor = cases.filter(p => p.doctorId === doctor.doctorId);
 
-      const duePatients = patientsForDoctor.filter(patient => {
-        if (patient.stage === 0) {
-          const baselineDue = new Date(patient.createdDt);
-          baselineDue.setDate(baselineDue.getDate() + 16);
-          return baselineDue <= today;
-        } else if (patient.stage === 1) {
-          if (!patient.blsubmitted) return false;
-          const fu1 = new Date(patient.blsubmitted);
-          fu1.setDate(fu1.getDate() + 46);
-          return fu1 <= today;
-        } else if (patient.stage === 3) {
-          if (!patient.fu1submitted) return false;
-          const fu2 = new Date(patient.fu1submitted);
-          fu2.setDate(fu2.getDate() + 76);
-          return fu2 <= today;
-        }
-        return false;
-      });
+        const duePatients = patientsForDoctor.filter(patient => {
+          if (patient.stage === 0) {
+            const baselineDue = new Date(patient.createdDt);
+            baselineDue.setDate(baselineDue.getDate() + 16);
+            return baselineDue <= today;
+          } else if (patient.stage === 1) {
+            if (!patient.blsubmitted) return false;
+            const fu1 = new Date(patient.blsubmitted);
+            fu1.setDate(fu1.getDate() + 46);
+            return fu1 <= today;
+          } else if (patient.stage === 3) {
+            if (!patient.fu1submitted) return false;
+            const fu2 = new Date(patient.fu1submitted);
+            fu2.setDate(fu2.getDate() + 76);
+            return fu2 <= today;
+          }
+          return false;
+        });
 
-      duePatients.forEach(patient => {
-        const created = this.toDateOnly(patient.createdDt);
-        let stageText = '';
-        let dueDays = 0;
-        let dueDate: Date = new Date(patient.createdDt);
+        duePatients.forEach(patient => {
+          const created = this.toDateOnly(patient.createdDt);
+          let stageText = '';
+          let dueDays = 0;
+          let dueDate: Date = new Date(patient.createdDt);
 
-        if (patient.stage === 0) {
-          stageText = 'BaseLine';
-          dueDate = new Date(patient.createdDt);
-          dueDate.setDate(dueDate.getDate() + 16);
-        } else if (patient.stage === 1) {
-          stageText = 'Follow-up1';
-          dueDate = new Date(patient.blsubmitted);
-          dueDate.setDate(dueDate.getDate() + 46);
-        } else if (patient.stage === 3) {
-          stageText = 'Follow-up2';
-          dueDate = new Date(patient.fu1submitted);
-          dueDate.setDate(dueDate.getDate() + 76);
-        }
+          if (patient.stage === 0) {
+            stageText = 'BaseLine';
+            dueDate = new Date(patient.createdDt);
+            dueDate.setDate(dueDate.getDate() + 16);
+          } else if (patient.stage === 1) {
+            stageText = 'Follow-up1';
+            dueDate = new Date(patient.blsubmitted);
+            dueDate.setDate(dueDate.getDate() + 46);
+          } else if (patient.stage === 3) {
+            stageText = 'Follow-up2';
+            dueDate = new Date(patient.fu1submitted);
+            dueDate.setDate(dueDate.getDate() + 76);
+          }
 
-        dueDays = Math.ceil((today.getTime() - dueDate.getTime()) / msInDay);
+          dueDays = Math.ceil((today.getTime() - dueDate.getTime()) / msInDay);
 
-        const payload = {
-          patientId: patient.patientId,
-          date: created.toISOString().split('T')[0],
-          stage: patient.stage,
-          email: doctor.email,
-          subject: `${stageText} Reminder`,
-          dueDays: dueDays,
-          body: `
+          const payload = {
+            patientId: patient.patientId,
+            date: created.toISOString().split('T')[0],
+            stage: patient.stage,
+            email: doctor.email,
+            subject: `${stageText} Reminder`,
+            dueDays: dueDays,
+            body: `
             <p>Dear Dr. ${doctor.name},</p>
             <p>This is a reminder that patient <b>${patient.initial}</b> <b>${stageText}</b> is overdue.</p>
             <ul>
@@ -497,26 +515,72 @@ export class DoctorListComponent implements OnInit {
             <br/>
             <p>Best regards,<br/>Admin</p>
           `
-        };
+          };
 
-        emailObservables.push(
-          this.http.httpPostMail('/Email', payload, { responseType: 'text' })
-        );
+          emailObservables.push(
+            this.http.httpPostMail('/Email', payload, { responseType: 'text' })
+          );
+        });
       });
+
+      // ✅ Run once after all doctor emails are collected
+      if (emailObservables.length > 0) {
+        forkJoin(emailObservables).subscribe({
+          next: () => alert('All notifications sent successfully!'),
+          error: err => alert('Some emails failed to send. Check console for details.')
+        });
+      }
     });
+  }
 
-    // ✅ Run once after all doctor emails are collected
-    if (emailObservables.length > 0) {
-      forkJoin(emailObservables).subscribe({
-        next: () => alert('All notifications sent successfully!'),
-        error: err => alert('Some emails failed to send. Check console for details.')
-      });
+
+
+
+
+  updateDisplayedDoctors() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.displayedDoctors = this.filteredDoctors.slice(startIndex, endIndex);
+    this.generatePageNumbers();
+  }
+
+  generatePageNumbers() {
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
-  });
-}
+
+    this.pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      this.pageNumbers.push(i);
+    }
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updateDisplayedDoctors();
+  }
+
+  goToPrevious() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updateDisplayedDoctors();
+    }
+  }
 
 
+  
 
+  goToNext() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updateDisplayedDoctors();
+    }
+  }
 
   login() {
     this.router.navigate(['/login']);
@@ -542,7 +606,7 @@ export class DoctorListComponent implements OnInit {
 
   }
 
-  goDashboard(){
+  goDashboard() {
     this.router.navigate([`/admindashboard`]);
   }
 

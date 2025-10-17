@@ -26,9 +26,14 @@ export class DemographicComponent implements OnInit {
   isSaved: boolean = false;
   states: Array<{ id: number; name: string }> = [];
   cities: any;
+  stateid: any
   userData: any;
   @Input() isPrintMode = false;
   isAgeAbove16 = false;
+  isInsertingNewPincode: boolean = false;
+  newPincodeValue: string = '';
+  showAddPincodeButton: boolean = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -73,7 +78,6 @@ export class DemographicComponent implements OnInit {
       this.patientId = +params['patientId'] || null;
       this.stage = +params['stage'];
       if (this.stage === 1 || this.stage === 2 || this.stage === 3 || this.stage === 4 || this.stage === 5) this.isSaved = true;
-
 
 
       if (this.stage !== 0) {
@@ -130,7 +134,8 @@ export class DemographicComponent implements OnInit {
           // save city id for later
           this.cityid = data.city;
           this.subjectno = data.subjectNo;
-          this.pincode = data.pincode
+          this.pincode = data.pincode;
+          this.stateid = data.stateId
           // patch form without city (yet)
           this.demographicForm.patchValue({
             patientName: data.initial || '',
@@ -142,7 +147,8 @@ export class DemographicComponent implements OnInit {
             gender: data.gender || '',
             education: data.education || '',
             occupation: data.occupation || '',
-            state: data.state ?? '',
+            state: data.stateId ?? '',
+            city: data.cityId ?? '',
             pincode: data.pincode ?? '',
             placeType: data.placeType || '',
             socioeconomic: data.socioeconomicStatus || '',
@@ -157,24 +163,24 @@ export class DemographicComponent implements OnInit {
 
           // Load cities first
           if (data.state) {
-            this.http.httpGet(API_URLS.CITY_GET, { stateId: data.state }).subscribe({
+            this.http.httpGet(API_URLS.CITY_GET, { stateId: data.stateId }).subscribe({
               next: (cities: any) => {
                 this.cities = cities.sort((a: any, b: any) =>
                   a.name.toLowerCase().localeCompare(b.name.toLowerCase())
                 );
 
-                // Patch city if available
-                if (this.cityid) {
-                  this.demographicForm.patchValue({ city: this.cityid });
+                if (data.city) {
+                  this.demographicForm.patchValue({ city: data.city });
                 }
 
-                // After city is set, fetch pincodes
                 if (this.cityid) {
                   this.http.httpGet(API_URLS.GET_PINCODE, { citiid: this.cityid }).subscribe({
                     next: (res: any) => {
                       this.pincode = res.sort((a: any, b: any) =>
                         (a.pincode || 0) - (b.pincode || 0)
                       );
+
+
 
                       // Patch the selected pincode value
                       if (data.pincode) {
@@ -211,6 +217,11 @@ export class DemographicComponent implements OnInit {
 
     if (socio === 'Below Poverty Line' && income !== 'Less than 1 Lakh') {
       alert('Select Annual Family Income Less than 1 Lakh');
+      return;
+    }
+
+    if (socio === 'Above Poverty Line' && income == 'Less than 1 Lakh') {
+      alert('Select Annual Family Income Greter than 1 Lakh');
       return;
     }
     if (!this.formValidation.validateForm(this.demographicForm)) {
@@ -251,8 +262,8 @@ export class DemographicComponent implements OnInit {
     };
 
     // Save it to localStorage
-      const ageValue = this.demographicForm.controls['age'].value;
-      localStorage.setItem('Age', JSON.stringify({ age: ageValue }));
+    const ageValue = this.demographicForm.controls['age'].value;
+    localStorage.setItem('Age', JSON.stringify({ age: ageValue }));
 
     this.http.httpPost('/PatientReg/SavePatient', param).subscribe((res: any) => {
       if (res.type === 'S') {
@@ -315,26 +326,76 @@ export class DemographicComponent implements OnInit {
   pincode: any
 
   getPincode(event: any) {
-    const cityId = event?.target?.value || null;
+  const cityId = event?.target?.value || null;
 
-    if (!cityId) {
-      this.pincode = [];
-      this.demographicForm.patchValue({ pincode: '' });
-      return;
-    }
+  // Reset insert state and form
+  this.isInsertingNewPincode = false;
+  this.newPincodeValue = '';
+  this.demographicForm.patchValue({ pincode: '' });
 
-    this.http.httpGet(API_URLS.GET_PINCODE, { citiid: cityId }).subscribe({
-      next: (res: any) => {
-        this.pincode = res.sort((a: any, b: any) =>
-          (a.pincode || 0) - (b.pincode || 0)
-        );
-      },
-      error: (err) => {
-        this.formValidation.showAlert('Error loading pincodes', 'danger');
-        console.error(err);
-      }
-    });
+  if (!cityId) {
+    this.pincode = [];
+    return;
   }
+
+  this.http.httpGet(API_URLS.GET_PINCODE, { citiid: cityId }).subscribe({
+    next: (res: any) => {
+      this.pincode = res.sort((a: any, b: any) =>
+        (a.pincode || 0) - (b.pincode || 0)
+      );
+
+      // If no pincodes returned, you can auto-show Add New input
+      if (this.pincode.length === 0) {
+        this.isInsertingNewPincode = true;
+      }
+    },
+    error: (err) => {
+      this.formValidation.showAlert('Error loading pincodes', 'danger');
+      console.error(err);
+    }
+  });
+}
+
+
+
+onPincodeSelect(event: Event) {
+  const value = (event.target as HTMLSelectElement).value;
+
+  if (value === 'new') {
+    this.isInsertingNewPincode = true;
+    this.demographicForm.get('pincode')?.setValue('');
+    this.newPincodeValue = '';
+  } else {
+    this.isInsertingNewPincode = false;
+    this.demographicForm.get('pincode')?.setValue(value);
+  }
+}
+
+
+onNewPincodeInput(event: Event) {
+  const value = (event.target as HTMLInputElement).value;
+  this.newPincodeValue = value;
+  this.demographicForm.get('pincode')?.setValue(value);
+}
+insertPincode() {
+  const val = this.newPincodeValue;
+  if (!/^\d{6}$/.test(val)) {
+    alert('Enter valid 6-digit pincode');
+    return;
+  }
+
+  // Add to dropdown array
+  this.pincode = [...this.pincode, { pincode: val }];
+  this.pincode.sort((a: any, b: any) => (a.pincode || 0) - (b.pincode || 0));
+
+  this.isInsertingNewPincode = false;
+  alert('Pincode added successfully!');
+}
+
+cancelPincodeInsert() {
+  this.isInsertingNewPincode = false;
+  this.newPincodeValue = '';
+}
 
 
   getCities(event: any) {
