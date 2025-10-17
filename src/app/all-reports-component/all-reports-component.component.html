@@ -24,7 +24,9 @@
     <div class="content-wrapper">
 
       <div class="dropdown-column">
+
         <div class="dropdown-grid">
+          <button (click)="clearFilters()" class="Clear">Clear</button>
 
           <!-- Category -->
           <div class="dropdown-wrapper" (click)="toggleDropdown('Category')">
@@ -39,7 +41,7 @@
 
           <!-- Option -->
           <div class="dropdown-wrapper" (click)="toggleDropdown('Option')">
-            <label class="dropdown-label">Option</label>
+            <label class="dropdown-label">Sub Category</label>
             <div class="selected-items">
               <span *ngIf="selectedOption" class="selected-item">{{ selectedOption }}</span>
             </div>
@@ -129,8 +131,9 @@
         </div>
 
         <div class="btn">
-          <button>Search</button>
-        </div>
+  <button >Search</button>
+</div>
+<!-- (click)="searchCharts()" -->
       </div>
 
       <!-- Right column: charts + table -->
@@ -144,6 +147,10 @@
           </div>
         </div>
 
+        <div> <button class="excel_button" (click)="exportToExcel()" class="dowloade">
+           Downloade
+        </button>
+        </div>
         <div class="case-table">
           <div class="table-scroll">
             <table>

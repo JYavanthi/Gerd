@@ -6,6 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Case, CaseDataService } from '../Services/case-data.services';
 import { forkJoin, Subscription } from 'rxjs';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 type DropdownData = {
   [key: string]: string[];
@@ -139,7 +141,7 @@ export class AllReportsComponentComponent {
 
   pieChartType: 'pie' = 'pie';
   pieChartData: ChartData<'pie', number[], string | string[]> = {
-    labels: ['Red', 'Blue', 'Yellow'],
+    labels: ['male','female','other'],
     datasets: [
       {
         data: [300, 500, 700],
@@ -156,9 +158,9 @@ export class AllReportsComponentComponent {
 
   barChartType: 'bar' = 'bar';
   barChartData: ChartData<'bar'> = {
-    labels: ['January', 'February', 'March', 'April', 'May'],
+    labels: ['18-30', '31-40', '41-50', '51-60', '61-70', '71-80', '>80'],
     datasets: [
-      { label: 'Sales', data: [65, 59, 80, 81, 56], backgroundColor: '#36A2EB' }
+      { label: 'gender', data: [65, 59, 80, 81, 56], backgroundColor: '#36A2EB' }
     ]
   };
   barChartOptions: ChartOptions<'bar'> = {
@@ -194,14 +196,38 @@ export class AllReportsComponentComponent {
     if (bl === 1) return 1;
     return 0;
   }
+
+
+
   onCategorySelect(category: string) {
     this.selectedCategory = category;
     this.availableOptions = this.data[category];
     this.selectedOption = null;
     this.showOptionDropdown = true;
 
-    this.loadPiechar(category);
+   this.loadPiechar(category);
   }
+
+
+//   searchCharts() {
+//   if (!this.selectedCategory) return;
+
+//   // Update charts
+// this.loadPiechar(this.selectedCategory, this.selectedOption || undefined);
+
+//   this.filterTableData();
+// }
+
+filterTableData() {
+  this.paginatedData = this.tableData.filter(row => {
+    let matches = true;
+    if (this.selectedCategory) {
+      // Replace 'categoryField' with your actual field mapping
+      matches = matches && row[this.selectedCategory] === this.selectedOption;
+    }
+    return matches;
+  });
+}
 
   onOptionSelect(option: string) {
     this.selectedOption = option;
@@ -209,6 +235,7 @@ export class AllReportsComponentComponent {
 
     if (this.selectedCategory && this.selectedOption) {
       this.loadPiechar(this.selectedCategory, this.selectedOption);
+      
     }
   }
 
@@ -410,6 +437,21 @@ export class AllReportsComponentComponent {
   patients: any[] = [];
 
 
+  clearFilters() {
+    this.selectedStage = '';
+    this.selectedZone = '';
+    this.selectedState = null;
+    this.selectedCity = null;
+    this.selectedGender = '';
+    this.selectedStage = '';
+    this.selectedOption = '';
+    this.selectedCategory = '';
+    this.pieChartData = { labels: [], datasets: [] };
+
+    this.tableData = [];
+
+    this.updatePagination();
+  }
 
 
   loadPiechar(category: string, option?: string) {
@@ -498,8 +540,6 @@ export class AllReportsComponentComponent {
       case 'AdherencetoTherapy':
         apiUrl = API_URLS.DIAGNOSIS_GET_DOCTOR;
         break;
-
-
 
 
       case 'Lifestyle Recommendations':
@@ -716,6 +756,8 @@ export class AllReportsComponentComponent {
         });
 
 
+
+
         this.pieChartData = {
           labels: option ? [option] : Object.keys(optionCounts),
           datasets: [{
@@ -727,6 +769,21 @@ export class AllReportsComponentComponent {
           }]
         };
 
+        this.barChartData = {
+          labels: option ? [option] : Object.keys(optionCounts),
+          datasets: [
+            {
+              label: category,
+              data: option ? [this.tableData.length] : Object.values(optionCounts),
+              backgroundColor: option
+                ? ['#36A2EB']
+                : [
+                  '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                  '#9966FF', '#FF9F40', '#FF7F50', '#87CEEB'
+                ]
+            }
+          ]
+        };
         if (option) {
 
           if (category === 'Current Medications') {
@@ -1058,6 +1115,40 @@ export class AllReportsComponentComponent {
   }
 
 
+  exportToExcel(): void {
+    if (!this.tableData || this.tableData.length === 0) {
+      alert("No data available to export.");
+      return;
+    }
+
+    const exportData = this.tableData.map((item: any) => {
+      const { password, createdDt, createdBy, modifiedDt, modifiedBy, ...rest } = item;
+      return {
+        'Subject No': rest.subjectNo || '',
+        'Patient Name': rest.initial || '',
+        'Gender': rest.gender || '',
+        'Age': rest.age || '',
+        'Doctor': rest.doctorName || '',
+        'City': rest.city || '',
+        'State': rest.state || '',
+        'Zone': rest.zone || '',
+        'Stage': rest.stage || '',
+        'Date': rest.date ? new Date(rest.date).toLocaleDateString() : '',
+      };
+    });
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Patient Data');
+
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, `Patient_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
+
+
   login() {
     this.router.navigate(['/login']);
   }
@@ -1090,5 +1181,7 @@ export class AllReportsComponentComponent {
     this.router.navigate([`/genderReport`]);
 
   }
-}
 
+
+
+}
