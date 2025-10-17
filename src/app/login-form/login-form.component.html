@@ -4,14 +4,17 @@
         <h1>Login to Your Account</h1>
 
         <form (ngSubmit)="onLogin()" #loginForm="ngForm">
-            <input type="email"  name="email" placeholder="Mobile" [(ngModel)]="mobileNo" required
+            <input type="email" name="email" placeholder="Mobile" [(ngModel)]="mobileNo" required
                 style="margin-right: 230px;">
             <div class="password-wrapper">
-                <input [type]="showPassword ? 'text' : 'password'"  name="password"
-                    placeholder="Password" [(ngModel)]="password" required>
+                <input [type]="showPassword ? 'text' : 'password'" name="password" placeholder="Password"
+                    [(ngModel)]="password" required>
                 <span (click)="togglePassword()" class="eye">👁️</span>
             </div>
-            <button type="submit" class="login-btn">Sign In</button>
+            <div class="login-actions">
+                <button class="login-btn" type="submit">Sign In</button>
+                <a routerLink="/forgot-password" class="forgot-link">Forgot Password?</a>
+            </div>
         </form>
     </div>
     <div class="signup-section">

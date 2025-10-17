@@ -44,8 +44,8 @@ export class MedicalExaminationComponent implements OnInit {
       PatientID: [this.patientService.getPatientId()],
       Stage: [''],
 
-      PE_Height: ['', Validators.required],
-      PE_Weight: ['', Validators.required],
+      PE_Height: ['', [Validators.required, Validators.min(50), Validators.max(250)]],
+      PE_Weight: ['', [Validators.required, Validators.min(2), Validators.max(300)]],
       PE_BMI: [{ value: '', disabled: true }],
       SE_GANormal: [''],
       SE_GAAbNormalCS: [''],
@@ -152,11 +152,11 @@ export class MedicalExaminationComponent implements OnInit {
             //console.log('✅ Medical Examination data patched:', this.medicalExaminationForm.value);
 
           } else {
-            console.warn('⚠️ No Medical Examination data found.');
+            console.warn('No Medical Examination data found.');
           }
         },
         error: (err) => {
-          console.error('❌ Error fetching Medical Examination data:', err);
+          console.error('Error fetching Medical Examination data:', err);
         }
       });
 
@@ -227,7 +227,7 @@ export class MedicalExaminationComponent implements OnInit {
     }
 
 
-    
+
     const bmi = form.get('PE_BMI')?.value;
     if (!bmi || bmi <= 0) {
       alert('BMI is invalid. Check height and weight.');
@@ -289,72 +289,12 @@ export class MedicalExaminationComponent implements OnInit {
   }
 
 
-  // Submit(): void {
-  //   if (!this.validatefields()) return;
-
-  //   if (!this.formValidation.validateForm(this.medicalExaminationForm)) {
-  //     alert('Enter all required values');
-  //     this.medicalExaminationForm.markAllAsTouched();
-  //     return;
-  //   }
-
-  //   const formValue = this.medicalExaminationForm.value;
-
-  //   const medicalExaminationPayload = {
-  //     Meid: !!formValue.MEID ? parseInt(formValue.MEID, 10) : null,
-  //     Flag: !!formValue.MEID ? 'U' : 'I',
-  //     DoctorId: this.doctorId,
-  //     PatientId: this.patientId,
-  //     Stage: this.stage,
-
-  //     pE_Height: formValue.PE_Height !== '' ? formValue.PE_Height : null,
-  //     pE_Weight: formValue.PE_Weight !== '' ? formValue.PE_Weight : null,
-  //     pE_BMI: this.bmi != null ? this.bmi.toString() : null,
-
-  //     sE_GANormal: formValue.SE_GANormal === 'normal',
-  //     sE_GAAbNormalCS: formValue.SE_GAAbNormalCS === 'cs',
-  //     sE_GAAbNormalNCS: formValue.SE_GAAbNormalNCS === 'ncs',
-  //     pE_BMSE_GAAbNormalRemarkI5: formValue.PE_BMSE_GAAbNormalRemarkI5,
-
-  //     sE_RSNormal: formValue.SE_RSNormal === 'normal',
-  //     sE_RSAbNormal_CS: formValue.SE_RSAbNormal_CS === 'cs',
-  //     sE_RSAbNormal_NCS: formValue.SE_RSAbNormal_NCS === 'ncs',
-  //     sE_RSAbNormalRemark: formValue.SE_RSAbNormalRemark,
-
-  //     othersNormal: formValue.OthersNormal === 'normal',
-  //     othersAbNormal_CS: formValue.OthersAbNormal_CS === 'cs',
-  //     othersAbNormal_NCS: formValue.OthersAbNormal_NCS === 'ncs',
-  //     othersAbNormalRemark: formValue.OthersAbNormalRemark,
-
-  //     paE_Findings: formValue.PAE_Findings,
-
-  //     CreatedBy: this.doctorId
-  //   };
-
-  //   const payload = { ...medicalExaminationPayload, Stage: this.stage };
-
-  //   console.log('Payload being sent:', JSON.stringify(payload, null, 2));
-
-  //   this.http.httpPost('/MedicalExamination/SaveMedicalExamination', payload).subscribe({
-  //     next: (res: any) => {
-  //       if (res?.type === 'S') {
-  //         this.isSaved = true;
-  //         alert('Saved Successfully');
-  //       } else {
-  //         this.formValidation.showAlert('Error!!', 'danger');
-  //       }
-  //     },
-  //     error: err => {
-  //       console.error('Submit error: ', err);
-  //       this.formValidation.showAlert('Error!!', 'danger');
-  //     }
-  //   });
-  // }
+  
 
 
   Submit(): void {
 
-         if (!this.validatefields()) return;
+    if (!this.validatefields()) return;
 
     if (!this.formValidation.validateForm(this.medicalExaminationForm)) {
       this.medicalExaminationForm.markAllAsTouched();
@@ -375,7 +315,7 @@ export class MedicalExaminationComponent implements OnInit {
         alert('BMI is below 13 → mild thinest. Please check height and weight.');
         return;
       }
-      if (this.bmi > 40) {
+      if (this.bmi > 48) {
         alert('BMI is above 40 →  Morbidly Obese. Please check height and weight.');
         return;
       }

@@ -172,7 +172,7 @@ export class ChiefComplaintComponent implements OnInit {
   }
 
   blockInvalidKeys(event: KeyboardEvent) {
-    if (['e', 'E', '+', '-', '.'].includes(event.key)) {
+    if (['e', 'E', '+', '-', '.', ')','(','*','&','%','$','#', '@', '!', '~', '^'].includes(event.key)) {
       event.preventDefault();
     }
 
@@ -257,15 +257,15 @@ export class ChiefComplaintComponent implements OnInit {
       return;
     }
 
-       //maximum possible hours per week = 24*7=168
-    if (enteredhB_Frequency > 168 || 
-      enteredr_Frequency > 168 ||
-      enteredrP_Frequency > 168 ||
-      enteredaT_Frequency > 168 
-    ) {
-      alert('Entered Frequency cannot exceed the maximum possible hours per week 168 . Please correct the value.');
-      return;
-    }
+    //    //maximum possible hours per week = 24*7=168
+    // if (enteredhB_Frequency > 168 || 
+    //   enteredr_Frequency > 168 ||
+    //   enteredrP_Frequency > 168 ||
+    //   enteredaT_Frequency > 168 
+    // ) {
+    //   alert('Entered Frequency cannot exceed the maximum possible hours per week 168 . Please correct the value.');
+    //   return;
+    // }
 
     this.http.httpPost(API_URLS.CHEIF_COMPLAINT_SAVE, param).subscribe(
       (res: any) => {

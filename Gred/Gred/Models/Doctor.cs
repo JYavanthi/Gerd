@@ -36,4 +36,8 @@ public partial class Doctor
     public int? ModifiedBy { get; set; }
 
     public DateTime? ModifiedDt { get; set; }
+
+    public string? ResetToken { get; set; }
+
+    public DateTime? ResetTokenExpires { get; set; }
 }
