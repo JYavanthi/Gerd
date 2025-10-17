@@ -54,36 +54,43 @@
               <span class="selected-item">{{ selectedZone || 'Select Zone' }}</span>
             </div>
             <ul class="dropdown-list" *ngIf="dropdownOpen['Zones']">
-              <li *ngFor="let z of zones" (click)="toggleSelection(z, 'zone'); $event.stopPropagation()"
-                [class.active]="selectedZone === z">
+              <li *ngFor="let z of zones" (click)="
+          toggleSelection(z, 'zone');
+          toggleDropdown('Zones');
+          $event.stopPropagation()
+        " [class.active]="selectedZone === z">
                 {{ z }}
               </li>
             </ul>
           </div>
 
-          <!-- States -->
           <div class="dropdown-wrapper" (click)="toggleDropdown('States')">
             <label class="dropdown-label">States</label>
             <div class="selected-items">
-              <span class="selected-item">{{ selectedState?.name || 'Select State' }}</span>
+              <span class="selected-item">{{ selectedStateName || 'Select State' }}</span>
             </div>
             <ul class="dropdown-list" *ngIf="dropdownOpen['States']">
-              <li *ngFor="let s of states" (click)="toggleSelection(s, 'state'); $event.stopPropagation()"
-                [class.active]="selectedState?.id === s.id">
+              <li *ngFor="let s of states" (click)="
+          toggleSelection(s, 'state');
+          toggleDropdown('States');
+          $event.stopPropagation()
+        " [class.active]="selectedState?.id === s.id">
                 {{ s.name }}
               </li>
             </ul>
           </div>
 
-          <!-- Cities -->
           <div class="dropdown-wrapper" (click)="toggleDropdown('Cities')">
             <label class="dropdown-label">Cities</label>
             <div class="selected-items">
-              <span class="selected-item">{{ selectedCity?.name || 'Select City' }}</span>
+              <span class="selected-item">{{ selectedCityName || 'Select City' }}</span>
             </div>
             <ul class="dropdown-list" *ngIf="dropdownOpen['Cities']">
-              <li *ngFor="let c of cities" (click)="selectCity(c); $event.stopPropagation()"
-                [class.active]="selectedCity?.id === c.id">
+              <li *ngFor="let c of cities" (click)="
+          toggleSelection(c, 'city');
+          toggleDropdown('Cities');
+          $event.stopPropagation()
+        " [class.active]="selectedCity?.id === c.id">
                 {{ c.name }}
               </li>
             </ul>
@@ -96,14 +103,29 @@
               <span class="selected-item">{{ selectedGender || 'Select Gender' }}</span>
             </div>
             <ul class="dropdown-list" *ngIf="dropdownOpen['Gender']">
-              <li *ngFor="let g of genders" (click)="toggleSelection(g, 'gender'); $event.stopPropagation()"
-                [class.active]="selectedGender === g">
+              <li *ngFor="let g of genders" (click)="
+                toggleSelection(g, 'gender'); 
+                toggleDropdown('genders'); 
+
+                $event.stopPropagation()" [class.active]="selectedGender === g">
                 {{ g }}
               </li>
             </ul>
           </div>
 
-
+          <div class="dropdown-wrapper" (click)="toggleDropdown('Stage')">
+            <label class="dropdown-label">Stages</label>
+            <div class="selected-items">
+              <span class="selected-item">{{ selectedStage || 'Select Stage' }}</span>
+            </div>
+            <ul class="dropdown-list" *ngIf="dropdownOpen['Stage']">
+              <li *ngFor="let stage of Stages"
+                (click)="toggleSelection(stage, 'stage'); toggleDropdown('Stages'); $event.stopPropagation()"
+                [class.active]="selectedStage === stage">
+                {{ stage }}
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div class="btn">

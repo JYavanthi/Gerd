@@ -67,6 +67,7 @@ export const API_URLS = {
   LOGIN: '/Auth/login',
   MANAGEMENT_SAVE: '/Management/SaveManagement',
   MANAGEMENT_CompleteCase: '/Management/CompleteCase',
+  GET_MANAGEMENT:'/Management/GetManagement',
 
   WEATHER_FORECAST: '/WeatherForecast',
 

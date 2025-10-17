@@ -28,4 +28,19 @@ public class CityController : ControllerBase
       return BadRequest(ex.Message);
     }
   }
+
+  [HttpGet("GetCities")]
+  public async Task<IActionResult> GetCities()
+  {
+    try
+    {
+      var data = await _context.VwCities.ToListAsync();
+      return Ok(data);
+    }
+    catch (Exception ex)
+    {
+      return BadRequest(ex.Message);
+    }
+  }
+
 }
