@@ -157,7 +157,7 @@ export class DemographicComponent implements OnInit {
 
           // Load cities first
           if (data.state) {
-            this.http.httpGet(API_URLS.CITY_GET, { stateId: data.state }).subscribe({
+            this.http.httpGet(API_URLS.CITY_GET, { stateId: data.stateId }).subscribe({
               next: (cities: any) => {
                 this.cities = cities.sort((a: any, b: any) =>
                   a.name.toLowerCase().localeCompare(b.name.toLowerCase())
