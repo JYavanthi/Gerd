@@ -162,16 +162,31 @@
           <div class="form-row mb-3">
 
             <div class="form-group col-md-4">
-              <select formControlName="pincode" class="form-select">
-                <option value="" disabled> Select Pincode </option>
+             <!-- <label class="form-label">Pincode</label> -->
+
+              <!-- Dropdown for existing pincodes + "Add New" option -->
+              <select *ngIf="!isInsertingNewPincode" class="form-select" [formControlName]="'pincode'"
+                (change)="onPincodeSelect($event)">
+                <option value="" disabled>Select Pincode</option>
                 <option *ngFor="let pin of pincode" [value]="pin.pincode">
                   {{ pin.pincode }}
                 </option>
+                <option value="new">-- Add New Pincode --</option>
               </select>
-              <label class="form-label">Pincode</label>
+
+              <!-- Input for new pincode -->
+              <input *ngIf="isInsertingNewPincode" type="text" class="form-control" maxlength="6"
+                placeholder="Enter new pincode" [value]="newPincodeValue" (input)="onNewPincodeInput($event)" />
+
+              <!-- Insert button -->
+              <button *ngIf="isInsertingNewPincode" type="button" class="btn btn-primary mt-2"
+                (click)="insertPincode()">
+                
+              </button>
+
               <div *ngIf="demographicForm.get('pincode')?.touched && demographicForm.get('pincode')?.invalid"
                 class="text-danger small">
-                Enter valid pincode with 6 digits.
+                Enter valid 6-digit pincode.
               </div>
             </div>
 

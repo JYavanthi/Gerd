@@ -33,7 +33,9 @@ export class AssessmentComponent {
 
   tabId = 1;
   @Input() stage: number = 0;
-  symptomScore: number = 0;
+  // symptomScore: number = 0;
+     symptomScore: any;
+
   isViewMode = false;
   isFollowUp: boolean = false;
   @Input() patientId: any;

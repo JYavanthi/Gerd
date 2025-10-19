@@ -114,10 +114,11 @@ export class HistoryEndoscopyComponent {
       if (value === 'yes') {
         remarkCtrl?.enable();
         this.fileUploadDisabled = false;
-      } else if (value === 'No') {
+      } else if (value === 'no') {
         remarkCtrl?.disable();
-        remarkCtrl?.setValue(''); // <-- Clear previous value
+        remarkCtrl?.setValue('');
         this.fileUploadDisabled = true;
+
 
         // Delete all attachments without alert
         [...this.attachmentList].forEach((file, index) => {
@@ -319,9 +320,9 @@ export class HistoryEndoscopyComponent {
         this.attachmentList = res;
         console.log("this.attachmentList", this.attachmentList);
 
-        this.endoscopyGSForm.patchValue({
-          endoscopyAttached: this.attachmentList.length > 0 ? 'yes' : 'No'
-        });
+        // this.endoscopyGSForm.patchValue({
+        //   endoscopyAttached: this.attachmentList.length ? 'yes' : 'no'
+        // });
 
       },
       error: (err) => {
@@ -345,10 +346,7 @@ export class HistoryEndoscopyComponent {
             usageOfPPI: data.usageOfPpi ?? '',
             historyofEndoscopy: data.historyofEndoscopy ?? '',
             endoscopyDate: data.endoscopyDate ? data.endoscopyDate.split('T')[0] : '',
-            // endoscopyAttached: data.endoscopyAttement === true ? 'yes' : 'no',
-            endoscopyAttached: data.endoscopyAttement === true
-              ? 'yes'
-              : (data.endoscopyAttement === false ? 'no' : ''),
+            endoscopyAttached: this.attachmentList.length ? 'yes' : 'no',
             endoscopyAttement: data.endoscopyAttement ?? '',
             endoscopyRemark: data.endoscopyRemark ?? '',
             historyofGS: data.historyofGs ? 'yes' : 'no',
