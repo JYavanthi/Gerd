@@ -135,7 +135,7 @@ export class DemographicComponent implements OnInit {
           this.cityid = data.city;
           this.subjectno = data.subjectNo;
           this.pincode = data.pincode;
-          this.stateid = data.stateId
+          this.stateid = data.stateId;
           // patch form without city (yet)
           this.demographicForm.patchValue({
             patientName: data.initial || '',
@@ -170,11 +170,12 @@ export class DemographicComponent implements OnInit {
                 );
 
                 if (data.city) {
-                  this.demographicForm.patchValue({ city: data.city });
+                  this.demographicForm.patchValue({city:  data.cityId});
+                  console.log('Patched city:', data.city);
                 }
 
-                if (this.cityid) {
-                  this.http.httpGet(API_URLS.GET_PINCODE, { citiid: this.cityid }).subscribe({
+                if (this.cityid) {  
+                  this.http.httpGet(API_URLS.GET_PINCODE, { citiid: data.cityId }).subscribe({
                     next: (res: any) => {
                       this.pincode = res.sort((a: any, b: any) =>
                         (a.pincode || 0) - (b.pincode || 0)
