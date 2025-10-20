@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, } from '@angular/router';
 import { HttpserviceService } from '../httpservice.service';
 import { FormvalidationService } from '../formvalidation.service';
@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { API_URLS } from '../shared/API-URLs';
 import { PatientService } from '../Services/patient.service';
 import { gadgetService } from '../Services/gadget.service';
+import { Subscription } from 'rxjs';
 
 
 
@@ -18,6 +19,7 @@ import { gadgetService } from '../Services/gadget.service';
 
 
 export class GadgetComponent implements OnInit {
+  private pushStateCount = 5;
   tabId = 1;
   @Input() stage: number = 0;
   gadgetForm!: FormGroup
@@ -32,7 +34,7 @@ export class GadgetComponent implements OnInit {
   id: any;
   userData: any;
   ageInYears: number = 0;
-  workingHours:number =24;
+  workingHours: number = 24;
   gadgetUsage = {
     computers: {
       used: '',
@@ -78,6 +80,7 @@ export class GadgetComponent implements OnInit {
 
   }
 
+  private routerSub!: Subscription;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && this.data) {
@@ -188,6 +191,60 @@ export class GadgetComponent implements OnInit {
       }
     });
 
+    for (let i = 0; i < this.pushStateCount; i++) {
+      history.pushState({ antiBack: true, idx: i }, '', window.location.href);
+    }
+
+    history.replaceState({ top: true }, '', window.location.href);
+
+  }
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+
+    const confirmed = window.confirm(
+      'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+    );
+
+    if (confirmed) {
+      this.logoutUser();
+      return;
+    }
+
+    setTimeout(() => {
+      try {
+        // push 2 states to ensure repeated backs don't slip through
+        history.pushState({ antiBack: true }, '', window.location.href);
+        history.pushState({ antiBack: true }, '', window.location.href);
+      } catch (e) {
+        // In case some browsers throw
+        console.warn('pushState failed', e);
+      }
+    }, 50); // 30–150ms works; 50ms is a good tradeoff
+
+    // Prevent default-like behavior by moving focus back; not strictly necessary:
+    window.scrollTo(0, 0);
+  }
+
+  // Also handle page unloads (refresh / close)
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    // Show native prompt in some browsers (message ignored by modern browsers)
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  logoutUser(): void {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Use router navigate with replaceUrl to avoid extra history entry
+    this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+      // Force full navigation to ensure clean state
+      window.location.href = '/login';
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.routerSub?.unsubscribe();
   }
   fetchGadgetData(patientId: number): void {
     this.gadgetService.GetGadgetById(patientId, this.stage).subscribe({
@@ -380,7 +437,7 @@ export class GadgetComponent implements OnInit {
       alert('Entered frequency exceeds the total hours/day . Please enter valid values.');
       return;
     }
-   
+
     this.http.httpPost(API_URLS.GADGET_SAVE, payload).subscribe({
       next: (res: any) => {
         if (res.type === 'S') {

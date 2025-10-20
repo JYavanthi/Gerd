@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpserviceService } from '../httpservice.service';
@@ -7,6 +7,7 @@ import { API_URLS } from '../shared/API-URLs';
 import { PatientHistoryService } from '../Services/patient-history.service';
 import { HistoryService } from '../Services/history.servie';
 import { PatientService } from '../Services/patient.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-history',
@@ -14,9 +15,10 @@ import { PatientService } from '../Services/patient.service';
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
+  private pushStateCount = 5;
   patientHistory!: FormGroup
   tabId = 1;
-  @Input()  stage: number = 0;
+  @Input() stage: number = 0;
   patientHistoryForm: FormGroup;
   @Input() patientId: number | null = null;
   doctorId: number | null = null;
@@ -26,8 +28,8 @@ export class HistoryComponent implements OnInit {
   isFollowUp: boolean = false;
   isSaved: boolean = false;
   userData: any;
-  @Input() data: any;  
-    @Input() isPrintMode: boolean = false;
+  @Input() data: any;
+  @Input() isPrintMode: boolean = false;
 
 
   constructor(
@@ -46,13 +48,14 @@ export class HistoryComponent implements OnInit {
     });
 
   }
-
+  private routerSub!: Subscription;
 
   ngOnInit(): void {
 
     this.route.params.subscribe(params => {
       this.patientId = +params['patientId']
       this.stage = +params['stage']
+
     });
 
 
@@ -64,12 +67,12 @@ export class HistoryComponent implements OnInit {
 
     });
     if (this.data) {
-    console.log("📌 Patching from parent onInit:", this.data);
-    this.patchForm(this.data);   // ✅ PATCH HERE
-  } else if (this.patientId) {
-    console.log("📌 Fetching from API");
-    this.fetchPatientHistoryById(this.patientId, this.stage);
-  }
+      console.log("📌 Patching from parent onInit:", this.data);
+      this.patchForm(this.data);   // ✅ PATCH HERE
+    } else if (this.patientId) {
+      console.log("📌 Fetching from API");
+      this.fetchPatientHistoryById(this.patientId, this.stage);
+    }
 
 
     console.log("📌 Patient ID from URL:", this.patientId);
@@ -81,40 +84,80 @@ export class HistoryComponent implements OnInit {
     this.tabId = state?.tabId ?? 1;
     this.formData = state?.data;
 
+    for (let i = 0; i < this.pushStateCount; i++) {
+      history.pushState({ antiBack: true, idx: i }, '', window.location.href);
+    }
 
+    history.replaceState({ top: true }, '', window.location.href);
 
-    // Check if there is a history ID in query params (e.g., ?id=1089)
-    // this.route.queryParams.subscribe(params => {
-    //   if (params['id']) {
-    //     this.patientHistoryId = parseInt(params['id']);
-    //     this.historyService.initializeWithID(this.patientHistoryId);
-    //     console.log('✔️ Initialized with existing ID from query params:', this.patientHistoryId);
-    //   } else {
-    //     this.patientHistoryId = 0;
-    //     this.historyService.initializeWithID(0);
-    //     console.log('ℹ️ No existing ID in query params, new record mode.');
-    //   }
-    // });
-
-    // const currentUrl = this.router.url;
-    // this.isFollowUp = currentUrl.includes('follow-up-1') || currentUrl.includes('follow-up-2');
+    
   }
 
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+
+    const confirmed = window.confirm(
+      'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+    );
+
+    if (confirmed) {
+      this.logoutUser();
+      return;
+    }
+
+    setTimeout(() => {
+      try {
+        // push 2 states to ensure repeated backs don't slip through
+        history.pushState({ antiBack: true }, '', window.location.href);
+        history.pushState({ antiBack: true }, '', window.location.href);
+      } catch (e) {
+        // In case some browsers throw
+        console.warn('pushState failed', e);
+      }
+    }, 50); // 30–150ms works; 50ms is a good tradeoff
+
+    // Prevent default-like behavior by moving focus back; not strictly necessary:
+    window.scrollTo(0, 0);
+  }
+
+  // Also handle page unloads (refresh / close)
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    // Show native prompt in some browsers (message ignored by modern browsers)
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  logoutUser(): void {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Use router navigate with replaceUrl to avoid extra history entry
+    this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+      // Force full navigation to ensure clean state
+      window.location.href = '/login';
+    });
+  }
+
+  ngOnDestroy(): void {
+    //window.removeEventListener('popstate', this.preventBackNavigation);
+    this.routerSub?.unsubscribe();
+
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-  if (changes['data'] && changes['data'].currentValue) {
-    console.log("📌 Patching from parent (onChanges):", this.data);
-    this.patchForm(this.data);
+    if (changes['data'] && changes['data'].currentValue) {
+      console.log("📌 Patching from parent (onChanges):", this.data);
+      this.patchForm(this.data);
+    }
   }
-}
-      private patchForm(data: any): void {
-      this.patientHistoryForm.patchValue({
-        pastHistory: data.pastHistory || '',
-            diet: data.dietVegetarian ? 'Vegetarian' : data.dietNonVegetarian ? 'Non-Vegetarian' : ''
-          });
-      
-    } 
-  
+  private patchForm(data: any): void {
+    this.patientHistoryForm.patchValue({
+      pastHistory: data.pastHistory || '',
+      diet: data.dietVegetarian ? 'Vegetarian' : data.dietNonVegetarian ? 'Non-Vegetarian' : ''
+    });
+
+  }
+
   fetchPatientHistoryById(PatientID: number, stage: number): void {
     this.patientHistoryService.getHistoryByid(PatientID, stage).subscribe({
       next: (res: any) => {
@@ -140,52 +183,52 @@ export class HistoryComponent implements OnInit {
   }
 
   Submit() {
-  if (this.patientHistoryForm.invalid) {
-    const controls = this.patientHistoryForm.controls;
+    if (this.patientHistoryForm.invalid) {
+      const controls = this.patientHistoryForm.controls;
 
-    if (controls['pastHistory'].invalid) {
-      alert('Please fill Past History.');
-    } else if (controls['diet'].invalid) {
-      alert('Please select Diet.');
-    }
-
-    this.patientHistoryForm.markAllAsTouched(); // Highlight missing fields
-    return; // Stop further execution
-  }
-
-  // ✅ Proceed with submission if form is valid
-  const f = this.patientHistoryForm.value;
-  let user: any = localStorage.getItem('doctor');
-  this.userData = JSON.parse(user);
-
-  const param = {
-    stage: this.stage,
-    Flag: 'I',
-    doctorID: this.userData?.doctorId,
-    PatientID: this.patientId,
-    Past_History: f.pastHistory,
-    Diet_Vegetarian: f.diet === 'Vegetarian',
-    Diet_NonVegetarian: f.diet === 'Non-Vegetarian',
-    CreatedBy: this.userData?.doctorId
-  };
-
-  console.log('Payload to save:', param);
-
-  this.http.httpPost(API_URLS.HISTORY_SAVE, param).subscribe({
-    next: (res: any) => {
-      if (res.type === 'S') {
-        alert('Saved Successfully');
-        this.isSaved = true;
-      } else {
-        this.formValidation.showAlert('Error saving data!', 'danger');
+      if (controls['pastHistory'].invalid) {
+        alert('Please fill Past History.');
+      } else if (controls['diet'].invalid) {
+        alert('Please select Diet.');
       }
-    },
-    error: (err) => {
-      console.error('Save error:', err);
-      this.formValidation.showAlert('Network or server error during save.', 'danger');
+
+      this.patientHistoryForm.markAllAsTouched(); // Highlight missing fields
+      return; // Stop further execution
     }
-  });
-}
+
+    // ✅ Proceed with submission if form is valid
+    const f = this.patientHistoryForm.value;
+    let user: any = localStorage.getItem('doctor');
+    this.userData = JSON.parse(user);
+
+    const param = {
+      stage: this.stage,
+      Flag: 'I',
+      doctorID: this.userData?.doctorId,
+      PatientID: this.patientId,
+      Past_History: f.pastHistory,
+      Diet_Vegetarian: f.diet === 'Vegetarian',
+      Diet_NonVegetarian: f.diet === 'Non-Vegetarian',
+      CreatedBy: this.userData?.doctorId
+    };
+
+    console.log('Payload to save:', param);
+
+    this.http.httpPost(API_URLS.HISTORY_SAVE, param).subscribe({
+      next: (res: any) => {
+        if (res.type === 'S') {
+          alert('Saved Successfully');
+          this.isSaved = true;
+        } else {
+          this.formValidation.showAlert('Error saving data!', 'danger');
+        }
+      },
+      error: (err) => {
+        console.error('Save error:', err);
+        this.formValidation.showAlert('Network or server error during save.', 'danger');
+      }
+    });
+  }
 
 
   goNext() {

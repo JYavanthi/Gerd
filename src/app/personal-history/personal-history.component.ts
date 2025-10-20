@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, HostListener } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { FormvalidationService } from '../formvalidation.service';
 import { HttpserviceService } from '../httpservice.service';
@@ -8,6 +8,7 @@ import { error } from 'node:console';
 import { PatientService } from '../Services/patient.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-personal-history',
@@ -15,6 +16,7 @@ import { Validators } from '@angular/forms';
   styleUrls: ['./personal-history.component.css']
 })
 export class PersonalHistoryComponent {
+  private pushStateCount = 5;
   @Input() patientId: number | null = null;
   doctorId: number | null = null;
   isViewMode = false;
@@ -92,6 +94,7 @@ export class PersonalHistoryComponent {
   ) {
 
   }
+  private routerSub!: Subscription;
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['data'] && this.data) {
@@ -168,6 +171,7 @@ export class PersonalHistoryComponent {
       this.loadExistingData(Number(this.patientId), this.stage);
       this.isViewMode = this.isViewMode ?? false;
 
+
     });
 
     // Age is stored in localStorage from Demographic component
@@ -177,6 +181,61 @@ export class PersonalHistoryComponent {
       this.ageInYears = age;            // age in years
       console.log('Age in Years:', this.ageInYears);
     }
+    for (let i = 0; i < this.pushStateCount; i++) {
+      history.pushState({ antiBack: true, idx: i }, '', window.location.href);
+    }
+
+    history.replaceState({ top: true }, '', window.location.href);
+
+  }
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+
+    const confirmed = window.confirm(
+      'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+    );
+
+    if (confirmed) {
+      this.logoutUser();
+      return;
+    }
+
+    setTimeout(() => {
+      try {
+        // push 2 states to ensure repeated backs don't slip through
+        history.pushState({ antiBack: true }, '', window.location.href);
+        history.pushState({ antiBack: true }, '', window.location.href);
+      } catch (e) {
+        // In case some browsers throw
+        console.warn('pushState failed', e);
+      }
+    }, 50); // 30–150ms works; 50ms is a good tradeoff
+
+    // Prevent default-like behavior by moving focus back; not strictly necessary:
+    window.scrollTo(0, 0);
+  }
+
+  // Also handle page unloads (refresh / close)
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    // Show native prompt in some browsers (message ignored by modern browsers)
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  logoutUser(): void {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Use router navigate with replaceUrl to avoid extra history entry
+    this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+      // Force full navigation to ensure clean state
+      window.location.href = '/login';
+    });
+  }
+
+  ngOnDestroy(): void {
+    //window.removeEventListener('popstate', this.preventBackNavigation);
+    this.routerSub?.unsubscribe();
 
   }
 
@@ -410,7 +469,7 @@ export class PersonalHistoryComponent {
       if (
         enteredaeratedDurationMonths > this.ageInYears ||
         enteredrcoffeeDurationMonths > this.ageInYears ||
-        entereteaDurationMonths > this.ageInYears || 
+        entereteaDurationMonths > this.ageInYears ||
         enteredalcoholDurationMonths > this.ageInYears ||
         enteredsweetsDurationMonths > this.ageInYears ||
         enteredsmokingDurationMonths > this.ageInYears ||

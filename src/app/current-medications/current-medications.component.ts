@@ -1,6 +1,6 @@
 
 
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpserviceService } from '../httpservice.service';
@@ -8,6 +8,7 @@ import { FormvalidationService } from '../formvalidation.service';
 import { CurrentMedicationsService } from '../Services/current-medications.service';
 import { PatientService } from '../Services/patient.service';
 import { API_URLS } from '../shared/API-URLs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-current-medications',
@@ -15,6 +16,7 @@ import { API_URLS } from '../shared/API-URLs';
   styleUrls: ['./current-medications.component.css']
 })
 export class CurrentMedicationsComponent implements OnInit {
+  private pushStateCount = 5;
   medicationsForm: FormGroup;
   patientId: number | null = null;
   doctorId: number | null = null;
@@ -58,6 +60,8 @@ export class CurrentMedicationsComponent implements OnInit {
     });
   }
 
+   private routerSub!: Subscription;
+
   ngOnInit(): void {
 
     this.patientId = Number(this.route.snapshot.params['patientId']);
@@ -74,19 +78,67 @@ export class CurrentMedicationsComponent implements OnInit {
     //this.doctorId =  this.patientService.getDoctorId();
     this.fetchCurrentMedicationsData(Number(this.patientId));
 
-    // const cachedData = this.patientService.getfamalyhistoryData();
-    // if (cachedData) {
-    //   this.medicationsForm.patchValue(cachedData);
-    // } else {
-    //   this.fetchCurrentMedicationsData(this.patientService.getPatientId());
+   for (let i = 0; i < this.pushStateCount; i++) {
+      history.pushState({ antiBack: true, idx: i }, '', window.location.href);
+    }
 
-    // }
+    history.replaceState({ top: true }, '', window.location.href);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && this.data) {
       this.patchForm(this.data);
     }
+  }
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+
+    const confirmed = window.confirm(
+      'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+    );
+
+    if (confirmed) {
+      this.logoutUser();
+      return;
+    }
+
+    setTimeout(() => {
+      try {
+        // push 2 states to ensure repeated backs don't slip through
+        history.pushState({ antiBack: true }, '', window.location.href);
+        history.pushState({ antiBack: true }, '', window.location.href);
+      } catch (e) {
+        // In case some browsers throw
+        console.warn('pushState failed', e);
+      }
+    }, 50); // 30–150ms works; 50ms is a good tradeoff
+
+    // Prevent default-like behavior by moving focus back; not strictly necessary:
+    window.scrollTo(0, 0);
+  }
+
+  // Also handle page unloads (refresh / close)
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    // Show native prompt in some browsers (message ignored by modern browsers)
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  logoutUser(): void {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Use router navigate with replaceUrl to avoid extra history entry
+    this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+      // Force full navigation to ensure clean state
+      window.location.href = '/login';
+    });
+  }
+
+  ngOnDestroy(): void {
+    //window.removeEventListener('popstate', this.preventBackNavigation);
+    this.routerSub?.unsubscribe();
+   
   }
 
   // Patch only the fields used in the form
