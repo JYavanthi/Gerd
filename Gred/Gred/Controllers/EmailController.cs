@@ -1,8 +1,9 @@
+using Gred.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
-using Gred.Models;
+using System.Net.Sockets;
 
 namespace Gred.Controllers
 {
@@ -59,50 +60,67 @@ namespace Gred.Controllers
 
     private void SendMail(Case caseModel)
     {
-      _config = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory) // <-- Here
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
-      smtpServer = _config["Smtp:Server"];
-      smtpPort = int.Parse(_config["Smtp:Port"]);
-      smtpUser = _config["Smtp:User"];
-      smtpPass = _config["Smtp:Pass"];
-      enableSsl = bool.Parse(_config["Smtp:EnableSsl"]);
-
-      Console.WriteLine("SMTP Server: " + smtpServer);
-      Console.WriteLine("smtpPort: " + smtpPort);
-      Console.WriteLine("smtpUser: " + smtpUser);
-      Console.WriteLine("smtpPass: " + smtpPass);
-      Console.WriteLine("enableSsl: " + enableSsl);
-
-      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-      using var smtpClient = new SmtpClient(smtpServer, smtpPort)
+      try
       {
-        UseDefaultCredentials = false,
-        EnableSsl = enableSsl,
-        Credentials = new NetworkCredential(smtpUser, smtpPass),
-        Timeout = 50000
-      };
+        _config = new ConfigurationBuilder()
+              .SetBasePath(AppContext.BaseDirectory) // <-- Here
+              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+              .Build();
+        smtpServer = _config["Smtp:Server"];
+        smtpPort = int.Parse(_config["Smtp:Port"]);
+        smtpUser = _config["Smtp:User"];
+        smtpPass = _config["Smtp:Pass"];
+        enableSsl = bool.Parse(_config["Smtp:EnableSsl"]);
 
-      var mailMessage = new MailMessage
+        Console.WriteLine("SMTP Server: " + smtpServer);
+        Console.WriteLine("smtpPort: " + smtpPort);
+        Console.WriteLine("smtpUser: " + smtpUser);
+        Console.WriteLine("smtpPass: " + smtpPass);
+        Console.WriteLine("enableSsl: " + enableSsl);
+
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+        using (var client = new TcpClient())
+        {
+          client.Connect("smtp.titan.email", 587);
+          Console.WriteLine("Connected!");
+        }
+
+
+        using var smtpClient = new SmtpClient(smtpServer, smtpPort)
+        {
+          UseDefaultCredentials = false,
+          EnableSsl = enableSsl,
+          Credentials = new NetworkCredential(smtpUser, smtpPass),
+          Timeout = 100000 // 100 seconds
+        };
+
+        var mailMessage = new MailMessage
+        {
+          From = new MailAddress(smtpUser),
+          Subject = caseModel.Subject ?? $"Case Update - Patient ID {caseModel.PatientId}",
+          Body =
+                //$"<p><b>Patient ID:</b> {caseModel.PatientId}</p>" +
+                //$"<p><b>Date:</b> {caseModel.Date?.ToString("yyyy-MM-dd")}</p>" +
+                //$"<p><b>Stage:</b> {(caseModel.Stage == 1 ? "Follow-up One" : caseModel.Stage == 2 || caseModel.Stage == 3 ? "Follow-up Two" : "Baseline")}</p>" +
+                //$"<hr/>" +
+                $"<p>{caseModel.Body}</p>",
+          IsBodyHtml = true
+        };
+
+        mailMessage.To.Add(!string.IsNullOrWhiteSpace(caseModel.Email)
+            ? caseModel.Email
+            : smtpUser);
+
+
+        smtpClient.Send(mailMessage);
+      }
+
+      catch (Exception ex)
       {
-        From = new MailAddress(smtpUser),
-        Subject = caseModel.Subject ?? $"Case Update - Patient ID {caseModel.PatientId}",
-        Body =
-              $"<p><b>Patient ID:</b> {caseModel.PatientId}</p>" +
-              $"<p><b>Date:</b> {caseModel.Date?.ToString("yyyy-MM-dd")}</p>" +
-              $"<p><b>Stage:</b> {(caseModel.Stage == 1 ? "Follow-up One" : caseModel.Stage == 2 || caseModel.Stage == 3 ? "Follow-up Two" : "Baseline")}</p>" +
-              $"<hr/>" +
-              $"<p>{caseModel.Body}</p>",
-        IsBodyHtml = true
-      };
-
-      mailMessage.To.Add(!string.IsNullOrWhiteSpace(caseModel.Email)
-          ? caseModel.Email
-          : smtpUser);
-
-      smtpClient.Send(mailMessage);
+        Console.WriteLine($"Failed to send email: {ex.Message}");
+        throw; // rethrow to handle in calling method
+      }
     }
   }
 }

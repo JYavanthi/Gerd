@@ -118,7 +118,9 @@ namespace Gred.Controllers
       <p>Hello {doctor.Name},</p>
       <p>You requested to reset your password. Click the link below:</p>
       <p><a href='{resetLink}'>Reset Password</a></p>
-      <p>This link will expire in 15 minutes.</p>";
+      <p>This link will expire in 15 minutes.</p>
+      <br/>
+      <p> Best regards,<br/> GERD Registry </p>";
 
         // Send email
         await SendEmailAsync(doctor.Email, subject, body);
@@ -183,7 +185,7 @@ namespace Gred.Controllers
 
           var mailMessage = new MailMessage
           {
-            From = new MailAddress(smtpUser, "Doctor Portal"),
+            From = new MailAddress(smtpUser, "GERD"),
             Subject = subject,
             Body = body,
             IsBodyHtml = true
