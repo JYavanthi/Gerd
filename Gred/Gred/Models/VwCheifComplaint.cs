@@ -23,7 +23,11 @@ public partial class VwCheifComplaint
 
     public int? Pincode { get; set; }
 
+    public int CityId { get; set; }
+
     public string City { get; set; } = null!;
+
+    public short StateId { get; set; }
 
     public string State { get; set; } = null!;
 
