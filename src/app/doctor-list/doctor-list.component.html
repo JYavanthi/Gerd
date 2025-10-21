@@ -105,18 +105,13 @@
 
       <div class="send">
         <div class="send">
-          <button>
-            Downloade by exel
-          </button>
+           <button (click)="exportToExcel()" class="btn btn-success">Export to Excel</button>
         </div>
       </div>
-
-
-
     </div>
     <!-- Doctor Table -->
     <div class="bg-white rounded-xl shadow-lg overflow-auto">
-      <table class="min-w-full table-auto border border-gray-300 text-sm text-gray-800">
+      <table id="excel-table" class="min-w-full table-auto border border-gray-300 text-sm text-gray-800">
         <thead class="bg-gray-100">
           <tr class="text-left">
             <th class="px-4 py-3 border">
