@@ -50,6 +50,7 @@ export class DoctorListComponent implements OnInit {
   expandedStage: string | null = null;
   stagePatients: Case[] = [];
 
+  dueDaysforBaseLine?: number;
   dueDaysforFollowUpOne?: number;
   dueDaysforFollowUpTwo?: number;
 
@@ -281,112 +282,104 @@ export class DoctorListComponent implements OnInit {
 
 
   sendTestEmail(doctor: any) {
-    this.caseDataService.getCases().subscribe((cases: Case[]) => {
-      const patientsForDoctor = cases.filter(p => p.doctorId === doctor.doctorId);
+  this.caseDataService.getCases().subscribe((cases: Case[]) => {
+    const patientsForDoctor = cases.filter(p => p.doctorId === doctor.doctorId);
 
-      if (!patientsForDoctor.length) {
-        console.warn(`❌ No patients found for Doctor ${doctor.name}`);
-        return;
+    if (!patientsForDoctor.length) {
+      console.warn(`❌ No patients found for Doctor ${doctor.name}`);
+      return;
+    }
+
+    const today = this.toDateOnly(new Date()); 
+    const msInDay = 1000 * 60 * 60 * 24;
+
+    const duePatients = patientsForDoctor.filter(patient => {
+      if (patient.stage === 0) {
+        const baselineDue = this.toDateOnly(new Date(patient.createdDt));
+        baselineDue.setDate(baselineDue.getDate() + 16);
+        return baselineDue <= today;
+      } 
+      else if (patient.stage === 1) {
+        if (!patient.blsubmitted) return false;
+        const fu1 = this.toDateOnly(new Date(patient.blsubmitted));
+        fu1.setDate(fu1.getDate() + 46);
+        return fu1 <= today;
+      } 
+      else if (patient.stage === 3) {
+        if (!patient.fu1submitted) return false;
+        const fu2 = this.toDateOnly(new Date(patient.fu1submitted));
+        fu2.setDate(fu2.getDate() + 76);
+        return fu2 <= today;
       }
-
-      const today = this.toDateOnly(new Date());
-      const msInDay = 1000 * 60 * 60 * 24;
-
-      // Filter only patients whose follow-up is due
-      const duePatients = patientsForDoctor.filter(patient => {
-        const created = this.toDateOnly(patient.createdDt);
-
-        if (patient.stage === 0) {
-          const baselineDue = new Date(patient.createdDt);
-          baselineDue.setDate(baselineDue.getDate() + 16);
-          return baselineDue <= today;
-        }
-        else if (patient.stage === 1) { // Follow-up 1
-          if (!patient.blsubmitted) return false;
-          const fu1 = new Date(patient.blsubmitted);
-          fu1.setDate(fu1.getDate() + 46);
-          return fu1 <= today;
-        }
-        else if (patient.stage === 3) { // Follow-up 2
-          if (!patient.fu1submitted) return false;
-          const fu2 = new Date(patient.fu1submitted);
-          fu2.setDate(fu2.getDate() + 76);
-          return fu2 <= today;
-        }
-        return false;
-      });
-
-      if (!duePatients.length) {
-        console.warn(`❌ No follow-up patients due for Doctor ${doctor.name}`);
-        return;
-      }
-
-      // Collect all email observables
-      const emailObservables = duePatients.map(patient => {
-        const created = this.toDateOnly(patient.createdDt);
-        const today = new Date();
-        let stageText = '';
-        let dueDays = 0;
-
-        if (patient.stage === 0) {
-          if (!patient.createdDt) return false;
-          stageText = 'BaseLine';
-          const dueDate = new Date(patient.createdDt);
-          dueDate.setDate(dueDate.getDate() + 16);
-          dueDays = Math.ceil((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
-        }
-
-        else if (patient.stage === 1) {
-          if (!patient.blsubmitted) return false;
-          stageText = 'Follow-up1';
-          const dueDate = new Date(patient.blsubmitted);
-          dueDate.setDate(dueDate.getDate() + 46);
-          dueDays = Math.ceil((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
-        }
-
-        else if (patient.stage === 3) {
-          if (!patient.fu1submitted) return false;
-          stageText = 'Follow-up2';
-          const dueDate = new Date(patient.fu1submitted);
-          dueDate.setDate(dueDate.getDate() + 76);
-          dueDays = Math.ceil((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
-        }
-
-
-        const payload = {
-          patientId: patient.patientId,
-          date: created.toISOString().split('T')[0],
-          stage: patient.stage,
-          email: doctor.email,
-          subject: `${stageText} Reminder`,
-          dueDays: dueDays,
-          body: `
-        <p>Dear Dr. ${doctor.name},</p>
-        <p>This is a reminder that patient <b>${patient.initial}</b> <b>${stageText}</b> is Overdue.</p>
-        <ul>
-          <li><b>Patient initial:</b> ${patient.initial}</li>
-          <li><b>Stage:</b> ${stageText}</li>
-          <li><b>Created Date:</b> ${created.toDateString()}</li>
-          <li><b>Overdue</b> ${dueDays} day(s)</li>
-        </ul>
-        <p>Could you please take action accordingly.</p>
-        <br/>
-        <p>Best regards,<br/>Admin</p>
-      `
-        };
-
-        return this.http.httpPostMail('/Email', payload, { responseType: 'text' });
-      });
-
-      // Wait for all emails to finish before showing alert
-      if (emailObservables.length > 0) {
-        forkJoin(emailObservables).subscribe({
-          next: () => alert(`Follow-up email(s) sent successfully for Dr. ${doctor.name}!`),
-          error: (err) => alert(`Some email(s) failed to send for Dr. ${doctor.name}. Check console.`)
-        });
-      }
+      return false;
     });
-  }
+
+    if (!duePatients.length) {
+      console.warn(`❌ No follow-up patients due for Doctor ${doctor.name}`);
+      return;
+    }
+
+    // Prepare all email observables
+    const emailObservables = duePatients.map(patient => {
+      const created = this.toDateOnly(patient.createdDt);
+      let stageText = '';
+      let dueDate: Date;
+
+      if (patient.stage === 0) {
+        stageText = 'BaseLine';
+        dueDate = this.toDateOnly(new Date(patient.createdDt));
+        dueDate.setDate(dueDate.getDate() + 16);
+      } 
+      else if (patient.stage === 1) {
+        stageText = 'Follow-up1';
+        dueDate = this.toDateOnly(new Date(patient.blsubmitted));
+        dueDate.setDate(dueDate.getDate() + 46);
+      } 
+      else if (patient.stage === 3) {
+        stageText = 'Follow-up2';
+        dueDate = this.toDateOnly(new Date(patient.fu1submitted));
+        dueDate.setDate(dueDate.getDate() + 76);
+      } 
+      else {
+        return null;
+      }
+
+      const dueDays = Math.ceil((today.getTime() - dueDate.getTime()) / msInDay);
+
+      const payload = {
+        patientId: patient.patientId,
+        date: created.toISOString().split('T')[0],
+        stage: patient.stage,
+        email: doctor.email,
+        subject: `${stageText} Reminder`,
+        dueDays: dueDays,
+        body: `
+          <p>Dear Dr. ${doctor.name},</p>
+          <p>This is a reminder that patient <b>${patient.initial}</b> <b>${stageText}</b> is overdue.</p>
+          <ul>
+            <li><b>Patient initial:</b> ${patient.initial}</li>
+            <li><b>Stage:</b> ${stageText}</li>
+            <li><b>Created Date:</b> ${created.toDateString()}</li>
+            <li><b>Overdue:</b> ${dueDays} day(s)</li>
+          </ul>
+          <p>Could you please take action accordingly.</p>
+          <br/>
+          <p>Best regards,<br/>Admin</p>
+        `
+      };
+
+      return this.http.httpPostMail('/Email', payload, { responseType: 'text' });
+    }).filter(Boolean); // remove nulls
+
+    if (emailObservables.length > 0) {
+      forkJoin(emailObservables).subscribe({
+        next: () => alert(`Follow-up email(s) sent successfully for Dr. ${doctor.name}!`),
+        error: err => alert(`Some email(s) failed to send for Dr. ${doctor.name}. Check console.`)
+      });
+    }
+  });
+}
+
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {

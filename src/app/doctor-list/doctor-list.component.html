@@ -193,6 +193,7 @@
                       <th class="px-2 py-1 border">Patient ID</th>
                       <th class="px-2 py-1 border">SubjectNo</th>
                       <th class="px-2 py-1 border">Name / Initial</th>
+                      <th class="px-2 py-1 border" *ngIf="expandedStage === 'baseline'">Due Days</th>
                       <th class="px-2 py-1 border" *ngIf="expandedStage === 'followUpOne'">Due Days</th>
                       <th class="px-2 py-1 border" *ngIf="expandedStage === 'followUpTwo'">Due Days</th>
                     </tr>
@@ -202,6 +203,9 @@
                       <td class="border px-2 py-1">{{ patient.patientId }}</td>
                       <td class="border px-2 py-1">{{ patient.subjectNo }}</td>
                       <td class="border px-2 py-1">{{ patient.initial }}</td>
+                      <td class="border px-2 py-1" *ngIf="expandedStage === 'baseline'">
+                        {{ patient['dueDaysforBaseLine'] }} days
+                      </td>
                       <td class="border px-2 py-1" *ngIf="expandedStage === 'followUpOne'">
                         {{ patient['dueDaysforFollowUpOne'] }} days
                       </td>
