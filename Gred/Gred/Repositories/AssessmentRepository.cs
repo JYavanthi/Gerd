@@ -21,7 +21,7 @@ namespace Gred.Repositories
       CommonRsult result = new CommonRsult();
       try
       {
-        var data = await _context.Assessments.ToListAsync();
+        var data = await _context.VwAssessments.ToListAsync();
         result.Data = data;
         result.Message = "Successfully Added";
         result.Type = "S";

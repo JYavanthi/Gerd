@@ -24,7 +24,7 @@ namespace Gred.Repositories
       CommonRsult result = new CommonRsult();
       try
       {
-        var data = await _context.VwComorbidities.ToListAsync();
+        var data = await _context.VwDiagnoses.ToListAsync();
         result.Data = data;
         result.Message = "Successfully Added";
         result.Type = "S";

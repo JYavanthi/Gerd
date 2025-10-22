@@ -26,7 +26,7 @@ namespace Gred.Repositories
       CommonRsult result = new CommonRsult();
       try
       {
-        var data = await _context.Managements.ToListAsync();
+        var data = await _context.VwManagements.ToListAsync();
         result.Data = data;
         result.Message = "Successfully";
       }

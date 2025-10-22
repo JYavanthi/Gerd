@@ -22,7 +22,7 @@ namespace Gred.Repositories
       CommonRsult result = new CommonRsult();
       try
       {
-        var data = await _context.Gadgets.ToListAsync();
+        var data = await _context.VwGadgets.ToListAsync();
         result.Data = data;
         result.Message = "Successfully Added";
         result.Type = "S";

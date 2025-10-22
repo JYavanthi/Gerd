@@ -22,7 +22,7 @@ namespace Gred.Repositories
       CommonRsult result = new CommonRsult();
       try
       {
-        var data = await _context.PersonalHistories.ToListAsync();
+        var data = await _context.VwPersonalHistories.ToListAsync();
         result.Data = data;
         result.Message = "Successfully retrieved";
       }

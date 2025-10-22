@@ -32,7 +32,7 @@ interface City {
 })
 
 export class AllReportsComponentComponent {
-   private pushStateCount = 5;
+  private pushStateCount = 5;
   age: number = 0;
   caseSub!: Subscription;
   tableData: any[] = [];
@@ -73,7 +73,7 @@ export class AllReportsComponentComponent {
     "Place Type": ["urban", "sub urban", "rural"],
     "Socioeconomic Status": ["Above poverty line", "Below poverty line"],
     "Annual Family Income (Rupees)": ["< 1 lakh", "1-5 lakhs", "> 5 lakhs"],
-    "Chief complaints": ["Heartburn", "Regurgitation", "Retrosternal Pain", "Acid Taste in mouth"],
+   // "Chief complaints": ["Heartburn", "Regurgitation", "Retrosternal Pain", "Acid Taste in mouth"],
     "Heartburn": ["Postural", "Nocturnal"],
     "Regurgitation": ["Postural", "Nocturnal"],
     "Retrosternal Pain": ["Postural", "Nocturnal"],
@@ -85,13 +85,13 @@ export class AllReportsComponentComponent {
     "Exercise": ["Walking", "Jogging", "Gym", "Yoga", "Aerobics", "Zumba", "Others"],
     "Computer Use": ["Yes", "No"],
     "Computer Usage (hrs/day)": ["0-1", "1-2", "2-3", "3-4", "4-6", "6-8", "8-10", "10-24"],
-    "Computer Usage Duration (years)": ["0-1", "1-5", "5-10", "10-15", "15-20", "20-100"],
+    "Computer Usage Duration (years)": ["0-1", "1-5", "5-10", "10-15", "15-20", "20-120"],
     "Smartphone Use": ["Yes", "No"],
     "Smartphone Usage (hrs/day)": ["0-1", "1-2", "2-3", "3-4", "4-6", "6-8", "8-10", "10-24"],
-    "Smartphone Usage Duration (years)": ["0-1", "1-5", "5-10", "10-15", "15-20", "20-100"],
+    "Smartphone Usage Duration (years)": ["0-1", "1-5", "5-10", "10-15", "15-20", "20-120"],
     "Working Hours (Occupation)": ["4.00 am to 12.00 noon (Early Morning shift)", "6.00 am to 3.00 pm (Morning shift)", "9.00 am to 6.00 pm (General shift)", "12.00 noon to 8.00 pm (Afternoon shift)", "8.00 pm to 8.00 am (Night shift)"],
     "Job/ Occupation type": ["Sedentary", "Non sedentary"],
-    "Duration (No. of years in the above working hours)": ["0-1", "1-5", "5-10", "10-15", "15-20", "20-100"],
+    "Duration (No. of years in the above working hours)": ["0-1", "1-5", "5-10", "10-15", "15-20", "20-120"],
     "Family History of GERD": ["Yes", "No"],
     "Family History of Esophago-gastric Cancer": ["Yes", "No"],
     "PPI Usage": ["Yes", "No"],
@@ -160,7 +160,7 @@ export class AllReportsComponentComponent {
 
   barChartType: 'bar' = 'bar';
   barChartData: ChartData<'bar'> = {
-    labels: ['18-30', '31-40', '41-50', '51-60', '61-70', '71-80', '>80'],
+    labels: ['18-30', '31-40', '41-50', '51-60', '61-70', '71-80', '80--120'],
     datasets: [
       { label: 'gender', data: [65, 59, 80, 81, 56], backgroundColor: '#36A2EB' }
     ]
@@ -186,59 +186,63 @@ export class AllReportsComponentComponent {
     this.getCities();
     this.getPatientList();
 
-     for (let i = 0; i < this.pushStateCount; i++) {
+    for (let i = 0; i < this.pushStateCount; i++) {
       history.pushState({ antiBack: true, idx: i }, '', window.location.href);
     }
 
     history.replaceState({ top: true }, '', window.location.href);
 
+    this.selectedCategory = 'Heartburn';
+    this.availableOptions = this.data['Heartburn'];
+    this.selectedOption = null;
+    this.loadPiechar('Heartburn');
   }
- @HostListener('window:popstate', ['$event'])
-    onPopState(event: PopStateEvent) {
-  
-      const confirmed = window.confirm(
-        'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
-      );
-  
-      if (confirmed) {
-        this.logoutUser();
-        return;
-      }
-  
-      setTimeout(() => {
-        try {
-          // push 2 states to ensure repeated backs don't slip through
-          history.pushState({ antiBack: true }, '', window.location.href);
-          history.pushState({ antiBack: true }, '', window.location.href);
-        } catch (e) {
-          // In case some browsers throw
-          console.warn('pushState failed', e);
-        }
-      }, 50); // 30–150ms works; 50ms is a good tradeoff
-  
-      // Prevent default-like behavior by moving focus back; not strictly necessary:
-      window.scrollTo(0, 0);
-    }
-  
-    // Also handle page unloads (refresh / close)
-    @HostListener('window:beforeunload', ['$event'])
-    onBeforeUnload(event: BeforeUnloadEvent) {
-      // Show native prompt in some browsers (message ignored by modern browsers)
-      event.preventDefault();
-      event.returnValue = '';
-    }
-  
-    logoutUser(): void {
-      localStorage.clear();
-      sessionStorage.clear();
-      // Use router navigate with replaceUrl to avoid extra history entry
-      this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
-        // Force full navigation to ensure clean state
-        window.location.href = '/login';
-      });
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+
+    const confirmed = window.confirm(
+      'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+    );
+
+    if (confirmed) {
+      this.logoutUser();
+      return;
     }
 
-    
+    setTimeout(() => {
+      try {
+        // push 2 states to ensure repeated backs don't slip through
+        history.pushState({ antiBack: true }, '', window.location.href);
+        history.pushState({ antiBack: true }, '', window.location.href);
+      } catch (e) {
+        // In case some browsers throw
+        console.warn('pushState failed', e);
+      }
+    }, 50); // 30–150ms works; 50ms is a good tradeoff
+
+    // Prevent default-like behavior by moving focus back; not strictly necessary:
+    window.scrollTo(0, 0);
+  }
+
+  // Also handle page unloads (refresh / close)
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    // Show native prompt in some browsers (message ignored by modern browsers)
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  logoutUser(): void {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Use router navigate with replaceUrl to avoid extra history entry
+    this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+      // Force full navigation to ensure clean state
+      window.location.href = '/login';
+    });
+  }
+
+
 
   getStage(c: Case): number {
     const bl = Number(c['blsubmitted'] ?? 0);
@@ -621,11 +625,8 @@ export class AllReportsComponentComponent {
     this.http.httpGet(apiUrl).subscribe({
       next: (res: any) => {
         const data = res?.data || [];
-
-
-
         const normalizeValue = (category: string, val: any) => {
-
+     
           const key = `${category} (${val})`;
           if (category === 'Education') {
             if (val === "10th Std & Above") return "Above Tenth standard";
@@ -639,6 +640,7 @@ export class AllReportsComponentComponent {
             'Acid Taste in mouth': { 'Postural': 'atPostural', 'Nocturnal': 'atNocturnal' },
           };
 
+          
           const comorbiditiesMap: Record<string, string> = {
             'Hypertension': 'htPresent', 'Diabetes': 'dbPresent', 'Hyperlipidemia': 'hlPresent',
             'Obesity': 'oPresent', 'Asthma': 'aPresent', 'COPD': 'cPresent', 'Heart Disease': 'hPresent',
@@ -892,9 +894,6 @@ export class AllReportsComponentComponent {
                 { data: [filteredData.length], backgroundColor: ['#FF6384'] }
               ]
             };
-
-
-
             this.barChartData = {
               labels: [option],
               datasets: [
@@ -955,7 +954,7 @@ export class AllReportsComponentComponent {
           }
 
 
-           else if (category === 'Annual Family Income (Rupees)') {
+          else if (category === 'Annual Family Income (Rupees)') {
             const normalizedOption = normalizeValue('Annual Family Income (Rupees)', option);
 
             const filteredData = data.filter((r: any) => {
@@ -1305,6 +1304,8 @@ export class AllReportsComponentComponent {
         'Zone': rest.zone || '',
         'Stage': rest.stage || '',
         'Date': rest.date ? new Date(rest.date).toLocaleDateString() : '',
+        'Place Type': rest.placeType || '',
+         'Socioeconomic Status' : rest.socioeconomicStatus || '',       
       };
     });
 

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { DoctorService } from '../Services/doctor.service';
 import { CaseDataService, Case } from '../Services/case-data.services';
 import { HttpserviceService } from '../httpservice.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
@@ -89,7 +89,6 @@ export class DoctorListComponent implements OnInit {
 
     setTimeout(() => {
       try {
-        // push 2 states to ensure repeated backs don't slip through
         history.pushState({ antiBack: true }, '', window.location.href);
         history.pushState({ antiBack: true }, '', window.location.href);
       } catch (e) {
@@ -632,7 +631,6 @@ export class DoctorListComponent implements OnInit {
 
 
 
-  // Export currently displayed table to Excel
 exportToExcel() {
   const tableElement = document.getElementById('excel-table');
 
@@ -641,14 +639,11 @@ exportToExcel() {
     return;
   }
 
-  // Convert HTML table to worksheet
   const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(tableElement);
 
-  // Create a new workbook and append the worksheet
   const wb: XLSX.WorkBook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'DoctorList');
 
-  // Save as Excel file
   XLSX.writeFile(wb, 'DoctorList.xlsx');
 }
 

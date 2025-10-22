@@ -260,4 +260,8 @@ export class TreatmentReportComponent implements OnInit {
    goTocontactUs(){
     this.router.navigate(['/contact-us']);
   }
+
+    goTofilterchart(){
+    this.router.navigate(['/allReport']);
+  }
 }

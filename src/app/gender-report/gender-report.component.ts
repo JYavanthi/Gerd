@@ -285,4 +285,8 @@ export class GenderReportComponent implements OnInit {
   goTocontactUs() {
     this.router.navigate(['/contact-us']);
   }
+
+    goTofilterchart(){
+    this.router.navigate(['/allReport']);
+  }
 }

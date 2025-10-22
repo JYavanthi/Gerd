@@ -5,24 +5,7 @@ import { PatientService } from "./patient.service";
 import { API_URLS } from '../shared/API-URLs';
 import { FormvalidationService } from "../formvalidation.service";
 
-// export interface Case {
-//   patientId: number;
-//   doctorId: number;
-//   initial: string;
-//   subjectNo: string;
-//   gender: string;
-//   date: string;
-//   baseline?: string;
-//   followUp1?: string;
-//   followUp2?: string;
-//   status: string;
-//   stage?: number;
-//   tabId?: number;
-//   statusClass?: string;
-//   baselineClass?: string;
-//   followUp1Class?: string;
-//   followUp2Class?: string;
-// }
+
 export interface Case {
   patientId: number;
   doctorId: number;
@@ -98,9 +81,9 @@ export class CaseDataService {
           const index = this.caseList.findIndex((c: Case) => c.patientId === newCase.patientId);
 
           if (index !== -1) {
-            this.caseList[index] = { ...newCase }; // Overwrite existing case
+            this.caseList[index] = { ...newCase }; 
           } else {
-            this.caseList.push(newCase); // Add new case
+            this.caseList.push(newCase); 
           }
 
           this.caseListSubject.next([...this.caseList]);

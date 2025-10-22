@@ -91,7 +91,10 @@
     flex: 0 0 250px;
     /* fixed width */
 }
-
+.clearandsearch{
+    display: flex;
+    gap: 15px;
+}
 
 .Clear {
     background-color: #417bf7 !important;
@@ -99,6 +102,7 @@
     padding: 2px;
     border-radius: 7px;
     color: white;
+    width: 85px !important;
 }
 
 

@@ -26,7 +26,9 @@
       <div class="dropdown-column">
 
         <div class="dropdown-grid">
-          <button (click)="clearFilters()" class="Clear">Clear</button>
+          <div class="clearandsearch"> <button (click)="clearFilters()" class="Clear">Clear</button>
+            <button class="Clear">Search</button>
+          </div>
 
           <!-- Category -->
           <div class="dropdown-wrapper" (click)="toggleDropdown('Category')">
@@ -130,13 +132,11 @@
           </div>
         </div>
 
-        <div class="btn">
-  <button >Search</button>
-</div>
-<!-- (click)="searchCharts()" -->
+        <div class="clearandsearch"> <button (click)="clearFilters()" class="Clear">Clear</button>
+          <button class="Clear">Search</button>
+        </div>
       </div>
 
-      <!-- Right column: charts + table -->
       <div class="chart-column">
         <div class="Bothchart">
           <div class="chart-fixed">
@@ -148,8 +148,8 @@
         </div>
 
         <div> <button class="excel_button" (click)="exportToExcel()" class="dowloade">
-           Downloade
-        </button>
+            Download
+          </button>
         </div>
         <div class="case-table">
           <div class="table-scroll">
@@ -165,8 +165,8 @@
                   <th>Education</th>
                   <th>Occupation</th>
                   <th>Pincode</th>
-                  <th>Place Type</th>
-                  <th>Socioeconomic Status</th>
+                  <!-- <th>Place Type</th>
+                  <th>Socioeconomic Status</th> -->
                   <th>Family Income</th>
                   <th>Zone</th>
                   <th>State</th>
@@ -186,8 +186,8 @@
                   <td>{{ row.education }}</td>
                   <td>{{ row.occupation }}</td>
                   <td>{{ row.pincode }}</td>
-                  <td>{{ row.placeType }}</td>
-                  <td>{{ row.socioeconomicStatus }}</td>
+                  <!-- <td>{{ row.placeType }}</td>
+                  <td>{{ row.socioeconomicStatus }}</td> -->
                   <td>{{ row.familyIncome }}</td>
                   <td>{{ row.zone }}</td>
                   <td>{{ row.state }}</td>

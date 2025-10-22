@@ -248,7 +248,9 @@ export class CoMorbiditiesReportComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-
+  goTofilterchart(){
+    this.router.navigate(['/allReport']);
+  }
   goToGnederreport(){
     this.router.navigate([`/genderReport`]);
   }
