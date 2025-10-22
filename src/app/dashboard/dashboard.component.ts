@@ -129,6 +129,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     window.onbeforeunload = null;
     window.removeEventListener('popstate', this.onPopState as any);
+    this.caseSub?.unsubscribe();
   }
 
 
