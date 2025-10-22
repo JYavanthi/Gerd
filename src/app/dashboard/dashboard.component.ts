@@ -192,11 +192,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   updatePagination() {
     this.totalItems = this.tableData.length;
-    // alert('this.totalItems' + this.tableData.length);
     this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
     this.updatePaginatedData();
     this.generatePageNumbers();
   }
+
   updatePaginatedData() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
@@ -226,23 +226,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToPrevious() {
-    if (this.currentPage > 1) {
-      this.goToPage(this.currentPage - 1);
-    }
-  }
-
-  goToNext() {
-    if (this.currentPage < this.totalPages) {
-      this.goToPage(this.currentPage + 1);
-    }
-  }
+  goToPrevious() { if (this.currentPage > 1) this.goToPage(this.currentPage - 1); }
+  goToNext() { if (this.currentPage < this.totalPages) this.goToPage(this.currentPage + 1); }
 
   onItemsPerPageChange(event: any) {
     this.itemsPerPage = parseInt(event.target.value);
     this.currentPage = 1;
     this.updatePagination();
   }
+
+
+  get rowsToDisplay() {
+  return this.paginatedData?.length ? this.paginatedData : this.tableData;
+}
 
 
   updatePieChart() {

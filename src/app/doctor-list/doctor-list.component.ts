@@ -3,7 +3,10 @@ import { Router } from '@angular/router';
 import { DoctorService } from '../Services/doctor.service';
 import { CaseDataService, Case } from '../Services/case-data.services';
 import { HttpserviceService } from '../httpservice.service';
-import { forkJoin, Subscription } from 'rxjs';
+import { forkJoin } from 'rxjs';
+
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 
 @Component({
@@ -53,8 +56,6 @@ export class DoctorListComponent implements OnInit {
   dueDaysforBaseLine?: number;
   dueDaysforFollowUpOne?: number;
   dueDaysforFollowUpTwo?: number;
-
-
 
 
   constructor(
@@ -623,7 +624,26 @@ export class DoctorListComponent implements OnInit {
   }
 
 
-  
+
+  // Export currently displayed table to Excel
+exportToExcel() {
+  const tableElement = document.getElementById('excel-table');
+
+  if (!tableElement) {
+    console.error("Table element not found.");
+    return;
+  }
+
+  // Convert HTML table to worksheet
+  const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(tableElement);
+
+  // Create a new workbook and append the worksheet
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'DoctorList');
+
+  // Save as Excel file
+  XLSX.writeFile(wb, 'DoctorList.xlsx');
+}
 
   goToNext() {
     if (this.currentPage < this.totalPages) {

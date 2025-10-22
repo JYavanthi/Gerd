@@ -143,7 +143,7 @@ export class AllReportsComponentComponent {
 
   pieChartType: 'pie' = 'pie';
   pieChartData: ChartData<'pie', number[], string | string[]> = {
-    labels: ['male','female','other'],
+    labels: ['male', 'female', 'other'],
     datasets: [
       {
         data: [300, 500, 700],
@@ -259,29 +259,29 @@ export class AllReportsComponentComponent {
     this.selectedOption = null;
     this.showOptionDropdown = true;
 
-   this.loadPiechar(category);
+    this.loadPiechar(category);
   }
 
 
-//   searchCharts() {
-//   if (!this.selectedCategory) return;
+  //   searchCharts() {
+  //   if (!this.selectedCategory) return;
 
-//   // Update charts
-// this.loadPiechar(this.selectedCategory, this.selectedOption || undefined);
+  //   // Update charts
+  // this.loadPiechar(this.selectedCategory, this.selectedOption || undefined);
 
-//   this.filterTableData();
-// }
+  //   this.filterTableData();
+  // }
 
-filterTableData() {
-  this.paginatedData = this.tableData.filter(row => {
-    let matches = true;
-    if (this.selectedCategory) {
-      // Replace 'categoryField' with your actual field mapping
-      matches = matches && row[this.selectedCategory] === this.selectedOption;
-    }
-    return matches;
-  });
-}
+  filterTableData() {
+    this.paginatedData = this.tableData.filter(row => {
+      let matches = true;
+      if (this.selectedCategory) {
+        // Replace 'categoryField' with your actual field mapping
+        matches = matches && row[this.selectedCategory] === this.selectedOption;
+      }
+      return matches;
+    });
+  }
 
   onOptionSelect(option: string) {
     this.selectedOption = option;
@@ -289,7 +289,7 @@ filterTableData() {
 
     if (this.selectedCategory && this.selectedOption) {
       this.loadPiechar(this.selectedCategory, this.selectedOption);
-      
+
     }
   }
 
@@ -856,7 +856,14 @@ filterTableData() {
                 if (!isNaN(minAge) && !isNaN(maxAge)) {
 
                   const filteredData = data.filter((r: any) => r.age >= Number(minAge) && r.age <= Number(maxAge));
-                  this.tableData = filteredData; // overwrite res if needed
+                  this.tableData = filteredData;
+
+                  this.barChartData = {
+                    labels: [option],
+                    datasets: [
+                      { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+                    ]
+                  };// overwrite res if needed
                 } else {
                   console.error('Invalid age numbers in range:', agegrp);
                 }
@@ -885,8 +892,118 @@ filterTableData() {
                 { data: [filteredData.length], backgroundColor: ['#FF6384'] }
               ]
             };
+
+
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+              ]
+            };
           }
 
+          else if (category === 'Occupation') {
+            const normalizedOption = normalizeValue('Occupation', option);
+
+            const filteredData = data.filter((r: any) => {
+              const eduNormalized = normalizeValue('Occupation', r.occupation);
+              return eduNormalized === normalizedOption;
+            });
+
+            this.tableData = filteredData;
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+              ]
+            };
+          }
+
+
+          else if (category === 'Place Type') {
+            const normalizedOption = normalizeValue('Place Type', option);
+
+            const filteredData = data.filter((r: any) => {
+              const eduNormalized = normalizeValue('Place Type', r.placeType);
+              return eduNormalized === normalizedOption;
+            });
+
+            this.tableData = filteredData;
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+              ]
+            };
+          }
+
+
+           else if (category === 'Annual Family Income (Rupees)') {
+            const normalizedOption = normalizeValue('Annual Family Income (Rupees)', option);
+
+            const filteredData = data.filter((r: any) => {
+              const eduNormalized = normalizeValue('Annual Family Income (Rupees)', r.familyIncome);
+              return eduNormalized === normalizedOption;
+            });
+
+            this.tableData = filteredData;
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+              ]
+            };
+          }
+
+          else if (category === 'Socioeconomic Status') {
+            const normalizedOption = normalizeValue('Socioeconomic Status', option);
+
+            const filteredData = data.filter((r: any) => {
+              const eduNormalized = normalizeValue('Socioeconomic Status', r.socioeconomicStatus);
+              return eduNormalized === normalizedOption;
+            });
+
+            this.tableData = filteredData;
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+              ]
+            };
+          }
 
           else if (category === 'Computer Usage (hrs/day)') {
 
