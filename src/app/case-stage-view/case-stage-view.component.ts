@@ -97,60 +97,70 @@ export class CaseStageViewComponent implements OnInit {
       this.loadStageData(5); // follow-up 2
 
     });
-    for (let i = 0; i < this.pushStateCount; i++) {
-      history.pushState({ antiBack: true, idx: i }, '', window.location.href);
-    }
+    // for (let i = 0; i < this.pushStateCount; i++) {
+    //   history.pushState({ antiBack: true, idx: i }, '', window.location.href);
+    // }
 
-    history.replaceState({ top: true }, '', window.location.href);
+    // history.replaceState({ top: true }, '', window.location.href);
   }
-   @HostListener('window:popstate', ['$event'])
-  onPopState(event: PopStateEvent) {
+  // private isDialogOpen = false;
 
-    const confirmed = window.confirm(
-      'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
-    );
+// @HostListener('window:popstate', ['$event'])
+// onPopState(event: PopStateEvent) {
+//   // Avoid multiple dialogs firing
+//   if (this.isDialogOpen) {
+//     return;
+//   }
 
-    if (confirmed) {
-      this.logoutUser();
-      return;
-    }
+//   this.isDialogOpen = true;
 
-    setTimeout(() => {
-      try {
-        // push 2 states to ensure repeated backs don't slip through
-        history.pushState({ antiBack: true }, '', window.location.href);
-        history.pushState({ antiBack: true }, '', window.location.href);
-      } catch (e) {
-        // In case some browsers throw
-        console.warn('pushState failed', e);
-      }
-    }, 50); // 30–150ms works; 50ms is a good tradeoff
+//   const confirmed = window.confirm(
+//     'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+//   );
 
-    // Prevent default-like behavior by moving focus back; not strictly necessary:
-    window.scrollTo(0, 0);
-  }
+//   if (confirmed) {
+//     this.logoutUser();
+//     return;
+//   }
 
-  // Also handle page unloads (refresh / close)
-  @HostListener('window:beforeunload', ['$event'])
-  onBeforeUnload(event: BeforeUnloadEvent) {
-    // Show native prompt in some browsers (message ignored by modern browsers)
-    event.preventDefault();
-    event.returnValue = '';
-  }
+//   // Delay a bit longer to allow async UI reflows to finish
+//   setTimeout(() => {
+//     try {
+//       history.pushState({ antiBack: true }, '', window.location.href);
+//       history.pushState({ antiBack: true }, '', window.location.href);
+//     } catch (e) {
+//       console.warn('pushState failed', e);
+//     } finally {
+//       // Release dialog lock AFTER state restored
+//       this.isDialogOpen = false;
+//     }
+//   }, 150); // 100–150ms prevents repeat alert loops
 
-  logoutUser(): void {
-    localStorage.clear();
-    sessionStorage.clear();
-    // Use router navigate with replaceUrl to avoid extra history entry
-    this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
-      // Force full navigation to ensure clean state
-      window.location.href = '/login';
-    });
-  }
-ngOnDestroy(): void {
-    //window.removeEventListener('popstate', this.preventBackNavigation);
-    this.routerSub?.unsubscribe();
-  }
+//   window.scrollTo(0, 0);
+// }
+
+
+//   // Also handle page unloads (refresh / close)
+//   @HostListener('window:beforeunload', ['$event'])
+//   onBeforeUnload(event: BeforeUnloadEvent) {
+//     // Show native prompt in some browsers (message ignored by modern browsers)
+//     event.preventDefault();
+//     event.returnValue = '';
+//   }
+
+//   logoutUser(): void {
+//     localStorage.clear();
+//     sessionStorage.clear();
+//     // Use router navigate with replaceUrl to avoid extra history entry
+//     this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+//       // Force full navigation to ensure clean state
+//       window.location.href = '/login';
+//     });
+//   }
+// ngOnDestroy(): void {
+//     //window.removeEventListener('popstate', this.preventBackNavigation);
+//     this.routerSub?.unsubscribe();
+//   }
   
   loadStageData(stage: number): void {
     if (!this.patientId) return;
