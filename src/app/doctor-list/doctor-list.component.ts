@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { DoctorService } from '../Services/doctor.service';
 import { CaseDataService, Case } from '../Services/case-data.services';
 import { HttpserviceService } from '../httpservice.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
