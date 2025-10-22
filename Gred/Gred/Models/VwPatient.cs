@@ -25,9 +25,13 @@ public partial class VwPatient
 
     public string Zone { get; set; } = null!;
 
-    public string State { get; set; } = null!;
+    public int CityId { get; set; }
 
     public string City { get; set; } = null!;
+
+    public short StateId { get; set; }
+
+    public string State { get; set; } = null!;
 
     public int? Pincode { get; set; }
 

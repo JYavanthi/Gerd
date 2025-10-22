@@ -1,5 +1,5 @@
 
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges , HostListener} from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { PatientService } from '../Services/patient.service';
 import { HttpserviceService } from '../httpservice.service';
@@ -7,6 +7,7 @@ import { API_URLS } from '../shared/API-URLs';
 import { ComorbiditiesService } from '../Services/comorbidities.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FormvalidationService } from '../formvalidation.service';
+import { Subscription } from 'rxjs';
 // Define interface for comorbidity item
 interface ComorbidityItem {
   present: boolean | null;
@@ -25,6 +26,7 @@ interface Comorbidities {
 })
 export class ComorbiditiesComponent {
   tabId = 1;
+  private pushStateCount = 5;
   patientId: number | null = null;
   doctorId: number | null = null;
   isViewMode = false;
@@ -54,6 +56,7 @@ export class ComorbiditiesComponent {
     cancer: { present: null, remarks: '' },
     others: { present: null, remarks: '' }
   };
+
 
 
    ngOnChanges(changes: SimpleChanges): void {
@@ -117,6 +120,8 @@ export class ComorbiditiesComponent {
 
   }
   ptnstage: number = 0;
+
+  private routerSub!: Subscription;
   ngOnInit(): void {
 
     this.patientId = Number(this.route.snapshot.params['patientId'] || null);
@@ -132,7 +137,58 @@ export class ComorbiditiesComponent {
 
     this.fetchComorbiditiesData(this.patientId);
 
+    for (let i = 0; i < this.pushStateCount; i++) {
+      history.pushState({ antiBack: true, idx: i }, '', window.location.href);
+    }
+    history.replaceState({ top: true }, '', window.location.href);
+
   }
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+
+    const confirmed = window.confirm(
+      'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+    );
+
+    if (confirmed) {
+      this.logoutUser();
+      return;
+    }
+
+    setTimeout(() => {
+      try {
+        // push 2 states to ensure repeated backs don't slip through
+        history.pushState({ antiBack: true }, '', window.location.href);
+        history.pushState({ antiBack: true }, '', window.location.href);
+      } catch (e) {
+        // In case some browsers throw
+        console.warn('pushState failed', e);
+      }
+    }, 50); // 30–150ms works; 50ms is a good tradeoff
+
+    // Prevent default-like behavior by moving focus back; not strictly necessary:
+    window.scrollTo(0, 0);
+  }
+
+  // Also handle page unloads (refresh / close)
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    // Show native prompt in some browsers (message ignored by modern browsers)
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  logoutUser(): void {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Use router navigate with replaceUrl to avoid extra history entry
+    this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+      // Force full navigation to ensure clean state
+      window.location.href = '/login';
+    });
+  }
+
   comorbidityKeys: string[] = [
     'hypertension', 'diabetes', 'dyslipidemia', 'liver', 'neuro',
     'cardio', 'hypo', 'hyper', 'behavioural', 'kidney',
@@ -214,7 +270,11 @@ export class ComorbiditiesComponent {
     }
   }
 
-
+ngOnDestroy(): void {
+    //window.removeEventListener('popstate', this.preventBackNavigation);
+    this.routerSub?.unsubscribe();
+  
+  }
   Submit() {
     const missingRemarks: string[] = [];
     const missingInput: string[] = [];

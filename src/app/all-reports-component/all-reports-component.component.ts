@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { API_URLS } from '../shared/API-URLs';
 import { HttpserviceService } from '../httpservice.service';
 import { ChartData, ChartOptions, ChartType } from 'chart.js';
@@ -30,7 +30,9 @@ interface City {
   styleUrls: ['./all-reports-component.component.css']
 
 })
+
 export class AllReportsComponentComponent {
+   private pushStateCount = 5;
   age: number = 0;
   caseSub!: Subscription;
   tableData: any[] = [];
@@ -175,6 +177,7 @@ export class AllReportsComponentComponent {
   constructor(private https: HttpClient, private http: HttpserviceService, private router: Router, private caseDataService: CaseDataService
   ) { }
 
+  private routerSub!: Subscription;
   ngOnInit() {
     this.selectedCategory = null;
     this.selectedOption = null;
@@ -183,8 +186,59 @@ export class AllReportsComponentComponent {
     this.getCities();
     this.getPatientList();
 
-  }
+     for (let i = 0; i < this.pushStateCount; i++) {
+      history.pushState({ antiBack: true, idx: i }, '', window.location.href);
+    }
 
+    history.replaceState({ top: true }, '', window.location.href);
+
+  }
+ @HostListener('window:popstate', ['$event'])
+    onPopState(event: PopStateEvent) {
+  
+      const confirmed = window.confirm(
+        'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+      );
+  
+      if (confirmed) {
+        this.logoutUser();
+        return;
+      }
+  
+      setTimeout(() => {
+        try {
+          // push 2 states to ensure repeated backs don't slip through
+          history.pushState({ antiBack: true }, '', window.location.href);
+          history.pushState({ antiBack: true }, '', window.location.href);
+        } catch (e) {
+          // In case some browsers throw
+          console.warn('pushState failed', e);
+        }
+      }, 50); // 30–150ms works; 50ms is a good tradeoff
+  
+      // Prevent default-like behavior by moving focus back; not strictly necessary:
+      window.scrollTo(0, 0);
+    }
+  
+    // Also handle page unloads (refresh / close)
+    @HostListener('window:beforeunload', ['$event'])
+    onBeforeUnload(event: BeforeUnloadEvent) {
+      // Show native prompt in some browsers (message ignored by modern browsers)
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  
+    logoutUser(): void {
+      localStorage.clear();
+      sessionStorage.clear();
+      // Use router navigate with replaceUrl to avoid extra history entry
+      this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+        // Force full navigation to ensure clean state
+        window.location.href = '/login';
+      });
+    }
+
+    
 
   getStage(c: Case): number {
     const bl = Number(c['blsubmitted'] ?? 0);
@@ -410,7 +464,7 @@ export class AllReportsComponentComponent {
 
   navigateToAddCase() { this.router.navigate([`/demographic/0/0`]); }
 
-  ngOnDestroy() { this.caseSub?.unsubscribe(); }
+  ngOnDestroy() { this.caseSub?.unsubscribe(); this.routerSub?.unsubscribe(); }
 
 
   downloadAllStages(patientID: any) {

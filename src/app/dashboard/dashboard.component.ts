@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
-import { Router } from '@angular/router';
+import { Router, NavigationStart, Event as NavigationEvent } from '@angular/router';
 import { ChartData, ChartOptions } from 'chart.js';
 import { Subscription } from 'rxjs';
 import { Case } from '../Services/case-data.services';
@@ -8,6 +8,8 @@ import { PatientService } from '../Services/patient.service';
 import { API_URLS } from '../shared/API-URLs';
 import { HttpserviceService } from '../httpservice.service';
 import { StageService } from '../Services/StageService.service';
+import { LocationStrategy } from '@angular/common';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +17,7 @@ import { StageService } from '../Services/StageService.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+  private pushStateCount = 5; // number of fake states to push
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
   caseSub!: Subscription;
   tableData: any[] = [];
@@ -74,18 +77,76 @@ export class DashboardComponent implements OnInit, OnDestroy {
           stepSize: 1 // Ensure y-axis increases in steps of 1
         }
       }
-    }
+    },
+
   };
 
   constructor(private router: Router,
     private patientService: PatientService, private http: HttpserviceService,
 
   ) { }
+  private routerSub!: Subscription;
 
   ngOnInit(): void {
-    this.getPatientList();
+    for (let i = 0; i < this.pushStateCount; i++) {
+      history.pushState({ antiBack: true, idx: i }, '', window.location.href);
+    }
 
+    history.replaceState({ top: true }, '', window.location.href);
+    this.getPatientList();
   }
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+
+    const confirmed = window.confirm(
+      'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+    );
+
+    if (confirmed) {
+      this.logoutUser();
+      return;
+    }
+
+    setTimeout(() => {
+      try {
+        // push 2 states to ensure repeated backs don't slip through
+        history.pushState({ antiBack: true }, '', window.location.href);
+        history.pushState({ antiBack: true }, '', window.location.href);
+      } catch (e) {
+        // In case some browsers throw
+        console.warn('pushState failed', e);
+      }
+    }, 50); // 30–150ms works; 50ms is a good tradeoff
+
+    // Prevent default-like behavior by moving focus back; not strictly necessary:
+    window.scrollTo(0, 0);
+  }
+
+  // Also handle page unloads (refresh / close)
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    // Show native prompt in some browsers (message ignored by modern browsers)
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  logoutUser(): void {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Use router navigate with replaceUrl to avoid extra history entry
+    this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+      // Force full navigation to ensure clean state
+      window.location.href = '/login';
+    });
+  }
+
+  ngOnDestroy(): void {
+    //window.removeEventListener('popstate', this.preventBackNavigation);
+    this.routerSub?.unsubscribe();
+    this.caseSub?.unsubscribe();
+  }
+
 
   getPatientList() {
     const user: any = localStorage.getItem('doctor');
@@ -114,10 +175,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         console.warn('⚠️ Unexpected response format:', response);
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    this.caseSub?.unsubscribe();
   }
   calculateStats() {
     this.totalCases = this.tableData.length;
@@ -159,7 +216,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedData = this.tableData.slice(startIndex, endIndex);
-    console.log('📦 Paginated Data:', this.paginatedData);
+    console.log('Paginated Data:', this.paginatedData); // ✅ Add this line
   }
   generatePageNumbers() {
     this.pageNumbers = [];
@@ -213,8 +270,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.chart?.update();
   }
 
-
-
   updateBarChart() {
     const months = 12;
     const completedCounts = Array(months).fill(0);
@@ -255,7 +310,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.chart?.update();
   }
-
 
   handleStageClick(row: any, section: 'baseline' | 'followUp1' | 'followUp2') {
     const patientId = row.patientId;
@@ -337,5 +391,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   downloadAllStages(patientID: any) {
     this.router.navigate([`/case-stage-view/${patientID}`]);
   }
+
 
 }

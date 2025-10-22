@@ -5,9 +5,33 @@ namespace gred.Models;
 
 public partial class VwGadget
 {
-    public int Id { get; set; }
+    public string? Initial { get; set; }
 
-    public int PatientId { get; set; }
+    public string? SubjectNo { get; set; }
+
+    public DateTime? Date { get; set; }
+
+    public int? Age { get; set; }
+
+    public string? Gender { get; set; }
+
+    public string? FamilyIncome { get; set; }
+
+    public string? Occupation { get; set; }
+
+    public string? Education { get; set; }
+
+    public int? Pincode { get; set; }
+
+    public int CityId { get; set; }
+
+    public string City { get; set; } = null!;
+
+    public short StateId { get; set; }
+
+    public string State { get; set; } = null!;
+
+    public string Zone { get; set; } = null!;
 
     public bool ComputerUsed { get; set; }
 
@@ -26,10 +50,6 @@ public partial class VwGadget
     public string? JobType { get; set; }
 
     public int? TotalWorkingYears { get; set; }
-
-    public DateTime? CreatedAt { get; set; }
-
-    public DateTime? ModifiedAt { get; set; }
 
     public int? Stage { get; set; }
 }

@@ -5,6 +5,30 @@ namespace gred.Models;
 
 public partial class VwSleep
 {
+    public string? Initial { get; set; }
+
+    public string? SubjectNo { get; set; }
+
+    public DateTime? Date { get; set; }
+
+    public int? Age { get; set; }
+
+    public string? Gender { get; set; }
+
+    public string? FamilyIncome { get; set; }
+
+    public string? Occupation { get; set; }
+
+    public string? Education { get; set; }
+
+    public int? Pincode { get; set; }
+
+    public string City { get; set; } = null!;
+
+    public string State { get; set; } = null!;
+
+    public string Zone { get; set; } = null!;
+
     public int Id { get; set; }
 
     public int PatientId { get; set; }
