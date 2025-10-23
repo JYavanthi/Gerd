@@ -117,7 +117,6 @@ export class DoctorsRegistrationComponent {
 
   onSubmit(): void {
     if (this.doctorForm.valid) {
-      //console.log(this.doctorForm.value);
       alert('Form submitted successfully!');
     } else {
       alert('Please fill all required fields.');
@@ -158,7 +157,12 @@ export class DoctorsRegistrationComponent {
         //this.doctorForm.reset();
         alert('Doctor registered successfully!');
         this.router.navigate(['/login']);
-      } else {
+      } 
+      
+      else if (res.message === 'Doctor Exists with email id and phonenumber') {
+        alert('Doctor already exists with the same email or phone number!');
+      } 
+       else {
         this.formValidation.showAlert('Error during registration', 'danger');
       }
     }, (error) => {

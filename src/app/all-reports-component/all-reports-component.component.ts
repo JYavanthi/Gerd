@@ -61,11 +61,15 @@ export class AllReportsComponentComponent {
   baseline: any;
   followup1: any;
   followup2: any;
+ allRecords: any[] = []; // <-- full table data
 
+  originalData: any[] = []; // full dataset from API
+  filteredData: any[] = [];
   selectedCategory: string | null = null;
   selectedOption: string | null = null;
   availableOptions: string[] = [];
 
+  
   data: DropdownData = {
     "Age": ["18-30", "31-40", "41-50", "51-60", "61-70", "71-80", ">80"],
     "Education": ["Above Tenth standard", "Below Tenth standard"],
@@ -73,7 +77,7 @@ export class AllReportsComponentComponent {
     "Place Type": ["urban", "sub urban", "rural"],
     "Socioeconomic Status": ["Above poverty line", "Below poverty line"],
     "Annual Family Income (Rupees)": ["< 1 lakh", "1-5 lakhs", "> 5 lakhs"],
-   // "Chief complaints": ["Heartburn", "Regurgitation", "Retrosternal Pain", "Acid Taste in mouth"],
+    // "Chief complaints": ["Heartburn", "Regurgitation", "Retrosternal Pain", "Acid Taste in mouth"],
     "Heartburn": ["Postural", "Nocturnal"],
     "Regurgitation": ["Postural", "Nocturnal"],
     "Retrosternal Pain": ["Postural", "Nocturnal"],
@@ -143,10 +147,10 @@ export class AllReportsComponentComponent {
 
   pieChartType: 'pie' = 'pie';
   pieChartData: ChartData<'pie', number[], string | string[]> = {
-    labels: ['male', 'female', 'other'],
+    labels: [''],
     datasets: [
       {
-        data: [300, 500, 700],
+        data: [],
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
       }
     ]
@@ -160,9 +164,9 @@ export class AllReportsComponentComponent {
 
   barChartType: 'bar' = 'bar';
   barChartData: ChartData<'bar'> = {
-    labels: ['18-30', '31-40', '41-50', '51-60', '61-70', '71-80', '80--120'],
+    labels: [''],
     datasets: [
-      { label: 'gender', data: [65, 59, 80, 81, 56], backgroundColor: '#36A2EB' }
+      { label: '', data: [], backgroundColor: '' }
     ]
   };
   barChartOptions: ChartOptions<'bar'> = {
@@ -192,8 +196,8 @@ export class AllReportsComponentComponent {
 
     history.replaceState({ top: true }, '', window.location.href);
 
-    this.selectedCategory = 'Heartburn';
-    this.availableOptions = this.data['Heartburn'];
+    this.selectedCategory = null;
+    this.availableOptions = this.data[''];
     this.selectedOption = null;
     this.loadPiechar('Heartburn');
   }
@@ -263,8 +267,10 @@ export class AllReportsComponentComponent {
     this.selectedOption = null;
     this.showOptionDropdown = true;
 
-    this.loadPiechar(category);
+    // Remove this line to prevent immediate filtering
+    // this.loadPiechar(category);
   }
+
 
 
   //   searchCharts() {
@@ -287,46 +293,52 @@ export class AllReportsComponentComponent {
     });
   }
 
-  onOptionSelect(option: string) {
-    this.selectedOption = option;
-    console.log(`Selected: ${this.selectedCategory} → ${option}`); // <-- use backticks
+  // onOptionSelect(option: string) {
+  //   this.selectedOption = option;
+  //   console.log(`Selected: ${this.selectedCategory} → ${option}`); // <-- use backticks
 
-    if (this.selectedCategory && this.selectedOption) {
-      this.loadPiechar(this.selectedCategory, this.selectedOption);
+  //   if (this.selectedCategory && this.selectedOption) {
+  //     this.loadPiechar(this.selectedCategory, this.selectedOption);
 
-    }
-  }
+  //   }
+  // }
+
+onOptionSelect(option: string) {
+  this.selectedOption = option;
+  console.log(`Selected: ${this.selectedCategory} → ${option}`);
+  // remove chart update here
+}
+
 
 
   toggleSelection(item: any, type: string) {
-    switch (type) {
-      case 'zone':
-        this.selectedZone = item;
-        this.selectedState = null;
-        this.selectedCity = null;
-        this.getStates();  // fetch states filtered by selected zone
-        this.cities = [];
-        break;
-      case 'state':
-        this.selectedState = item;
-        this.selectedCity = null;
-        this.getCities();  // fetch cities filtered by selected state
-        break;
-      case 'city':
-        this.selectedCity = item;
-        break;
-
-      case 'gender':
-        this.selectedGender = item;
-        break;
-
-      case 'stage':
-        this.selectedStage = item;
-        break;
-    }
-
-    this.loadPiechar(this.selectedCategory!, this.selectedOption!);
+  switch (type) {
+    case 'zone':
+      this.selectedZone = item;
+      this.selectedState = null;
+      this.selectedCity = null;
+      this.getStates();
+      this.cities = [];
+      break;
+    case 'state':
+      this.selectedState = item;
+      this.selectedCity = null;
+      this.getCities();
+      break;
+    case 'city':
+      this.selectedCity = item;
+      break;
+    case 'gender':
+      this.selectedGender = item;
+      break;
+    case 'stage':
+      this.selectedStage = item;
+      break;
   }
+  // remove chart update here
+}
+
+
 
   get selectedStateName() {
     return this.selectedState ? this.selectedState.name : '';
@@ -505,7 +517,7 @@ export class AllReportsComponentComponent {
     this.selectedOption = '';
     this.selectedCategory = '';
     this.pieChartData = { labels: [], datasets: [] };
-
+    this.barChartData = { labels: [], datasets: [] };
     this.tableData = [];
 
     this.updatePagination();
@@ -626,12 +638,15 @@ export class AllReportsComponentComponent {
       next: (res: any) => {
         const data = res?.data || [];
         const normalizeValue = (category: string, val: any) => {
-     
+
           const key = `${category} (${val})`;
           if (category === 'Education') {
             if (val === "10th Std & Above") return "Above Tenth standard";
-            if (val === "Below 10th") return "Below Tenth standard";
+            if (val === "Below 10th") return "Non sedentary";
           }
+
+
+
 
           const symptomMap: Record<string, Record<string, string>> = {
             'Heartburn': { 'Postural': 'hbPostural', 'Nocturnal': 'hbNocturnal' },
@@ -640,7 +655,7 @@ export class AllReportsComponentComponent {
             'Acid Taste in mouth': { 'Postural': 'atPostural', 'Nocturnal': 'atNocturnal' },
           };
 
-          
+
           const comorbiditiesMap: Record<string, string> = {
             'Hypertension': 'htPresent', 'Diabetes': 'dbPresent', 'Hyperlipidemia': 'hlPresent',
             'Obesity': 'oPresent', 'Asthma': 'aPresent', 'COPD': 'cPresent', 'Heart Disease': 'hPresent',
@@ -761,8 +776,6 @@ export class AllReportsComponentComponent {
 
         };
 
-
-
         const isYes = (value: any) => value === true || value === 'true' || value?.toString().toLowerCase() === 'yes';
 
         const normalizedOptions = this.availableOptions.map(opt => normalizeValue(category, opt));
@@ -861,9 +874,13 @@ export class AllReportsComponentComponent {
                   this.tableData = filteredData;
 
                   this.barChartData = {
-                    labels: [option],
+                    labels: [option], // age range shown on x-axis
                     datasets: [
-                      { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+                      {
+                        label: category,   // this will appear in the legend
+                        data: [filteredData.length],
+                        backgroundColor: ['#FF6384']
+                      }
                     ]
                   };// overwrite res if needed
                 } else {
@@ -897,18 +914,30 @@ export class AllReportsComponentComponent {
             this.barChartData = {
               labels: [option],
               datasets: [
-                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+                { label: category, data: [filteredData.length], backgroundColor: ['#FF6384'] }
               ]
             };
           }
 
           else if (category === 'Occupation') {
-            const normalizedOption = normalizeValue('Occupation', option);
+            const normalizeValue = (val: any) => {
+              if (!val) return '';
+              return val
+                .toString()
+                .trim()
+                .toLowerCase()
+                .replace(/[\u2010-\u2015\u2212]/g, '-') // normalize all dash types
+                .replace(/[-\s]+/g, ''); // remove spaces and hyphens for comparison
+            };
+
+            const normalizedOption = normalizeValue(option);
 
             const filteredData = data.filter((r: any) => {
-              const eduNormalized = normalizeValue('Occupation', r.occupation);
-              return eduNormalized === normalizedOption;
+              const occNormalized = normalizeValue(r.occupation);
+              return occNormalized === normalizedOption;
             });
+
+            console.log('Filtered length:', filteredData.length);
 
             this.tableData = filteredData;
 
@@ -922,85 +951,93 @@ export class AllReportsComponentComponent {
             this.barChartData = {
               labels: [option],
               datasets: [
-                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
+                { label: category, data: [filteredData.length], backgroundColor: ['#FF6384'] }
               ]
             };
           }
 
 
           else if (category === 'Place Type') {
-            const normalizedOption = normalizeValue('Place Type', option);
+            const normalizedOption = option.trim().toLowerCase();
 
             const filteredData = data.filter((r: any) => {
-              const eduNormalized = normalizeValue('Place Type', r.placeType);
-              return eduNormalized === normalizedOption;
+              if (!r.placeType) return false;
+              // split by comma if multiple types, trim, and lowercase for safe comparison
+              const placeTypes = r.placeType
+                .split(',')
+                .map((x: string) => x.trim().toLowerCase());
+              return placeTypes.includes(normalizedOption);
             });
 
             this.tableData = filteredData;
 
             this.pieChartData = {
               labels: [option],
-              datasets: [
-                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
-              ]
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
             };
 
             this.barChartData = {
               labels: [option],
-              datasets: [
-                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
-              ]
+              datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#FF6384'] }]
             };
           }
 
 
-          else if (category === 'Annual Family Income (Rupees)') {
-            const normalizedOption = normalizeValue('Annual Family Income (Rupees)', option);
 
+          else if (category === 'Annual Family Income (Rupees)') {
+            // Normalize clicked option to standard bucket
+            const normalizeIncome = (income: string): string => {
+              if (!income) return '';
+              const inc = income.trim().toLowerCase();
+              if (inc.includes('less than') || inc.includes('<')) return '< 1 lakh';
+              if (inc.includes('1-5') || inc.includes('1 to 5')) return '1-5 lakhs';
+              if (inc.includes('greater than') || inc.includes('>')) return '> 5 lakhs';
+              return inc; // fallback
+            };
+
+            const normalizedOption = normalizeIncome(option);
             const filteredData = data.filter((r: any) => {
-              const eduNormalized = normalizeValue('Annual Family Income (Rupees)', r.familyIncome);
-              return eduNormalized === normalizedOption;
+              const incomeNormalized = normalizeIncome(r.familyIncome);
+              return incomeNormalized === normalizedOption;
             });
 
             this.tableData = filteredData;
 
             this.pieChartData = {
               labels: [option],
-              datasets: [
-                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
-              ]
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
             };
 
             this.barChartData = {
               labels: [option],
-              datasets: [
-                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
-              ]
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
             };
           }
 
           else if (category === 'Socioeconomic Status') {
-            const normalizedOption = normalizeValue('Socioeconomic Status', option);
+            // Normalize option and data values to lowercase for comparison
+            const normalizeStatus = (status: string): string => {
+              if (!status) return '';
+              return status.trim().toLowerCase(); // make it lowercase
+            };
+
+            const normalizedOption = normalizeStatus(option);
 
             const filteredData = data.filter((r: any) => {
-              const eduNormalized = normalizeValue('Socioeconomic Status', r.socioeconomicStatus);
-              return eduNormalized === normalizedOption;
+              const statusNormalized = normalizeStatus(r.socioeconomicStatus);
+              return statusNormalized === normalizedOption;
             });
 
             this.tableData = filteredData;
 
             this.pieChartData = {
               labels: [option],
-              datasets: [
-                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
-              ]
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
             };
 
             this.barChartData = {
               labels: [option],
-              datasets: [
-                { data: [filteredData.length], backgroundColor: ['#FF6384'] }
-              ]
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
             };
           }
 
@@ -1175,6 +1212,11 @@ export class AllReportsComponentComponent {
               labels: [option],
               datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+            };
           }
 
           if (this.selectedState) {
@@ -1183,13 +1225,21 @@ export class AllReportsComponentComponent {
               labels: [option],
               datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+            };
           }
 
           if (this.selectedCity) {
-            // alert('this.selectedCity' + this.selectedCity?.name)
             this.tableData = this.tableData.filter(item => item.city.trim() === this.selectedCity?.name.trim());
-            // alert('this.selectedState?.name length' + this.tableData.length)
             this.pieChartData = {
+              labels: [option],
+              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+            };
+
+            this.barChartData = {
               labels: [option],
               datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
@@ -1202,6 +1252,11 @@ export class AllReportsComponentComponent {
               labels: [option],
               datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+            };
           }
 
           if (this.selectedStage) {
@@ -1209,6 +1264,11 @@ export class AllReportsComponentComponent {
             this.tableData = this.tableData.filter(item => stageNumbers.includes(Number(item.stage)));
 
             this.pieChartData = {
+              labels: [option],
+              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+            };
+
+            this.barChartData = {
               labels: [option],
               datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
@@ -1305,7 +1365,7 @@ export class AllReportsComponentComponent {
         'Stage': rest.stage || '',
         'Date': rest.date ? new Date(rest.date).toLocaleDateString() : '',
         'Place Type': rest.placeType || '',
-         'Socioeconomic Status' : rest.socioeconomicStatus || '',       
+        'Socioeconomic Status': rest.socioeconomicStatus || '',
       };
     });
 
@@ -1354,6 +1414,52 @@ export class AllReportsComponentComponent {
 
   }
 
+applyFilter(): void {
+  this.filteredData = [...this.allRecords];
+
+  if (this.selectedCategory && this.selectedOption) {
+    this.filteredData = this.filteredData.filter(
+      d => d[this.selectedCategory!] === this.selectedOption
+    );
+  }
+
+  if (this.selectedZone) {
+    this.filteredData = this.filteredData.filter(d => d.zone === this.selectedZone);
+  }
+
+  if (this.selectedState?.name) {
+    this.filteredData = this.filteredData.filter(d => d.state === this.selectedState!.name);
+  }
+
+  if (this.selectedCity?.name) {
+    this.filteredData = this.filteredData.filter(d => d.city === this.selectedCity!.name);
+  }
+
+  if (this.selectedGender) {
+    this.filteredData = this.filteredData.filter(d => d.gender === this.selectedGender);
+  }
+
+  if (this.selectedStage) {
+    this.filteredData = this.filteredData.filter(d => d.stage === this.selectedStage);
+  }
+
+ if (this.selectedCategory) {
+    this.loadPiechar(this.selectedCategory, this.selectedOption || undefined);
+  }
+
+
+}
+  updateCharts() {
+    this.pieChartData = {
+      labels: ['Filtered Data'], 
+      datasets: [{ data: [this.filteredData.length], backgroundColor: ['#FF6384'] }]
+    };
+
+    this.barChartData = {
+      labels: ['Filtered Data'],
+      datasets: [{ data: [this.filteredData.length], backgroundColor: ['#36A2EB'] }]
+    };
+  }
 
 
 }
