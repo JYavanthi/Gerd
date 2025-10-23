@@ -61,7 +61,7 @@ export class AllReportsComponentComponent {
   baseline: any;
   followup1: any;
   followup2: any;
- allRecords: any[] = []; // <-- full table data
+  allRecords: any[] = []; // <-- full table data
 
   originalData: any[] = []; // full dataset from API
   filteredData: any[] = [];
@@ -69,7 +69,7 @@ export class AllReportsComponentComponent {
   selectedOption: string | null = null;
   availableOptions: string[] = [];
 
-  
+
   data: DropdownData = {
     "Age": ["18-30", "31-40", "41-50", "51-60", "61-70", "71-80", ">80"],
     "Education": ["Above Tenth standard", "Below Tenth standard"],
@@ -163,7 +163,7 @@ export class AllReportsComponentComponent {
   };
 
   barChartType: 'bar' = 'bar';
-  barChartData: ChartData<'bar'> = {
+  barChartData: ChartData<'bar', number[], string | string[]> = {
     labels: [''],
     datasets: [
       { label: '', data: [], backgroundColor: '' }
@@ -303,40 +303,40 @@ export class AllReportsComponentComponent {
   //   }
   // }
 
-onOptionSelect(option: string) {
-  this.selectedOption = option;
-  console.log(`Selected: ${this.selectedCategory} → ${option}`);
-  // remove chart update here
-}
+  onOptionSelect(option: string) {
+    this.selectedOption = option;
+    console.log(`Selected: ${this.selectedCategory} → ${option}`);
+    // remove chart update here
+  }
 
 
 
   toggleSelection(item: any, type: string) {
-  switch (type) {
-    case 'zone':
-      this.selectedZone = item;
-      this.selectedState = null;
-      this.selectedCity = null;
-      this.getStates();
-      this.cities = [];
-      break;
-    case 'state':
-      this.selectedState = item;
-      this.selectedCity = null;
-      this.getCities();
-      break;
-    case 'city':
-      this.selectedCity = item;
-      break;
-    case 'gender':
-      this.selectedGender = item;
-      break;
-    case 'stage':
-      this.selectedStage = item;
-      break;
+    switch (type) {
+      case 'zone':
+        this.selectedZone = item;
+        this.selectedState = null;
+        this.selectedCity = null;
+        this.getStates();
+        this.cities = [];
+        break;
+      case 'state':
+        this.selectedState = item;
+        this.selectedCity = null;
+        this.getCities();
+        break;
+      case 'city':
+        this.selectedCity = item;
+        break;
+      case 'gender':
+        this.selectedGender = item;
+        break;
+      case 'stage':
+        this.selectedStage = item;
+        break;
+    }
+    // remove chart update here
   }
-  // remove chart update here
-}
 
 
 
@@ -823,7 +823,6 @@ onOptionSelect(option: string) {
             }
           });
         });
-
 
 
 
@@ -1414,44 +1413,44 @@ onOptionSelect(option: string) {
 
   }
 
-applyFilter(): void {
-  this.filteredData = [...this.allRecords];
+  applyFilter(): void {
+    this.filteredData = [...this.allRecords];
 
-  if (this.selectedCategory && this.selectedOption) {
-    this.filteredData = this.filteredData.filter(
-      d => d[this.selectedCategory!] === this.selectedOption
-    );
+    if (this.selectedCategory && this.selectedOption) {
+      this.filteredData = this.filteredData.filter(
+        d => d[this.selectedCategory!] === this.selectedOption
+      );
+    }
+
+    if (this.selectedZone) {
+      this.filteredData = this.filteredData.filter(d => d.zone === this.selectedZone);
+    }
+
+    if (this.selectedState?.name) {
+      this.filteredData = this.filteredData.filter(d => d.state === this.selectedState!.name);
+    }
+
+    if (this.selectedCity?.name) {
+      this.filteredData = this.filteredData.filter(d => d.city === this.selectedCity!.name);
+    }
+
+    if (this.selectedGender) {
+      this.filteredData = this.filteredData.filter(d => d.gender === this.selectedGender);
+    }
+
+    if (this.selectedStage) {
+      this.filteredData = this.filteredData.filter(d => d.stage === this.selectedStage);
+    }
+
+    if (this.selectedCategory) {
+      this.loadPiechar(this.selectedCategory, this.selectedOption || undefined);
+    }
+
+
   }
-
-  if (this.selectedZone) {
-    this.filteredData = this.filteredData.filter(d => d.zone === this.selectedZone);
-  }
-
-  if (this.selectedState?.name) {
-    this.filteredData = this.filteredData.filter(d => d.state === this.selectedState!.name);
-  }
-
-  if (this.selectedCity?.name) {
-    this.filteredData = this.filteredData.filter(d => d.city === this.selectedCity!.name);
-  }
-
-  if (this.selectedGender) {
-    this.filteredData = this.filteredData.filter(d => d.gender === this.selectedGender);
-  }
-
-  if (this.selectedStage) {
-    this.filteredData = this.filteredData.filter(d => d.stage === this.selectedStage);
-  }
-
- if (this.selectedCategory) {
-    this.loadPiechar(this.selectedCategory, this.selectedOption || undefined);
-  }
-
-
-}
   updateCharts() {
     this.pieChartData = {
-      labels: ['Filtered Data'], 
+      labels: ['Filtered Data'],
       datasets: [{ data: [this.filteredData.length], backgroundColor: ['#FF6384'] }]
     };
 

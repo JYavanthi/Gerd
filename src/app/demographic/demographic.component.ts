@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 })
 
 export class DemographicComponent implements OnInit {
-   private pushStateCount = 5; 
+  private pushStateCount = 5;
   demographicForm: FormGroup;
   showCodeMessage = false;
   savedPatientId: any;
@@ -73,9 +73,8 @@ export class DemographicComponent implements OnInit {
   viewFlag: Boolean = false;
   //stateid : any;
   cityid: any;
-    private routerSub!: Subscription;
+  private routerSub!: Subscription;
   ngOnInit(): void {
-
 
     this.route.params.subscribe(params => {
       this.patientId = +params['patientId'] || null;
@@ -121,49 +120,49 @@ export class DemographicComponent implements OnInit {
   }
 
   @HostListener('window:popstate', ['$event'])
-    onPopState(event: PopStateEvent) {
-  
-      const confirmed = window.confirm(
-        'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
-      );
-  
-      if (confirmed) {
-        this.logoutUser();
-        return;
+  onPopState(event: PopStateEvent) {
+
+    const confirmed = window.confirm(
+      'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+    );
+
+    if (confirmed) {
+      this.logoutUser();
+      return;
+    }
+
+    setTimeout(() => {
+      try {
+        // push 2 states to ensure repeated backs don't slip through
+        history.pushState({ antiBack: true }, '', window.location.href);
+        history.pushState({ antiBack: true }, '', window.location.href);
+      } catch (e) {
+        // In case some browsers throw
+        console.warn('pushState failed', e);
       }
-  
-      setTimeout(() => {
-        try {
-          // push 2 states to ensure repeated backs don't slip through
-          history.pushState({ antiBack: true }, '', window.location.href);
-          history.pushState({ antiBack: true }, '', window.location.href);
-        } catch (e) {
-          // In case some browsers throw
-          console.warn('pushState failed', e);
-        }
-      }, 50); // 30–150ms works; 50ms is a good tradeoff
-  
-      // Prevent default-like behavior by moving focus back; not strictly necessary:
-      window.scrollTo(0, 0);
-    }
-  
-    // Also handle page unloads (refresh / close)
-    @HostListener('window:beforeunload', ['$event'])
-    onBeforeUnload(event: BeforeUnloadEvent) {
-      // Show native prompt in some browsers (message ignored by modern browsers)
-      event.preventDefault();
-      event.returnValue = '';
-    }
-  
-    logoutUser(): void {
-      localStorage.clear();
-      sessionStorage.clear();
-      // Use router navigate with replaceUrl to avoid extra history entry
-      this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
-        // Force full navigation to ensure clean state
-        window.location.href = '/login';
-      });
-    }
+    }, 50); // 30–150ms works; 50ms is a good tradeoff
+
+    // Prevent default-like behavior by moving focus back; not strictly necessary:
+    window.scrollTo(0, 0);
+  }
+
+  // Also handle page unloads (refresh / close)
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    // Show native prompt in some browsers (message ignored by modern browsers)
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  logoutUser(): void {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Use router navigate with replaceUrl to avoid extra history entry
+    this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+      // Force full navigation to ensure clean state
+      window.location.href = '/login';
+    });
+  }
 
   today: string = new Date().toISOString().split('T')[0];
 
@@ -179,6 +178,94 @@ export class DemographicComponent implements OnInit {
 
   subjectno: string = ''
 
+  // fetchDemographicData(patientId: number): void {
+  //   if (this.stage === undefined) {
+  //     console.warn('⚠️ Stage not set for Demography');
+  //     return;
+  //   }
+
+  //   this.demographicService.getDemographicDetailsByPatientId(patientId).subscribe({
+  //     next: (res: any) => {
+  //       if (res.type === 'S' && res.data) {
+  //         this.isSaved = true;
+
+  //         const data = res.data;
+
+  //         // save city id for later
+  //         this.cityid = data.city;
+  //         this.subjectno = data.subjectNo;
+  //         this.pincode = data.pincode;
+  //         this.stateid = data.stateId;
+  //         // patch form without city (yet)
+  //         this.demographicForm.patchValue({
+  //           patientName: data.initial || '',
+  //           initial: data.initial || '',
+  //           subjectNumber: data.subjectNo || '',
+  //           date: data.date ? data.date.split('T')[0] : '',
+  //           age: data.age ?? '',
+  //           dob: data.dob || '',
+  //           gender: data.gender || '',
+  //           education: data.education || '',
+  //           occupation: data.occupation || '',
+  //           state: data.stateId ?? '',
+  //           city: data.cityId ?? '',
+  //           pincode: data.pincode ?? '',
+  //           placeType: data.placeType || '',
+  //           socioeconomic: data.socioeconomicStatus || '',
+  //           annualFamilyIncome: data.familyIncome || '',
+  //           diet: data.diet || '',
+  //           pastHistory: data.pastHistory || '',
+  //         });
+
+  //         this.patientService.setDemographicData(data);
+
+
+
+  //         // Load cities first
+  //         if (data.state) {
+  //           this.http.httpGet(API_URLS.CITY_GET, { stateId: data.stateId }).subscribe({
+  //             next: (cities: any) => {
+  //               this.cities = cities.sort((a: any, b: any) =>
+  //                 a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+  //               );
+
+  //               if (data.city) {
+  //                 this.demographicForm.patchValue({city:  data.cityId});
+  //                 console.log('Patched city:', data.city);
+  //               }
+
+  //               if (this.cityid) {  
+  //                 this.http.httpGet(API_URLS.GET_PINCODE, { citiid: data.cityId }).subscribe({
+  //                   next: (res: any) => {
+  //                     this.pincode = res.sort((a: any, b: any) =>
+  //                       (a.pincode || 0) - (b.pincode || 0)
+  //                     );
+
+  //                     if (data.pincode) {
+  //                       this.demographicForm.patchValue({ pincode: data.pincode });
+  //                     }
+  //                   },
+  //                   error: (err) => console.error('❌ Error loading pincodes:', err)
+  //                 });
+  //               }
+  //             },
+  //             error: (err) => console.error('❌ Error loading cities:', err)
+  //           });
+  //         }
+
+  //         // auto-calc age
+  //         if (data.date) {
+  //           const age = this.calculateAge(new Date(data.date));
+  //           this.demographicForm.get('age')?.setValue(age, { emitEvent: false });
+  //         }
+  //       } else {
+  //       }
+  //     },
+  //     error: (err) => {
+  //     }
+  //   });
+  // }
+
   fetchDemographicData(patientId: number): void {
     if (this.stage === undefined) {
       console.warn('⚠️ Stage not set for Demography');
@@ -192,12 +279,11 @@ export class DemographicComponent implements OnInit {
 
           const data = res.data;
 
-          // save city id for later
           this.cityid = data.city;
           this.subjectno = data.subjectNo;
           this.pincode = data.pincode;
           this.stateid = data.stateId;
-          // patch form without city (yet)
+
           this.demographicForm.patchValue({
             patientName: data.initial || '',
             initial: data.initial || '',
@@ -220,9 +306,6 @@ export class DemographicComponent implements OnInit {
 
           this.patientService.setDemographicData(data);
 
-
-
-          // Load cities first
           if (data.state) {
             this.http.httpGet(API_URLS.CITY_GET, { stateId: data.stateId }).subscribe({
               next: (cities: any) => {
@@ -231,23 +314,33 @@ export class DemographicComponent implements OnInit {
                 );
 
                 if (data.city) {
-                  this.demographicForm.patchValue({city:  data.cityId});
+                  this.demographicForm.patchValue({ city: data.cityId });
                   console.log('Patched city:', data.city);
                 }
 
-                if (this.cityid) {  
+                if (this.cityid) {
                   this.http.httpGet(API_URLS.GET_PINCODE, { citiid: data.cityId }).subscribe({
-                    next: (res: any) => {
-                      this.pincode = res.sort((a: any, b: any) =>
-                        (a.pincode || 0) - (b.pincode || 0)
+                    next: (res: any[]) => {
+                      this.pincode = res.sort(
+                        (a: any, b: any) => (a.pincode || 0) - (b.pincode || 0)
                       );
 
+                      if (
+                        data.pincode &&
+                        !this.pincode.some((p: any) => p.pincode == data.pincode)
+                      ) {
+                        this.pincode.push({ pincode: data.pincode });
+                        this.pincode.sort(
+                          (a: any, b: any) => (a.pincode || 0) - (b.pincode || 0)
+                        );
+                      }
 
-
-                      // Patch the selected pincode value
                       if (data.pincode) {
                         this.demographicForm.patchValue({ pincode: data.pincode });
                       }
+
+                      this.isInsertingNewPincode = false;
+                      this.newPincodeValue = '';
                     },
                     error: (err) => console.error('❌ Error loading pincodes:', err)
                   });
@@ -257,7 +350,6 @@ export class DemographicComponent implements OnInit {
             });
           }
 
-          // auto-calc age
           if (data.date) {
             const age = this.calculateAge(new Date(data.date));
             this.demographicForm.get('age')?.setValue(age, { emitEvent: false });
@@ -266,9 +358,11 @@ export class DemographicComponent implements OnInit {
         }
       },
       error: (err) => {
+        console.error('❌ Error fetching demographic data:', err);
       }
     });
   }
+
 
   Submit() {
 
@@ -388,76 +482,74 @@ export class DemographicComponent implements OnInit {
   pincode: any
 
   getPincode(event: any) {
-  const cityId = event?.target?.value || null;
+    const cityId = event?.target?.value || null;
 
-  // Reset insert state and form
-  this.isInsertingNewPincode = false;
-  this.newPincodeValue = '';
-  this.demographicForm.patchValue({ pincode: '' });
+    // Reset insert state and form
+    this.isInsertingNewPincode = false;
+    this.newPincodeValue = '';
+    this.demographicForm.patchValue({ pincode: '' });
 
-  if (!cityId) {
-    this.pincode = [];
-    return;
+    if (!cityId) {
+      this.pincode = [];
+      return;
+    }
+
+    this.http.httpGet(API_URLS.GET_PINCODE, { citiid: cityId }).subscribe({
+      next: (res: any) => {
+        this.pincode = res.sort((a: any, b: any) =>
+          (a.pincode || 0) - (b.pincode || 0)
+        );
+
+        // If no pincodes returned, you can auto-show Add New input
+        if (this.pincode.length === 0) {
+          this.isInsertingNewPincode = true;
+        }
+      },
+      error: (err) => {
+        this.formValidation.showAlert('Error loading pincodes', 'danger');
+        console.error(err);
+      }
+    });
   }
 
-  this.http.httpGet(API_URLS.GET_PINCODE, { citiid: cityId }).subscribe({
-    next: (res: any) => {
-      this.pincode = res.sort((a: any, b: any) =>
-        (a.pincode || 0) - (b.pincode || 0)
-      );
 
-      // If no pincodes returned, you can auto-show Add New input
-      if (this.pincode.length === 0) {
-        this.isInsertingNewPincode = true;
-      }
-    },
-    error: (err) => {
-      this.formValidation.showAlert('Error loading pincodes', 'danger');
-      console.error(err);
+
+  onPincodeSelect(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+
+    if (value === 'new') {
+      this.isInsertingNewPincode = true;
+      this.demographicForm.get('pincode')?.setValue('');
+      this.newPincodeValue = '';
+    } else {
+      this.isInsertingNewPincode = false;
+      this.demographicForm.get('pincode')?.setValue(value);
     }
-  });
-}
+  }
 
-
-
-onPincodeSelect(event: Event) {
-  const value = (event.target as HTMLSelectElement).value;
-
-  if (value === 'new') {
-    this.isInsertingNewPincode = true;
-    this.demographicForm.get('pincode')?.setValue('');
-    this.newPincodeValue = '';
-  } else {
-    this.isInsertingNewPincode = false;
+  onNewPincodeInput(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.newPincodeValue = value;
     this.demographicForm.get('pincode')?.setValue(value);
   }
-}
+  insertPincode() {
+    const val = this.newPincodeValue;
+    if (!/^\d{6}$/.test(val)) {
+      alert('Enter valid 6-digit pincode');
+      return;
+    }
 
+    this.pincode = [...this.pincode, { pincode: val }];
+    this.pincode.sort((a: any, b: any) => (a.pincode || 0) - (b.pincode || 0));
 
-onNewPincodeInput(event: Event) {
-  const value = (event.target as HTMLInputElement).value;
-  this.newPincodeValue = value;
-  this.demographicForm.get('pincode')?.setValue(value);
-}
-insertPincode() {
-  const val = this.newPincodeValue;
-  if (!/^\d{6}$/.test(val)) {
-    alert('Enter valid 6-digit pincode');
-    return;
+    this.isInsertingNewPincode = false;
+    alert('Pincode added successfully!');
   }
 
-  // Add to dropdown array
-  this.pincode = [...this.pincode, { pincode: val }];
-  this.pincode.sort((a: any, b: any) => (a.pincode || 0) - (b.pincode || 0));
-
-  this.isInsertingNewPincode = false;
-  alert('Pincode added successfully!');
-}
-
-cancelPincodeInsert() {
-  this.isInsertingNewPincode = false;
-  this.newPincodeValue = '';
-}
+  cancelPincodeInsert() {
+    this.isInsertingNewPincode = false;
+    this.newPincodeValue = '';
+  }
 
 
   getCities(event: any) {

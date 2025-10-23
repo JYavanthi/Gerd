@@ -174,7 +174,6 @@
                 <option value="new">-- Add New Pincode --</option>
               </select>
 
-              <!-- Input for new pincode -->
               <input *ngIf="isInsertingNewPincode" type="text" class="form-control" maxlength="6"
                 placeholder="Enter new pincode" [value]="newPincodeValue" (input)="onNewPincodeInput($event)" />
 
