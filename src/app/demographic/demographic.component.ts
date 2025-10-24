@@ -1,5 +1,5 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormvalidationService } from '../formvalidation.service';
 import { HttpserviceService } from '../httpservice.service';
@@ -53,8 +53,9 @@ export class DemographicComponent implements OnInit {
       initial: [''],
       date: ['', Validators.required],
       subjectNumber: [''],
-      age: ['', Validators.required],
-      dob: [''],
+      dob: ['', [Validators.required, this.dateRangeValidator.bind(this)]],
+      age: ['', [Validators.required, Validators.max(120)]],
+
       stage: this.stage ?? 0,
       gender: ['', Validators.required],
       education: ['', Validators.required],
@@ -70,10 +71,27 @@ export class DemographicComponent implements OnInit {
     });
   }
 
+  dateRangeValidator(control: FormControl) {
+    if (!control.value) return null;
+
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+    const minDate = new Date();
+    minDate.setFullYear(today.getFullYear() - 120);
+
+    if (selectedDate > today || selectedDate < minDate) {
+      return { invalidDateRange: true };
+    }
+    return null;
+  }
+
   viewFlag: Boolean = false;
   //stateid : any;
   cityid: any;
   private routerSub!: Subscription;
+  minDate!: string;
+  currentday!: string;
+
   ngOnInit(): void {
 
     this.route.params.subscribe(params => {
@@ -117,6 +135,14 @@ export class DemographicComponent implements OnInit {
     }
 
     history.replaceState({ top: true }, '', window.location.href);
+
+    const currentDate = new Date();
+    this.currentday = currentDate.toISOString().split('T')[0]; // Max date = today
+
+    // Calculate 120 years back from today
+    const minDateObj = new Date();
+    minDateObj.setFullYear(currentDate.getFullYear() - 120);
+    this.minDate = minDateObj.toISOString().split('T')[0];
   }
 
   @HostListener('window:popstate', ['$event'])
