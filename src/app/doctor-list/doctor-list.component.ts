@@ -151,7 +151,7 @@ export class DoctorListComponent implements OnInit {
             const baselinePatients = patients.filter(p => {
               if (p.stage !== 0) return false;
               const baselineDue = new Date(p.createdDt);
-              baselineDue.setDate(baselineDue.getDate() + 16);
+              baselineDue.setDate(baselineDue.getDate() + 15);
               return baselineDue <= today;
             });
 
@@ -160,7 +160,7 @@ export class DoctorListComponent implements OnInit {
               if (p.stage !== 1) return false;
               if (!p.blsubmitted) return false;
               const fu1 = new Date(p.blsubmitted);
-              fu1.setDate(fu1.getDate() + 46);
+              fu1.setDate(fu1.getDate() + 45);
               return fu1 <= today;
             });
 
@@ -169,7 +169,7 @@ export class DoctorListComponent implements OnInit {
               if (p.stage !== 3) return false;
               if (!p.fu1submitted) return false;
               const fu2 = new Date(p.fu1submitted);
-              fu2.setDate(fu2.getDate() + 76);
+              fu2.setDate(fu2.getDate() + 75);
               return fu2 <= today;
             });
 
@@ -296,19 +296,19 @@ export class DoctorListComponent implements OnInit {
     const duePatients = patientsForDoctor.filter(patient => {
       if (patient.stage === 0) {
         const baselineDue = this.toDateOnly(new Date(patient.createdDt));
-        baselineDue.setDate(baselineDue.getDate() + 16);
+        baselineDue.setDate(baselineDue.getDate() + 15);
         return baselineDue <= today;
       } 
       else if (patient.stage === 1) {
         if (!patient.blsubmitted) return false;
         const fu1 = this.toDateOnly(new Date(patient.blsubmitted));
-        fu1.setDate(fu1.getDate() + 46);
+        fu1.setDate(fu1.getDate() + 45);
         return fu1 <= today;
       } 
       else if (patient.stage === 3) {
         if (!patient.fu1submitted) return false;
         const fu2 = this.toDateOnly(new Date(patient.fu1submitted));
-        fu2.setDate(fu2.getDate() + 76);
+        fu2.setDate(fu2.getDate() + 75);
         return fu2 <= today;
       }
       return false;
@@ -328,17 +328,17 @@ export class DoctorListComponent implements OnInit {
       if (patient.stage === 0) {
         stageText = 'BaseLine';
         dueDate = this.toDateOnly(new Date(patient.createdDt));
-        dueDate.setDate(dueDate.getDate() + 16);
+        dueDate.setDate(dueDate.getDate() + 15);
       } 
       else if (patient.stage === 1) {
         stageText = 'Follow-up1';
         dueDate = this.toDateOnly(new Date(patient.blsubmitted));
-        dueDate.setDate(dueDate.getDate() + 46);
+        dueDate.setDate(dueDate.getDate() + 45);
       } 
       else if (patient.stage === 3) {
         stageText = 'Follow-up2';
         dueDate = this.toDateOnly(new Date(patient.fu1submitted));
-        dueDate.setDate(dueDate.getDate() + 76);
+        dueDate.setDate(dueDate.getDate() + 75);
       } 
       else {
         return null;
@@ -411,21 +411,21 @@ export class DoctorListComponent implements OnInit {
           if (stage === 'baseline') {
             if (p.stage !== 0) return false;
             const baselineDue = new Date(p.createdDt);
-            baselineDue.setDate(baselineDue.getDate() + 16);
+            baselineDue.setDate(baselineDue.getDate() + 15);
             return baselineDue <= today;
           }
 
           if (stage === 'followUpOne' && p.stage === 1) {
             if (!p.blsubmitted) return false;
             const fu1 = new Date(p.blsubmitted);
-            fu1.setDate(fu1.getDate() + 46);
+            fu1.setDate(fu1.getDate() + 45);
             return fu1 <= today;
           }
 
           if (stage === 'followUpTwo' && p.stage === 3) {
             if (!p.fu1submitted) return false;
             const fu2 = new Date(p.fu1submitted);
-            fu2.setDate(fu2.getDate() + 76);
+            fu2.setDate(fu2.getDate() + 75);
             return fu2 <= today;
           }
 
@@ -434,17 +434,17 @@ export class DoctorListComponent implements OnInit {
         .map(patient => {
           if (stage === 'baseline') {
             const bs1 = new Date(patient.createdDt);
-            bs1.setDate(bs1.getDate() + 16);
+            bs1.setDate(bs1.getDate() + 15);
             return { ...patient, dueDaysforBaseLine: Math.ceil((today.getTime() - bs1.getTime()) / msInDay) };
           }
           if (stage === 'followUpOne') {
             const fu1 = new Date(patient.blsubmitted);
-            fu1.setDate(fu1.getDate() + 46);
+            fu1.setDate(fu1.getDate() + 45);
             return { ...patient, dueDaysforFollowUpOne: Math.ceil((today.getTime() - fu1.getTime()) / msInDay) };
           }
           if (stage === 'followUpTwo') {
             const fu2 = new Date(patient.fu1submitted);
-            fu2.setDate(fu2.getDate() + 76);
+            fu2.setDate(fu2.getDate() + 75);
             return { ...patient, dueDaysforFollowUpTwo: Math.ceil((today.getTime() - fu2.getTime()) / msInDay) };
           }
           return { ...patient }; // baseline
@@ -507,17 +507,17 @@ export class DoctorListComponent implements OnInit {
         const duePatients = patientsForDoctor.filter(patient => {
           if (patient.stage === 0) {
             const baselineDue = new Date(patient.createdDt);
-            baselineDue.setDate(baselineDue.getDate() + 16);
+            baselineDue.setDate(baselineDue.getDate() + 15);
             return baselineDue <= today;
           } else if (patient.stage === 1) {
             if (!patient.blsubmitted) return false;
             const fu1 = new Date(patient.blsubmitted);
-            fu1.setDate(fu1.getDate() + 46);
+            fu1.setDate(fu1.getDate() + 45);
             return fu1 <= today;
           } else if (patient.stage === 3) {
             if (!patient.fu1submitted) return false;
             const fu2 = new Date(patient.fu1submitted);
-            fu2.setDate(fu2.getDate() + 76);
+            fu2.setDate(fu2.getDate() + 75);
             return fu2 <= today;
           }
           return false;
@@ -532,15 +532,15 @@ export class DoctorListComponent implements OnInit {
           if (patient.stage === 0) {
             stageText = 'BaseLine';
             dueDate = new Date(patient.createdDt);
-            dueDate.setDate(dueDate.getDate() + 16);
+            dueDate.setDate(dueDate.getDate() + 15);
           } else if (patient.stage === 1) {
             stageText = 'Follow-up1';
             dueDate = new Date(patient.blsubmitted);
-            dueDate.setDate(dueDate.getDate() + 46);
+            dueDate.setDate(dueDate.getDate() + 45);
           } else if (patient.stage === 3) {
             stageText = 'Follow-up2';
             dueDate = new Date(patient.fu1submitted);
-            dueDate.setDate(dueDate.getDate() + 76);
+            dueDate.setDate(dueDate.getDate() + 75);
           }
 
           dueDays = Math.ceil((today.getTime() - dueDate.getTime()) / msInDay);

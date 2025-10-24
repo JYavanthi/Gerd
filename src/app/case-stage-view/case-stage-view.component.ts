@@ -17,7 +17,7 @@ import { PersonalHistoryService } from '../Services/personal-history.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { CurrentMedicationsService } from '../Services/current-medications.service';
-import { Subscription } from 'rxjs';
+//import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -26,7 +26,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./case-stage-view.component.scss']
 })
 export class CaseStageViewComponent implements OnInit {
-  private pushStateCount = 5; 
+  private pushStateCount = 5;
   patientId: number = 0;
   Object = Object;
   baselineData: any = null;
@@ -78,7 +78,7 @@ export class CaseStageViewComponent implements OnInit {
 
 
   ) { }
-  private routerSub!: Subscription;
+  //private routerSub!: Subscription;
 
   ngOnInit(): void {
 
@@ -97,71 +97,10 @@ export class CaseStageViewComponent implements OnInit {
       this.loadStageData(5); // follow-up 2
 
     });
-    // for (let i = 0; i < this.pushStateCount; i++) {
-    //   history.pushState({ antiBack: true, idx: i }, '', window.location.href);
-    // }
 
-    // history.replaceState({ top: true }, '', window.location.href);
   }
-  // private isDialogOpen = false;
-
-// @HostListener('window:popstate', ['$event'])
-// onPopState(event: PopStateEvent) {
-//   // Avoid multiple dialogs firing
-//   if (this.isDialogOpen) {
-//     return;
-//   }
-
-//   this.isDialogOpen = true;
-
-//   const confirmed = window.confirm(
-//     'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
-//   );
-
-//   if (confirmed) {
-//     this.logoutUser();
-//     return;
-//   }
-
-//   // Delay a bit longer to allow async UI reflows to finish
-//   setTimeout(() => {
-//     try {
-//       history.pushState({ antiBack: true }, '', window.location.href);
-//       history.pushState({ antiBack: true }, '', window.location.href);
-//     } catch (e) {
-//       console.warn('pushState failed', e);
-//     } finally {
-//       // Release dialog lock AFTER state restored
-//       this.isDialogOpen = false;
-//     }
-//   }, 150); // 100–150ms prevents repeat alert loops
-
-//   window.scrollTo(0, 0);
-// }
 
 
-//   // Also handle page unloads (refresh / close)
-//   @HostListener('window:beforeunload', ['$event'])
-//   onBeforeUnload(event: BeforeUnloadEvent) {
-//     // Show native prompt in some browsers (message ignored by modern browsers)
-//     event.preventDefault();
-//     event.returnValue = '';
-//   }
-
-//   logoutUser(): void {
-//     localStorage.clear();
-//     sessionStorage.clear();
-//     // Use router navigate with replaceUrl to avoid extra history entry
-//     this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
-//       // Force full navigation to ensure clean state
-//       window.location.href = '/login';
-//     });
-//   }
-// ngOnDestroy(): void {
-//     //window.removeEventListener('popstate', this.preventBackNavigation);
-//     this.routerSub?.unsubscribe();
-//   }
-  
   loadStageData(stage: number): void {
     if (!this.patientId) return;
 
@@ -358,37 +297,7 @@ export class CaseStageViewComponent implements OnInit {
 
   }
 
-  // async downloadAllStages(patientId: number) {
-  //   const content = document.getElementById('caseStageContent');
-  //   if (!content) {
-  //     alert('File not downloadable')
-  //     return;
-  //   }
-  //   const canvas = await html2canvas(content, { scale: 1 });
-  //   const imgData = canvas.toDataURL('image/png');
-
-  //   const pdf = new jsPDF('p', 'mm', 'a4');
-  //   const imgWidth = 210; 
-  //   const pageHeight = 290; 
-  //   const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-  //   let heightLeft = imgHeight;
-  //   let position = 0;
-
-  //   // First page
-  //   pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-  //   heightLeft -= pageHeight;
-
-  //   // Extra pages if content is taller than one page
-  //   while (heightLeft > 0) {
-  //     position = heightLeft - imgHeight;
-  //     pdf.addPage();
-  //     pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-  //     heightLeft -= pageHeight;
-  //   }
-
-  //   pdf.save(`Patient_${patientId}_All_Stages.pdf`);
-  // }
+  
 
 
   async downloadAllStages(patientId: number) {
@@ -441,5 +350,5 @@ export class CaseStageViewComponent implements OnInit {
 
   goback() {
     this.router.navigate([`/dashboard`]);
-    }
+  }
 }
