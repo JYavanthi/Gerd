@@ -1,5 +1,5 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormvalidationService } from '../formvalidation.service';
 import { HttpserviceService } from '../httpservice.service';
@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 })
 
 export class DemographicComponent implements OnInit {
-   private pushStateCount = 5; 
+  private pushStateCount = 5;
   demographicForm: FormGroup;
   showCodeMessage = false;
   savedPatientId: any;
@@ -53,8 +53,9 @@ export class DemographicComponent implements OnInit {
       initial: [''],
       date: ['', Validators.required],
       subjectNumber: [''],
-      age: ['', Validators.required],
-      dob: [''],
+      dob: ['', [Validators.required, this.dateRangeValidator.bind(this)]],
+      age: ['', [Validators.required, Validators.max(120)]],
+
       stage: this.stage ?? 0,
       gender: ['', Validators.required],
       education: ['', Validators.required],
@@ -70,10 +71,27 @@ export class DemographicComponent implements OnInit {
     });
   }
 
+  dateRangeValidator(control: FormControl) {
+    if (!control.value) return null;
+
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+    const minDate = new Date();
+    minDate.setFullYear(today.getFullYear() - 120);
+
+    if (selectedDate > today || selectedDate < minDate) {
+      return { invalidDateRange: true };
+    }
+    return null;
+  }
+
   viewFlag: Boolean = false;
   //stateid : any;
   cityid: any;
-    private routerSub!: Subscription;
+  private routerSub!: Subscription;
+  minDate!: string;
+  currentday!: string;
+
   ngOnInit(): void {
 
 
@@ -118,52 +136,60 @@ export class DemographicComponent implements OnInit {
     }
 
     history.replaceState({ top: true }, '', window.location.href);
+
+    const currentDate = new Date();
+    this.currentday = currentDate.toISOString().split('T')[0]; // Max date = today
+
+    // Calculate 120 years back from today
+    const minDateObj = new Date();
+    minDateObj.setFullYear(currentDate.getFullYear() - 120);
+    this.minDate = minDateObj.toISOString().split('T')[0];
   }
 
   @HostListener('window:popstate', ['$event'])
-    onPopState(event: PopStateEvent) {
-  
-      const confirmed = window.confirm(
-        'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
-      );
-  
-      if (confirmed) {
-        this.logoutUser();
-        return;
+  onPopState(event: PopStateEvent) {
+
+    const confirmed = window.confirm(
+      'Back navigation is disabled. Click OK to log out or Cancel to stay on this page.'
+    );
+
+    if (confirmed) {
+      this.logoutUser();
+      return;
+    }
+
+    setTimeout(() => {
+      try {
+        // push 2 states to ensure repeated backs don't slip through
+        history.pushState({ antiBack: true }, '', window.location.href);
+        history.pushState({ antiBack: true }, '', window.location.href);
+      } catch (e) {
+        // In case some browsers throw
+        console.warn('pushState failed', e);
       }
-  
-      setTimeout(() => {
-        try {
-          // push 2 states to ensure repeated backs don't slip through
-          history.pushState({ antiBack: true }, '', window.location.href);
-          history.pushState({ antiBack: true }, '', window.location.href);
-        } catch (e) {
-          // In case some browsers throw
-          console.warn('pushState failed', e);
-        }
-      }, 50); // 30–150ms works; 50ms is a good tradeoff
-  
-      // Prevent default-like behavior by moving focus back; not strictly necessary:
-      window.scrollTo(0, 0);
-    }
-  
-    // Also handle page unloads (refresh / close)
-    @HostListener('window:beforeunload', ['$event'])
-    onBeforeUnload(event: BeforeUnloadEvent) {
-      // Show native prompt in some browsers (message ignored by modern browsers)
-      event.preventDefault();
-      event.returnValue = '';
-    }
-  
-    logoutUser(): void {
-      localStorage.clear();
-      sessionStorage.clear();
-      // Use router navigate with replaceUrl to avoid extra history entry
-      this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
-        // Force full navigation to ensure clean state
-        window.location.href = '/login';
-      });
-    }
+    }, 50); // 30–150ms works; 50ms is a good tradeoff
+
+    // Prevent default-like behavior by moving focus back; not strictly necessary:
+    window.scrollTo(0, 0);
+  }
+
+  // Also handle page unloads (refresh / close)
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    // Show native prompt in some browsers (message ignored by modern browsers)
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  logoutUser(): void {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Use router navigate with replaceUrl to avoid extra history entry
+    this.router.navigate(['/login'], { replaceUrl: true }).then(() => {
+      // Force full navigation to ensure clean state
+      window.location.href = '/login';
+    });
+  }
 
   today: string = new Date().toISOString().split('T')[0];
 
@@ -222,7 +248,6 @@ export class DemographicComponent implements OnInit {
 
 
 
-          // Load cities first
           if (data.state) {
             this.http.httpGet(API_URLS.CITY_GET, { stateId: data.stateId }).subscribe({
               next: (cities: any) => {
@@ -231,11 +256,11 @@ export class DemographicComponent implements OnInit {
                 );
 
                 if (data.city) {
-                  this.demographicForm.patchValue({city:  data.cityId});
+                  this.demographicForm.patchValue({ city: data.cityId });
                   console.log('Patched city:', data.city);
                 }
 
-                if (this.cityid) {  
+                if (this.cityid) {
                   this.http.httpGet(API_URLS.GET_PINCODE, { citiid: data.cityId }).subscribe({
                     next: (res: any) => {
                       this.pincode = res.sort((a: any, b: any) =>
@@ -388,76 +413,76 @@ export class DemographicComponent implements OnInit {
   pincode: any
 
   getPincode(event: any) {
-  const cityId = event?.target?.value || null;
+    const cityId = event?.target?.value || null;
 
-  // Reset insert state and form
-  this.isInsertingNewPincode = false;
-  this.newPincodeValue = '';
-  this.demographicForm.patchValue({ pincode: '' });
+    // Reset insert state and form
+    this.isInsertingNewPincode = false;
+    this.newPincodeValue = '';
+    this.demographicForm.patchValue({ pincode: '' });
 
-  if (!cityId) {
-    this.pincode = [];
-    return;
+    if (!cityId) {
+      this.pincode = [];
+      return;
+    }
+
+    this.http.httpGet(API_URLS.GET_PINCODE, { citiid: cityId }).subscribe({
+      next: (res: any) => {
+        this.pincode = res.sort((a: any, b: any) =>
+          (a.pincode || 0) - (b.pincode || 0)
+        );
+
+        // If no pincodes returned, you can auto-show Add New input
+        if (this.pincode.length === 0) {
+          this.isInsertingNewPincode = true;
+        }
+      },
+      error: (err) => {
+        this.formValidation.showAlert('Error loading pincodes', 'danger');
+        console.error(err);
+      }
+    });
   }
 
-  this.http.httpGet(API_URLS.GET_PINCODE, { citiid: cityId }).subscribe({
-    next: (res: any) => {
-      this.pincode = res.sort((a: any, b: any) =>
-        (a.pincode || 0) - (b.pincode || 0)
-      );
 
-      // If no pincodes returned, you can auto-show Add New input
-      if (this.pincode.length === 0) {
-        this.isInsertingNewPincode = true;
-      }
-    },
-    error: (err) => {
-      this.formValidation.showAlert('Error loading pincodes', 'danger');
-      console.error(err);
+
+  onPincodeSelect(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+
+    if (value === 'new') {
+      this.isInsertingNewPincode = true;
+      this.demographicForm.get('pincode')?.setValue('');
+      this.newPincodeValue = '';
+    } else {
+      this.isInsertingNewPincode = false;
+      this.demographicForm.get('pincode')?.setValue(value);
     }
-  });
-}
+  }
 
 
-
-onPincodeSelect(event: Event) {
-  const value = (event.target as HTMLSelectElement).value;
-
-  if (value === 'new') {
-    this.isInsertingNewPincode = true;
-    this.demographicForm.get('pincode')?.setValue('');
-    this.newPincodeValue = '';
-  } else {
-    this.isInsertingNewPincode = false;
+  onNewPincodeInput(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.newPincodeValue = value;
     this.demographicForm.get('pincode')?.setValue(value);
   }
-}
+  insertPincode() {
+    const val = this.newPincodeValue;
+    if (!/^\d{6}$/.test(val)) {
+      alert('Enter valid 6-digit pincode');
+      return;
+    }
 
+    // Add to dropdown array
+    this.pincode = [...this.pincode, { pincode: val }];
+    this.pincode.sort((a: any, b: any) => (a.pincode || 0) - (b.pincode || 0));
 
-onNewPincodeInput(event: Event) {
-  const value = (event.target as HTMLInputElement).value;
-  this.newPincodeValue = value;
-  this.demographicForm.get('pincode')?.setValue(value);
-}
-insertPincode() {
-  const val = this.newPincodeValue;
-  if (!/^\d{6}$/.test(val)) {
-    alert('Enter valid 6-digit pincode');
-    return;
+    this.isInsertingNewPincode = false;
+    alert('Pincode added successfully!');
   }
 
-  // Add to dropdown array
-  this.pincode = [...this.pincode, { pincode: val }];
-  this.pincode.sort((a: any, b: any) => (a.pincode || 0) - (b.pincode || 0));
-
-  this.isInsertingNewPincode = false;
-  alert('Pincode added successfully!');
-}
-
-cancelPincodeInsert() {
-  this.isInsertingNewPincode = false;
-  this.newPincodeValue = '';
-}
+  cancelPincodeInsert() {
+    this.isInsertingNewPincode = false;
+    this.newPincodeValue = '';
+  }
 
 
   getCities(event: any) {

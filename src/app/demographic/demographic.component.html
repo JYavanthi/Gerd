@@ -63,10 +63,10 @@
               </div>
             </div>
             <div class="form-group col-md-4">
-              <input formControlName="date" type="date" class="form-input" placeholder=" " [max]="today" />
+              <input formControlName="date" type="date" class="form-input" placeholder=" " [max]="today" [min]="minDate" />
               <label class="form-label">Date of Birth</label>
               <div *ngIf="demographicForm.get('date')?.touched && demographicForm.get('date')?.invalid"
-                class="text-danger small">Date is required.</div>
+                class="text-danger small">Date is required and must be within the last 120 years.</div>
             </div>
             <div class="form-group col-md-4">
               <input formControlName="age" class="form-input" placeholder=" " />

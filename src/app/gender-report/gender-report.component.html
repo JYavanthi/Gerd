@@ -23,7 +23,7 @@
   </div>
 
   <div class="mainDiv">
-    <div class="filter-bar">
+    <!-- <div class="filter-bar">
       <label for="">Start Date <input type="date" placeholder="Start Date" />
       </label>
       <label for="">End Date
@@ -36,7 +36,7 @@
       <button class="btn">Go Back</button>
       <button class="btn" (click)="goToNext()">Next</button>
 
-    </div>
+    </div> -->
     <div class="content">
       <div class="chart-section" *ngIf="genderChartData.datasets[0].data.length">
         <canvas baseChart [data]="genderChartData" [options]="genderChartOptions" [type]="'pie'">
