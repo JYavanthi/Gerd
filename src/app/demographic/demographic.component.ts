@@ -94,7 +94,6 @@ export class DemographicComponent implements OnInit {
 
   ngOnInit(): void {
 
-
     this.route.params.subscribe(params => {
       this.patientId = +params['patientId'] || null;
       this.stage = +params['stage'];
@@ -205,6 +204,94 @@ export class DemographicComponent implements OnInit {
 
   subjectno: string = ''
 
+  // fetchDemographicData(patientId: number): void {
+  //   if (this.stage === undefined) {
+  //     console.warn('⚠️ Stage not set for Demography');
+  //     return;
+  //   }
+
+  //   this.demographicService.getDemographicDetailsByPatientId(patientId).subscribe({
+  //     next: (res: any) => {
+  //       if (res.type === 'S' && res.data) {
+  //         this.isSaved = true;
+
+  //         const data = res.data;
+
+  //         // save city id for later
+  //         this.cityid = data.city;
+  //         this.subjectno = data.subjectNo;
+  //         this.pincode = data.pincode;
+  //         this.stateid = data.stateId;
+  //         // patch form without city (yet)
+  //         this.demographicForm.patchValue({
+  //           patientName: data.initial || '',
+  //           initial: data.initial || '',
+  //           subjectNumber: data.subjectNo || '',
+  //           date: data.date ? data.date.split('T')[0] : '',
+  //           age: data.age ?? '',
+  //           dob: data.dob || '',
+  //           gender: data.gender || '',
+  //           education: data.education || '',
+  //           occupation: data.occupation || '',
+  //           state: data.stateId ?? '',
+  //           city: data.cityId ?? '',
+  //           pincode: data.pincode ?? '',
+  //           placeType: data.placeType || '',
+  //           socioeconomic: data.socioeconomicStatus || '',
+  //           annualFamilyIncome: data.familyIncome || '',
+  //           diet: data.diet || '',
+  //           pastHistory: data.pastHistory || '',
+  //         });
+
+  //         this.patientService.setDemographicData(data);
+
+
+
+  //         // Load cities first
+  //         if (data.state) {
+  //           this.http.httpGet(API_URLS.CITY_GET, { stateId: data.stateId }).subscribe({
+  //             next: (cities: any) => {
+  //               this.cities = cities.sort((a: any, b: any) =>
+  //                 a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+  //               );
+
+  //               if (data.city) {
+  //                 this.demographicForm.patchValue({city:  data.cityId});
+  //                 console.log('Patched city:', data.city);
+  //               }
+
+  //               if (this.cityid) {  
+  //                 this.http.httpGet(API_URLS.GET_PINCODE, { citiid: data.cityId }).subscribe({
+  //                   next: (res: any) => {
+  //                     this.pincode = res.sort((a: any, b: any) =>
+  //                       (a.pincode || 0) - (b.pincode || 0)
+  //                     );
+
+  //                     if (data.pincode) {
+  //                       this.demographicForm.patchValue({ pincode: data.pincode });
+  //                     }
+  //                   },
+  //                   error: (err) => console.error('❌ Error loading pincodes:', err)
+  //                 });
+  //               }
+  //             },
+  //             error: (err) => console.error('❌ Error loading cities:', err)
+  //           });
+  //         }
+
+  //         // auto-calc age
+  //         if (data.date) {
+  //           const age = this.calculateAge(new Date(data.date));
+  //           this.demographicForm.get('age')?.setValue(age, { emitEvent: false });
+  //         }
+  //       } else {
+  //       }
+  //     },
+  //     error: (err) => {
+  //     }
+  //   });
+  // }
+
   fetchDemographicData(patientId: number): void {
     if (this.stage === undefined) {
       console.warn('⚠️ Stage not set for Demography');
@@ -218,12 +305,11 @@ export class DemographicComponent implements OnInit {
 
           const data = res.data;
 
-          // save city id for later
           this.cityid = data.city;
           this.subjectno = data.subjectNo;
           this.pincode = data.pincode;
           this.stateid = data.stateId;
-          // patch form without city (yet)
+
           this.demographicForm.patchValue({
             patientName: data.initial || '',
             initial: data.initial || '',
@@ -246,8 +332,6 @@ export class DemographicComponent implements OnInit {
 
           this.patientService.setDemographicData(data);
 
-
-
           if (data.state) {
             this.http.httpGet(API_URLS.CITY_GET, { stateId: data.stateId }).subscribe({
               next: (cities: any) => {
@@ -262,17 +346,27 @@ export class DemographicComponent implements OnInit {
 
                 if (this.cityid) {
                   this.http.httpGet(API_URLS.GET_PINCODE, { citiid: data.cityId }).subscribe({
-                    next: (res: any) => {
-                      this.pincode = res.sort((a: any, b: any) =>
-                        (a.pincode || 0) - (b.pincode || 0)
+                    next: (res: any[]) => {
+                      this.pincode = res.sort(
+                        (a: any, b: any) => (a.pincode || 0) - (b.pincode || 0)
                       );
 
+                      if (
+                        data.pincode &&
+                        !this.pincode.some((p: any) => p.pincode == data.pincode)
+                      ) {
+                        this.pincode.push({ pincode: data.pincode });
+                        this.pincode.sort(
+                          (a: any, b: any) => (a.pincode || 0) - (b.pincode || 0)
+                        );
+                      }
 
-
-                      // Patch the selected pincode value
                       if (data.pincode) {
                         this.demographicForm.patchValue({ pincode: data.pincode });
                       }
+
+                      this.isInsertingNewPincode = false;
+                      this.newPincodeValue = '';
                     },
                     error: (err) => console.error('❌ Error loading pincodes:', err)
                   });
@@ -282,7 +376,6 @@ export class DemographicComponent implements OnInit {
             });
           }
 
-          // auto-calc age
           if (data.date) {
             const age = this.calculateAge(new Date(data.date));
             this.demographicForm.get('age')?.setValue(age, { emitEvent: false });
@@ -291,9 +384,11 @@ export class DemographicComponent implements OnInit {
         }
       },
       error: (err) => {
+        console.error('❌ Error fetching demographic data:', err);
       }
     });
   }
+
 
   Submit() {
 
@@ -458,7 +553,6 @@ export class DemographicComponent implements OnInit {
     }
   }
 
-
   onNewPincodeInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.newPincodeValue = value;
@@ -471,7 +565,6 @@ export class DemographicComponent implements OnInit {
       return;
     }
 
-    // Add to dropdown array
     this.pincode = [...this.pincode, { pincode: val }];
     this.pincode.sort((a: any, b: any) => (a.pincode || 0) - (b.pincode || 0));
 
