@@ -41,7 +41,7 @@ export class AllReportsComponentComponent {
   isViewMode = false;
   Math = Math;
   currentPage = 1;
-  itemsPerPage = 10;
+  itemsPerPage = 1000;
   totalItems = 0;
   paginatedData: Case[] | null = null;
   totalPages = 0;
@@ -61,9 +61,9 @@ export class AllReportsComponentComponent {
   baseline: any;
   followup1: any;
   followup2: any;
-  allRecords: any[] = []; // <-- full table data
+  allRecords: any[] = []; 
 
-  originalData: any[] = []; // full dataset from API
+  originalData: any[] = []; 
   filteredData: any[] = [];
   selectedCategory: string | null = null;
   selectedOption: string | null = null;
@@ -260,40 +260,28 @@ export class AllReportsComponentComponent {
     return 0;
   }
 
-
-
   onCategorySelect(category: string) {
     this.selectedCategory = category;
     this.availableOptions = this.data[category];
     this.selectedOption = null;
     this.showOptionDropdown = true;
 
-
   }
-
-
-
 
   filterTableData() {
     this.paginatedData = this.tableData.filter(row => {
       let matches = true;
       if (this.selectedCategory) {
-        // Replace 'categoryField' with your actual field mapping
         matches = matches && row[this.selectedCategory] === this.selectedOption;
       }
       return matches;
     });
   }
 
-
-
   onOptionSelect(option: string) {
     this.selectedOption = option;
     console.log(`Selected: ${this.selectedCategory} → ${option}`);
-    // remove chart update here
   }
-
-
 
   toggleSelection(item: any, type: string) {
     switch (type) {
@@ -319,10 +307,7 @@ export class AllReportsComponentComponent {
         this.selectedStage = item;
         break;
     }
-    // remove chart update here
   }
-
-
 
   get selectedStateName() {
     return this.selectedState ? this.selectedState.name : '';
@@ -346,9 +331,6 @@ export class AllReportsComponentComponent {
     Cities: false,
     Gender: false
   };
-
-
-
 
   getStates() {
     if (!this.selectedZone) {
@@ -421,7 +403,6 @@ export class AllReportsComponentComponent {
   getPatientList() {
     this.caseSub = this.http.httpGet('/PatientReg/GetPatient').subscribe((res: any) => {
       if (res?.data && Array.isArray(res.data)) {
-        // Sort by date descending
         this.tableData = res.data.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
         this.updatePagination();
       }
@@ -449,17 +430,17 @@ export class AllReportsComponentComponent {
     for (let i = start; i <= end; i++) this.pageNumbers.push(i);
   }
 
-  goToPage(page: number) {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.updatePaginatedData();
-      this.generatePageNumbers();
-    }
-  }
+  // goToPage(page: number) {
+  //   if (page >= 1 && page <= this.totalPages) {
+  //     this.currentPage = page;
+  //     this.updatePaginatedData();
+  //     this.generatePageNumbers();
+  //   }
+  // }
 
-  goToPrevious() { if (this.currentPage > 1) this.goToPage(this.currentPage - 1); }
-  goToNext() { if (this.currentPage < this.totalPages) this.goToPage(this.currentPage + 1); }
-  onItemsPerPageChange(event: any) { this.itemsPerPage = +event.target.value; this.currentPage = 1; this.updatePagination(); }
+  // goToPrevious() { if (this.currentPage > 1) this.goToPage(this.currentPage - 1); }
+  // goToNext() { if (this.currentPage < this.totalPages) this.goToPage(this.currentPage + 1); }
+  // onItemsPerPageChange(event: any) { this.itemsPerPage = +event.target.value; this.currentPage = 1; this.updatePagination(); }
 
 
   navigateToAddCase() { this.router.navigate([`/demographic/0/0`]); }
@@ -471,20 +452,20 @@ export class AllReportsComponentComponent {
     this.router.navigate([`/case-stage-view/${patientID}`]);
   }
 
-  categoryPropMap: Record<string, string> = {
-    "Age": "age",
-    "Education": "education",
-    "Occupation": "occupation",
-    "Place Type": "placeType",
-    "Socioeconomic Status": "socioeconomicStatus",
-    "Annual Family Income (Rupees)": "familyIncome",
-    "Chief complaints": "chiefComplaint",
-    "Heartburn": "rNocturnal",
-    "Regurgitation": "rNocturnalq",
-    "Retrosternal Pain": "retrosternalPain",
-    "Acid Taste in mouth": "acidTasteInMouth",
-    "Diet": "Diet",
-  };
+  // categoryPropMap: Record<string, string> = {
+  //   "Age": "age",
+  //   "Education": "education",
+  //   "Occupation": "occupation",
+  //   "Place Type": "placeType",
+  //   "Socioeconomic Status": "socioeconomicStatus",
+  //   "Annual Family Income (Rupees)": "familyIncome",
+  //   "Chief complaints": "chiefComplaint",
+  //   "Heartburn": "rNocturnal",
+  //   "Regurgitation": "rNocturnalq",
+  //   "Retrosternal Pain": "retrosternalPain",
+  //   "Acid Taste in mouth": "acidTasteInMouth",
+  //   "Diet": "Diet",
+  // };
 
 
   urlStr: string = '';
@@ -616,7 +597,7 @@ export class AllReportsComponentComponent {
       "H₂ Blockers": "othersMolecule",
     };
 
-    const field = this.categoryPropMap[category] || category;
+    // const field = this.categoryPropMap[category] || category;
 
     this.http.httpGet(apiUrl).subscribe({
       next: (res: any) => {
@@ -641,6 +622,7 @@ export class AllReportsComponentComponent {
 
           const comorbiditiesMap: Record<string, string> = {
             'Hypertension': 'htPresent',
+            "Hyperthyroidism":'hPresent',
             'Diabetes': 'dbPresent',
             'Dyslipidemia': 'ddPresent',
             'Chronic liver disease': 'cldPresent',
@@ -671,8 +653,6 @@ export class AllReportsComponentComponent {
             'Tobacco (other forms/day)': 'tobaccoIntake'
           };
 
-
-
           const SleepMap: Record<string, string> = {
             'Exercise (Yes)': 'exerciseIntakeyes',
             'Exercise (No)': 'exerciseIntakeno',
@@ -687,10 +667,6 @@ export class AllReportsComponentComponent {
 
 
           const GadgetMap: Record<string, string> = {
-            'Computer Use (Yes)': 'computerUsed',
-            'Computer Use (No)': 'computerNotUsed',
-            'Smartphone Use (Yes)': 'smartphoneUsed',
-            'Smartphone Use (No)': 'smartphoneNotUsed',
             'Computer Usage (hrs/day)': 'computerFrequency',
             'Computer Usage Duration (years)': 'computerDurationYears',
             'Smartphone Usage (hrs/day)': 'smartphoneFrequency',
@@ -764,7 +740,7 @@ export class AllReportsComponentComponent {
         const booleanCategoriesNormalized = [
           'htPresent', 'dbPresent', 'hlPresent', 'oPresent', 'aPresent', 'cPresent', 'hPresent',
           'ckdPresent', 'cldPresent', 'htdPresent', 'raPresent', 'ssPresent', 'cmoPresent', 'bdPresent',
-          'dietVegetarian', 'dietNonVegetarian',
+          'dietVegetarian', 'dietNonVegetarian','hPresent',
           'aeratedIntake', 'coffeeIntake', 'teaIntake', 'spicyIntake', 'alcoholIntake', 'sweetsIntake', 'smokingIntake', 'tobaccoIntake',
           'sleepApneayes', 'sleepApneano', 'exerciseIntakeyes', 'exerciseIntakeno', 'joggingSelectedyes', 'gymSelectedyes', 'yogaSelectedyes', 'walkingSelectedyes', 'aerobicsyes', 'zumbano', 'othersyes',
           'computerUsed', 'computerNotUsed', 'smartphoneUsed', 'smartphoneNotUsed',
@@ -851,15 +827,15 @@ export class AllReportsComponentComponent {
                   this.tableData = filteredData;
 
                   this.barChartData = {
-                    labels: [option], // age range shown on x-axis
+                    labels: [option],
                     datasets: [
                       {
-                        label: category,   // this will appear in the legend
+                        label: category,
                         data: [filteredData.length],
                         backgroundColor: ['#FF6384']
                       }
                     ]
-                  };// overwrite res if needed
+                  };
                 } else {
                   console.error('Invalid age numbers in range:', agegrp);
                 }
@@ -872,7 +848,6 @@ export class AllReportsComponentComponent {
           }
 
           else if (category === 'Education') {
-            // normalize the option the same way as your data
             const normalizedOption = normalizeValue('Education', option);
 
             const filteredData = data.filter((r: any) => {
@@ -992,7 +967,6 @@ export class AllReportsComponentComponent {
           }
 
           else if (category === 'Socioeconomic Status') {
-            // Normalize option and data values to lowercase for comparison
             const normalizeStatus = (status: string): string => {
               if (!status) return '';
               return status.trim().toLowerCase(); // make it lowercase
@@ -1178,6 +1152,69 @@ export class AllReportsComponentComponent {
               datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
+
+          else if (category === 'Computer Use') {
+            const normalizedOption = option.trim().toLowerCase(); // "yes" or "no"
+
+            let field = 'computerUsed';
+            let value: boolean | null = null;
+
+            if (normalizedOption === 'yes') value = true;
+            else if (normalizedOption === 'no') value = false;
+
+            if (value !== null) {
+              this.tableData = data.filter((item: any) => item[field] === value);
+            } else {
+              console.error('Invalid Computer Use option:', option);
+              this.tableData = [];
+            }
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [this.tableData.length], backgroundColor: ['#36A2EB'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+              ]
+            };
+          }
+
+           else if (category === 'Smartphone Use') {
+            const normalizedOption = option.trim().toLowerCase(); // "yes" or "no"
+
+            let field = 'smartphoneUsed';
+            let value: boolean | null = null;
+
+            if (normalizedOption === 'yes') value = true;
+            else if (normalizedOption === 'no') value = false;
+
+            if (value !== null) {
+              this.tableData = data.filter((item: any) => item[field] === value);
+            } else {
+              console.error('Invalid Computer Use option:', option);
+              this.tableData = [];
+            }
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [this.tableData.length], backgroundColor: ['#36A2EB'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+              ]
+            };
+          }
+
 
           else if (category === 'Lifestyle Recommendations' || category === 'Drug Therapy Advised') {
             const field = normalizeValue(category, option);
@@ -1653,6 +1690,4 @@ export class AllReportsComponentComponent {
       datasets: [{ data: [this.filteredData.length], backgroundColor: ['#36A2EB'] }]
     };
   }
-
-
 }
