@@ -136,16 +136,16 @@
         <div class="clearandsearch"> <button (click)="clearFilters()" class="Clear">Clear</button>
           <button class="Clear" (click)="applyFilter()">Search</button>
         </div>
-      </div>
+      </div>  
 
       <div class="chart-column">
-        <div class="Bothchart"> 
+        <div class="Bothchart">
           <div class="chart-fixed">
             <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" [type]="pieChartType"></canvas>
           </div>
-          <div class="chart-fixed">
-            <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType"
-              style="margin-top: 55px;"></canvas>
+          <div class="chart-fixed" style="height: 400px; width: 100%;">
+            <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType">
+            </canvas>
           </div>
         </div>
 

@@ -43,7 +43,7 @@ export class AllReportsComponentComponent {
   currentPage = 1;
   itemsPerPage = 10;
   totalItems = 0;
-  paginatedData: Case[] = [];
+  paginatedData: Case[] | null = null;
   totalPages = 0;
   pageNumbers: number[] = [];
   // selectedState: string = '';
@@ -166,41 +166,47 @@ export class AllReportsComponentComponent {
   barChartData: ChartData<'bar', number[], string | string[]> = {
     labels: [''],
     datasets: [
-      { label: '', data: [], backgroundColor: '' }
+      { label: '', data: [], backgroundColor: '#36A2EB' }
     ]
   };
   barChartOptions: ChartOptions<'bar'> = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: { beginAtZero: true }
     },
-    plugins: {
-      legend: { position: 'top' }
+    plugins: { legend: { position: 'top' } },
+    datasets: {
+      bar: {
+        barThickness: 30 // adjust the value as needed
+      }
     }
   };
+
   constructor(private https: HttpClient, private http: HttpserviceService, private router: Router, private caseDataService: CaseDataService
   ) { }
 
   private routerSub!: Subscription;
+
+
   ngOnInit() {
     this.selectedCategory = null;
     this.selectedOption = null;
-    //this.availableOptions = [];
+    this.availableOptions = this.data[''] || [];
+
+    this.paginatedData = [];
+
     this.getStates();
     this.getCities();
-    this.getPatientList();
+
+    this.loadPiechar('');
 
     for (let i = 0; i < this.pushStateCount; i++) {
       history.pushState({ antiBack: true, idx: i }, '', window.location.href);
     }
-
     history.replaceState({ top: true }, '', window.location.href);
-
-    this.selectedCategory = null;
-    this.availableOptions = this.data[''];
-    this.selectedOption = null;
-    this.loadPiechar('Heartburn');
   }
+
   @HostListener('window:popstate', ['$event'])
   onPopState(event: PopStateEvent) {
 
@@ -215,23 +221,18 @@ export class AllReportsComponentComponent {
 
     setTimeout(() => {
       try {
-        // push 2 states to ensure repeated backs don't slip through
         history.pushState({ antiBack: true }, '', window.location.href);
         history.pushState({ antiBack: true }, '', window.location.href);
       } catch (e) {
-        // In case some browsers throw
         console.warn('pushState failed', e);
       }
-    }, 50); // 30–150ms works; 50ms is a good tradeoff
+    }, 50);
 
-    // Prevent default-like behavior by moving focus back; not strictly necessary:
     window.scrollTo(0, 0);
   }
 
-  // Also handle page unloads (refresh / close)
   @HostListener('window:beforeunload', ['$event'])
   onBeforeUnload(event: BeforeUnloadEvent) {
-    // Show native prompt in some browsers (message ignored by modern browsers)
     event.preventDefault();
     event.returnValue = '';
   }
@@ -267,20 +268,11 @@ export class AllReportsComponentComponent {
     this.selectedOption = null;
     this.showOptionDropdown = true;
 
-    // Remove this line to prevent immediate filtering
-    // this.loadPiechar(category);
+
   }
 
 
 
-  //   searchCharts() {
-  //   if (!this.selectedCategory) return;
-
-  //   // Update charts
-  // this.loadPiechar(this.selectedCategory, this.selectedOption || undefined);
-
-  //   this.filterTableData();
-  // }
 
   filterTableData() {
     this.paginatedData = this.tableData.filter(row => {
@@ -293,15 +285,7 @@ export class AllReportsComponentComponent {
     });
   }
 
-  // onOptionSelect(option: string) {
-  //   this.selectedOption = option;
-  //   console.log(`Selected: ${this.selectedCategory} → ${option}`); // <-- use backticks
 
-  //   if (this.selectedCategory && this.selectedOption) {
-  //     this.loadPiechar(this.selectedCategory, this.selectedOption);
-
-  //   }
-  // }
 
   onOptionSelect(option: string) {
     this.selectedOption = option;
@@ -642,9 +626,8 @@ export class AllReportsComponentComponent {
           const key = `${category} (${val})`;
           if (category === 'Education') {
             if (val === "10th Std & Above") return "Above Tenth standard";
-            if (val === "Below 10th") return "Non sedentary";
+            if (val === "Below 10th Std") return "Below Tenth standard";
           }
-
 
 
 
@@ -657,12 +640,23 @@ export class AllReportsComponentComponent {
 
 
           const comorbiditiesMap: Record<string, string> = {
-            'Hypertension': 'htPresent', 'Diabetes': 'dbPresent', 'Hyperlipidemia': 'hlPresent',
-            'Obesity': 'oPresent', 'Asthma': 'aPresent', 'COPD': 'cPresent', 'Heart Disease': 'hPresent',
-            'Kidney Disease': 'ckdPresent', 'Liver Disease': 'cldPresent', 'Thyroid Disorder': 'htdPresent',
-            'Rheumatoid Arthritis': 'raPresent', 'Sickle Cell': 'ssPresent', 'Congenital Disease': 'cmoPresent',
-            'Other': 'bdPresent'
+            'Hypertension': 'htPresent',
+            'Diabetes': 'dbPresent',
+            'Dyslipidemia': 'ddPresent',
+            'Chronic liver disease': 'cldPresent',
+            'Neurological Disorder': 'ndPresent',
+            'Cardiovascular disorders': 'cdPresent',
+            'Hypothyroidism': 'hPresent',
+            'Behavioural disorders': 'htdPresent',
+            'Chronic kidney disease': 'ckdPresent',
+            'Asthma': 'aPresent',
+            'Osteoarthritis': 'oPresent',
+            'Rheumatoid arthritis': 'raPresent',
+            'Systemic Sclerosis': 'ssPresent',
+            'Cancer': 'cPresent',
+            'Others': 'cmoPresent'
           };
+
 
           const dietMap: Record<string, string> = { 'Vegetarian': 'dietVegetarian', 'Non-Vegetarian': 'dietNonVegetarian' };
 
@@ -678,26 +672,8 @@ export class AllReportsComponentComponent {
           };
 
 
-          const diagnosisFieldMap: Record<string, string> = {
-            'Newly Diagnosed (Yes)': 'ndPresent',
-            'Newly Diagnosed (No)': 'ndAbsent',
-            'Newly Diagnosed (Male)': 'ndMale',
-            'Newly Diagnosed (Female)': 'ndFemale',
-            'Known case of GERD (Yes)': 'dbPresent',
-            'Known case of GERD (No)': 'dbPresent',
-            'Known case of GERD (Male)': 'gerdMale',
-            'Known case of GERD (Female)': 'gerdFemale',
-            'GERDType (Erosive GERD)': 'ddPresent',
-            'GERDType (Non-Erosive GERD)': 'ddPresent',
-            'RefractorytoPPI (Yes)': 'cldPresent',
-            'RefractorytoPPI (No)': 'cldPresent',
-            'AdherencetoTherapy (Yes)': 'ndPresent',
-            'AdherencetoTherapy (No)': 'ndPresent'
-          };
 
           const SleepMap: Record<string, string> = {
-            'Sleep Apnea (Yes)': 'sleepApneayes',
-            'Sleep Apnea (No)': 'sleepApneano',
             'Exercise (Yes)': 'exerciseIntakeyes',
             'Exercise (No)': 'exerciseIntakeno',
             'Jogging': 'joggingSelectedyes',
@@ -708,6 +684,7 @@ export class AllReportsComponentComponent {
             'Zumba': 'zumbayes',
             'Others': 'othersyes'
           };
+
 
           const GadgetMap: Record<string, string> = {
             'Computer Use (Yes)': 'computerUsed',
@@ -741,11 +718,11 @@ export class AllReportsComponentComponent {
 
 
           const managementMap: Record<string, string> = {
-            'Diet modification': 'lifestyleRecommendations',
-            'Moderation of alcohol': 'lifestyleRecommendations',
-            'Weight loss': 'lifestyleRecommendations',
-            'Regular exercise': 'lifestyleRecommendations',
-            'Stop Tobacco use': 'lifestyleRecommendations',
+            'Diet modification': 'dietModifications',
+            'Moderation of alcohol': 'moderationOfAlcohol',
+            'Weight loss': 'weightLoss',
+            'Regular exercise': 'regularExercise',
+            'Stop Tobacco use': 'stopTobaccoUse',
 
             'PPI': 'ppiMedicationName',
             'Combination of PPI + Prokinetics': 'prokineticsMedicationName',
@@ -762,16 +739,17 @@ export class AllReportsComponentComponent {
           if (category === 'Exercise') return SleepMap[val] || val;
           if (category === 'Newly Diagnosed') {
             const key = `Newly Diagnosed (${val})`;
-            return diagnosisFieldMap[key] || val;
+            return
           }
-          if (category === 'Sleep Apnea') return SleepMap[val] || val;
+
+
+
           if (GERDGISTORYMAP[category]) return GERDGISTORYMAP[category];
           if (['Computer Use', 'Smartphone Use'].includes(category)) return GadgetMap[`${category} (${val})`] || val;
           if (familyHistoryMap[category]) return familyHistoryMap[category];
           if (category === 'Lifestyle Recommendations' || category === 'Drug Therapy Advised') {
             return managementMap[val] || val;
           }
-          if (diagnosisFieldMap[key]) return diagnosisFieldMap[key];
           return symptomMap[category]?.[val] || val;
 
         };
@@ -788,7 +766,7 @@ export class AllReportsComponentComponent {
           'ckdPresent', 'cldPresent', 'htdPresent', 'raPresent', 'ssPresent', 'cmoPresent', 'bdPresent',
           'dietVegetarian', 'dietNonVegetarian',
           'aeratedIntake', 'coffeeIntake', 'teaIntake', 'spicyIntake', 'alcoholIntake', 'sweetsIntake', 'smokingIntake', 'tobaccoIntake',
-          'sleepApneayes', 'sleepApneano', 'exerciseIntakeyes', 'exerciseIntakeno', 'joggingSelectedyes', 'gymSelectedyes', 'yogaSelectedyes', 'walkingSelectedyes', 'aerobicsyes', 'zumbayes', 'othersyes',
+          'sleepApneayes', 'sleepApneano', 'exerciseIntakeyes', 'exerciseIntakeno', 'joggingSelectedyes', 'gymSelectedyes', 'yogaSelectedyes', 'walkingSelectedyes', 'aerobicsyes', 'zumbano', 'othersyes',
           'computerUsed', 'computerNotUsed', 'smartphoneUsed', 'smartphoneNotUsed',
           'fhGred', 'fhEgc', 'ghPpi',
           'historyofEndoscopy', 'historyofGs', 'gsBariatricSurgery', 'gsFundoplicationSurgery', 'gsGastricPoemsurgery', 'gsGastrojejunostomy', 'gsOther',
@@ -1041,43 +1019,78 @@ export class AllReportsComponentComponent {
           }
 
           else if (category === 'Computer Usage (hrs/day)') {
-
             if (option && option.includes('-')) {
-              const computerFrequencygrp = option.split('-').map(x => x.trim()); // remove spaces
+              const computerFrequencygrp = option.split('-').map(x => x.trim());
 
               if (computerFrequencygrp.length === 2) {
                 const mincomputerFrequency = parseInt(computerFrequencygrp[0], 10);
                 const maxcomputerFrequency = parseInt(computerFrequencygrp[1], 10);
+
                 if (!isNaN(mincomputerFrequency) && !isNaN(maxcomputerFrequency)) {
 
-                  const filteredData = data.filter((r: any) => r.computerFrequency >= Number(mincomputerFrequency) && r.computerFrequency <= Number(maxcomputerFrequency));
-                  this.tableData = filteredData; // overwrite res if needed
+                  const filteredData = data.filter(
+                    (r: any) =>
+                      r.computerFrequency >= mincomputerFrequency &&
+                      r.computerFrequency <= maxcomputerFrequency
+                  );
+
+                  this.tableData = filteredData;
+
+                  // Update charts
+                  this.pieChartData = {
+                    labels: [option],
+                    datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+                  };
+
+                  this.barChartData = {
+                    labels: [option],
+                    datasets: [{ data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+                  };
+
                 } else {
-                  console.error('Invalid age numbers in range:', computerFrequencygrp);
+                  console.error('Invalid numbers in range:', computerFrequencygrp);
                 }
               } else {
-                console.error('Age range does not have two numbers:', computerFrequencygrp);
+                console.error('Range does not have two numbers:', computerFrequencygrp);
               }
             } else {
               console.error('Option is empty or invalid:', option);
             }
           }
-          else if (category === 'Smartphone Usage (hrs/day)') {
 
+          else if (category === 'Smartphone Usage (hrs/day)') {
             if (option && option.includes('-')) {
-              const smartphoneFrequencygrp = option.split('-').map(x => x.trim()); // remove spaces
+              const smartphoneFrequencygrp = option.split('-').map(x => x.trim());
 
               if (smartphoneFrequencygrp.length === 2) {
-                const minsmartphoneFrequencygrp = parseInt(smartphoneFrequencygrp[0], 10);
-                const maxsmartphoneFrequencygrp = parseInt(smartphoneFrequencygrp[1], 10);
-                if (!isNaN(minsmartphoneFrequencygrp) && !isNaN(maxsmartphoneFrequencygrp)) {
-                  const filteredData = data.filter((r: any) => r.smartphoneFrequency >= Number(minsmartphoneFrequencygrp) && r.smartphoneFrequency <= Number(maxsmartphoneFrequencygrp));
-                  this.tableData = filteredData; // overwrite res if needed
+                const minsmartphoneFrequency = parseInt(smartphoneFrequencygrp[0], 10);
+                const maxsmartphoneFrequency = parseInt(smartphoneFrequencygrp[1], 10);
+
+                if (!isNaN(minsmartphoneFrequency) && !isNaN(maxsmartphoneFrequency)) {
+                  const filteredData = data.filter(
+                    (r: any) =>
+                      r.smartphoneFrequency >= minsmartphoneFrequency &&
+                      r.smartphoneFrequency <= maxsmartphoneFrequency
+                  );
+
+                  this.tableData = filteredData;
+
+                  // Update charts
+                  this.pieChartData = {
+                    labels: [option],
+                    datasets: [{ data: [filteredData.length], backgroundColor: ['#FFCE56'] }]
+                  };
+
+                  this.barChartData = {
+                    labels: [option],
+                    datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+                  };
+
                 } else {
-                  console.error('Invalid smartphoneFrequencygrp numbers in range:', smartphoneFrequencygrp);
+                  console.error('Invalid numbers in range:', smartphoneFrequencygrp);
                 }
               } else {
-                console.error('smartphoneFrequencygrp range does not have two numbers:', smartphoneFrequencygrp);
+                console.error('Range does not have two numbers:', smartphoneFrequencygrp);
               }
             } else {
               console.error('Option is empty or invalid:', option);
@@ -1085,7 +1098,6 @@ export class AllReportsComponentComponent {
           }
 
           else if (category === 'Computer Usage Duration (years)') {
-
             if (option && option.includes('-')) {
               const computerDurationgrp = option.split('-').map(x => x.trim()); // remove spaces
 
@@ -1094,13 +1106,29 @@ export class AllReportsComponentComponent {
                 const maxcomputerDuration = parseInt(computerDurationgrp[1], 10);
                 if (!isNaN(mincomputerDuration) && !isNaN(maxcomputerDuration)) {
 
-                  const filteredData = data.filter((r: any) => r.computerFrequency >= Number(mincomputerDuration) && r.computerFrequency <= Number(maxcomputerDuration));
-                  this.tableData = filteredData; // overwrite res if needed
+                  const filteredData = data.filter(
+                    (r: any) =>
+                      r.computerFrequency >= mincomputerDuration &&
+                      r.computerFrequency <= maxcomputerDuration
+                  );
+
+                  this.tableData = filteredData;
+
+                  this.pieChartData = {
+                    labels: [option],
+                    datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+                  };
+
+                  this.barChartData = {
+                    labels: [option],
+                    datasets: [{ data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+                  };
+
                 } else {
-                  console.error('Invalid age numbers in range:', computerDurationgrp);
+                  console.error('Invalid numbers in range:', computerDurationgrp);
                 }
               } else {
-                console.error('Age range does not have two numbers:', computerDurationgrp);
+                console.error('Range does not have two numbers:', computerDurationgrp);
               }
             } else {
               console.error('Option is empty or invalid:', option);
@@ -1108,13 +1136,48 @@ export class AllReportsComponentComponent {
           }
 
           else if (category === 'Working Hours (Occupation)') {
-            this.tableData = data.filter((r: any) => r.workingHours === option);
+            const filteredData = data.filter((r: any) =>
+              r.workingHours?.toLowerCase() === option?.toLowerCase()
+            );
+
+            this.tableData = filteredData;
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+            };
+          }
+
+
+          else if (category === 'Sleep Apnea') {
+            const normalizedOption = option.trim().toLowerCase();
+
+            let field = '';
+            if (normalizedOption === 'yes') field = 'sleepApneayes';
+            else if (normalizedOption === 'no') field = 'sleepApneano';
+
+            if (field) {
+              this.tableData = data.filter((item: any) => item[field] && item[field].trim() !== '');
+            } else {
+              console.error('Invalid Sleep Apnea option:', option);
+              this.tableData = [];
+            }
+
             this.pieChartData = {
               labels: [option],
               datasets: [{ data: [this.tableData.length], backgroundColor: ['#36A2EB'] }]
             };
-          }
 
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+            };
+          }
 
           else if (category === 'Lifestyle Recommendations' || category === 'Drug Therapy Advised') {
             const field = normalizeValue(category, option);
@@ -1122,6 +1185,10 @@ export class AllReportsComponentComponent {
             this.pieChartData = {
               labels: [option],
               datasets: [{ data: [this.tableData.length], backgroundColor: ['#36A2EB'] }]
+            };
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1133,6 +1200,11 @@ export class AllReportsComponentComponent {
               labels: [option],
               datasets: [{ data: [this.tableData.length], backgroundColor: ['#36A2EB'] }]
             };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+            };
           }
 
 
@@ -1142,16 +1214,106 @@ export class AllReportsComponentComponent {
               labels: [option],
               datasets: [{ data: [this.tableData.length], backgroundColor: ['#36A2EB'] }]
             };
-          }
 
-          else if (category === 'Job/ Occupation type') {
-            this.tableData = data.filter((r: any) => r.jobType === option);
-            this.pieChartData = {
+            this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#FF6384'] }]
+              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
+          else if (category === 'Job/ Occupation type') {
+            const filteredData = data.filter((r: any) =>
+              r.jobType?.trim().toLowerCase().replace(/[-]/g, ' ') === option?.trim().toLowerCase()
+            );
+
+            this.tableData = filteredData;
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+            };
+          }
+
+          else if (category === 'Newly Diagnosed') {
+            const filteredData = data.filter((r: any) =>
+              (option === 'Yes' && r.newlyDiagnosed === true) ||
+              (option === 'No' && r.newlyDiagnosed === false)
+            );
+
+            this.tableData = filteredData;
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+            };
+          }
+
+          else if (category === 'Known case of GERD') {
+            const filteredData = data.filter((r: any) =>
+              (option === 'Yes' && r.knownCaseOfGerd === true) ||
+              (option === 'No' && r.knownCaseOfGerd === false)
+            );
+
+            this.tableData = filteredData;
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+            };
+          }
+
+          else if (category === 'RefractorytoPPI') {
+            const filteredData = data.filter((r: any) =>
+              (option === 'Yes' && r.refractoryToPpi === true) ||
+              (option === 'No' && r.refractoryToPpi === false)
+            );
+
+            this.tableData = filteredData;
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+            };
+          }
+
+          else if (category === 'AdherencetoTherapy') {
+            const filteredData = data.filter((r: any) =>
+              (option === 'Yes' && r.adherenceToTherapy === true) ||
+              (option === 'No' && r.adherenceToTherapy === false)
+            );
+
+            this.tableData = filteredData;
+
+            this.pieChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+            };
+          }
           else if (category === 'Duration (No. of years in the above working hours)') {
             if (option && option.includes('-')) {
               const range = option.split('-').map(x => parseInt(x.trim(), 10));
@@ -1163,6 +1325,11 @@ export class AllReportsComponentComponent {
                   labels: [option],
                   datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
                 };
+
+                this.barChartData = {
+                  labels: [option],
+                  datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+                };
               } else {
                 console.error('Invalid working years range:', option);
               }
@@ -1172,27 +1339,44 @@ export class AllReportsComponentComponent {
           }
 
           else if (category === 'Smartphone Usage Duration (years)') {
-
             if (option && option.includes('-')) {
-              const SmartphoneDurationgrp = option.split('-').map(x => x.trim()); // remove spaces
+              const smartphoneDurationGrp = option.split('-').map(x => x.trim()); // remove spaces
 
-              if (SmartphoneDurationgrp.length === 2) {
-                const minSmartphoneDuration = parseInt(SmartphoneDurationgrp[0], 10);
-                const maxSmartphoneDuration = parseInt(SmartphoneDurationgrp[1], 10);
+              if (smartphoneDurationGrp.length === 2) {
+                const minSmartphoneDuration = parseInt(smartphoneDurationGrp[0], 10);
+                const maxSmartphoneDuration = parseInt(smartphoneDurationGrp[1], 10);
+
                 if (!isNaN(minSmartphoneDuration) && !isNaN(maxSmartphoneDuration)) {
 
-                  const filteredData = data.filter((r: any) => r.computerFrequency >= Number(minSmartphoneDuration) && r.computerFrequency <= Number(maxSmartphoneDuration));
-                  this.tableData = filteredData; // overwrite res if needed
+                  // Filter the data
+                  const filteredData = data.filter(
+                    (r: any) =>
+                      r.smartphoneDuration >= minSmartphoneDuration &&
+                      r.smartphoneDuration <= maxSmartphoneDuration
+                  );
+
+                  this.tableData = filteredData; // update table
+
+                  // Update charts
+                  this.pieChartData = {
+                    labels: [option],
+                    datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+                  };
+
+                  this.barChartData = {
+                    labels: [option],
+                    datasets: [{ data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+                  };
+
                 } else {
-                  console.error('Invalid age numbers in range:', SmartphoneDurationgrp);
+                  console.error('Invalid numbers in range:', smartphoneDurationGrp);
                 }
               } else {
-                console.error('Age range does not have two numbers:', SmartphoneDurationgrp);
+                console.error('Range does not have two numbers:', smartphoneDurationGrp);
               }
             } else {
               console.error('Option is empty or invalid:', option);
             }
-
           }
 
           else {
@@ -1202,6 +1386,11 @@ export class AllReportsComponentComponent {
             } else {
               this.tableData = data.filter((item: any) => item[normalizedOption] === 'Yes');
             }
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+            };
           }
 
           if (this.selectedZone) {
@@ -1414,6 +1603,11 @@ export class AllReportsComponentComponent {
   }
 
   applyFilter(): void {
+
+    if (this.selectedCategory && !this.selectedOption) {
+      alert('Please select an sub_category for the selected category.');
+      return;
+    }
     this.filteredData = [...this.allRecords];
 
     if (this.selectedCategory && this.selectedOption) {
