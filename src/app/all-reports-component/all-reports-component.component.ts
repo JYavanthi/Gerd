@@ -41,7 +41,7 @@ export class AllReportsComponentComponent {
   isViewMode = false;
   Math = Math;
   currentPage = 1;
-//  itemsPerPage = 12;
+  itemsPerPage = 1000;
   totalItems = 0;
   paginatedData: Case[] | null = null;
   totalPages = 0;
@@ -61,9 +61,9 @@ export class AllReportsComponentComponent {
   baseline: any;
   followup1: any;
   followup2: any;
-  allRecords: any[] = []; // <-- full table data
+  allRecords: any[] = []; 
 
-  originalData: any[] = []; // full dataset from API
+  originalData: any[] = []; 
   filteredData: any[] = [];
   selectedCategory: string | null = null;
   selectedOption: string | null = null;
@@ -404,15 +404,23 @@ export class AllReportsComponentComponent {
     this.caseSub = this.http.httpGet('/PatientReg/GetPatient').subscribe((res: any) => {
       if (res?.data && Array.isArray(res.data)) {
         this.tableData = res.data.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        
+        this.updatePagination();
       }
     });
   }
 
 
-  
+  updatePagination() {
+    this.totalPages = Math.ceil(this.tableData.length / this.itemsPerPage);
+    this.updatePaginatedData();
+    this.generatePageNumbers();
+  }
 
-  
+  updatePaginatedData() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    this.paginatedData = this.tableData.slice(start, start + this.itemsPerPage);
+  }
+
   generatePageNumbers() {
     this.pageNumbers = [];
     const maxVisiblePages = 5;
@@ -422,15 +430,16 @@ export class AllReportsComponentComponent {
     for (let i = start; i <= end; i++) this.pageNumbers.push(i);
   }
 
-  goToPage(page: number) {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.generatePageNumbers();
-    }
-  }
+  // goToPage(page: number) {
+  //   if (page >= 1 && page <= this.totalPages) {
+  //     this.currentPage = page;
+  //     this.updatePaginatedData();
+  //     this.generatePageNumbers();
+  //   }
+  // }
 
-  goToPrevious() { if (this.currentPage > 1) this.goToPage(this.currentPage - 1); }
-  goToNext() { if (this.currentPage < this.totalPages) this.goToPage(this.currentPage + 1); }
+  // goToPrevious() { if (this.currentPage > 1) this.goToPage(this.currentPage - 1); }
+  // goToNext() { if (this.currentPage < this.totalPages) this.goToPage(this.currentPage + 1); }
   // onItemsPerPageChange(event: any) { this.itemsPerPage = +event.target.value; this.currentPage = 1; this.updatePagination(); }
 
 
@@ -476,6 +485,7 @@ export class AllReportsComponentComponent {
     this.barChartData = { labels: [], datasets: [] };
     this.tableData = [];
 
+    this.updatePagination();
   }
 
 
@@ -1502,6 +1512,7 @@ export class AllReportsComponentComponent {
 
 
 
+        this.updatePagination();
       },
       error: err => console.error('Error fetching data', err)
     });
