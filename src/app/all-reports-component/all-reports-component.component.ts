@@ -67,9 +67,9 @@ export class AllReportsComponentComponent {
   filteredData: any[] = [];
   selectedCategory: string | null = null;
   selectedOption: string | null = null;
-  availableOptions: string[] = [];
+  availableOptions: string[] = []; 
 
-
+ 
   data: DropdownData = {
     "Age": ["18-30", "31-40", "41-50", "51-60", "61-70", "71-80", ">80"],
     "Education": ["Above Tenth standard", "Below Tenth standard"],
@@ -709,6 +709,9 @@ export class AllReportsComponentComponent {
             'PCAB': 'pcabMedicationName',
             'Any others': 'othersMedicationName'
           };
+
+
+          
           if (category === 'COMORBIDITIES') return comorbiditiesMap[val] || val;
           if (category === 'Diet') return dietMap[val] || val;
           if (category === 'Patient Personal History') return personalHistoryMap[val] || val;
@@ -737,6 +740,7 @@ export class AllReportsComponentComponent {
         const optionCounts: Record<string, number> = {};
         normalizedOptions.forEach(opt => optionCounts[opt] = 0);
 
+        
         const booleanCategoriesNormalized = [
           'htPresent', 'dbPresent', 'hlPresent', 'oPresent', 'aPresent', 'cPresent', 'hPresent',
           'ckdPresent', 'cldPresent', 'htdPresent', 'raPresent', 'ssPresent', 'cmoPresent', 'bdPresent',
@@ -962,7 +966,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#FF6384'] }]
             };
           }
 
@@ -988,7 +992,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#FF6384'] }]
             };
           }
 
@@ -1018,7 +1022,7 @@ export class AllReportsComponentComponent {
 
                   this.barChartData = {
                     labels: [option],
-                    datasets: [{ data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+                    datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
                   };
 
                 } else {
@@ -1057,7 +1061,7 @@ export class AllReportsComponentComponent {
 
                   this.barChartData = {
                     labels: [option],
-                    datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+                    datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
                   };
 
                 } else {
@@ -1095,7 +1099,7 @@ export class AllReportsComponentComponent {
 
                   this.barChartData = {
                     labels: [option],
-                    datasets: [{ data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+                    datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
                   };
 
                 } else {
@@ -1123,7 +1127,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1149,7 +1153,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1179,7 +1183,7 @@ export class AllReportsComponentComponent {
             this.barChartData = {
               labels: [option],
               datasets: [
-                { data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+                {label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
               ]
             };
           }
@@ -1210,13 +1214,13 @@ export class AllReportsComponentComponent {
             this.barChartData = {
               labels: [option],
               datasets: [
-                { data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+                {label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
               ]
             };
           }
 
 
-          else if (category === 'Lifestyle Recommendations' || category === 'Drug Therapy Advised') {
+          else if (  category === 'Drug Therapy Advised') {
             const field = normalizeValue(category, option);
             this.tableData = data.filter((item: any) => item[field] && item[field].toString().trim() !== '' && item[field] !== 0);
             this.pieChartData = {
@@ -1225,7 +1229,7 @@ export class AllReportsComponentComponent {
             };
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1240,7 +1244,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1254,7 +1258,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1272,7 +1276,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1310,7 +1314,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1329,7 +1333,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1348,7 +1352,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
           else if (category === 'Duration (No. of years in the above working hours)') {
@@ -1365,7 +1369,7 @@ export class AllReportsComponentComponent {
 
                 this.barChartData = {
                   labels: [option],
-                  datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+                  datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
                 };
               } else {
                 console.error('Invalid working years range:', option);
@@ -1402,7 +1406,7 @@ export class AllReportsComponentComponent {
 
                   this.barChartData = {
                     labels: [option],
-                    datasets: [{ data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+                    datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
                   };
 
                 } else {
@@ -1415,6 +1419,7 @@ export class AllReportsComponentComponent {
               console.error('Option is empty or invalid:', option);
             }
           }
+          
 
           else {
             const normalizedOption = normalizeValue(category, option);
@@ -1426,7 +1431,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1440,7 +1445,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1453,7 +1458,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1466,7 +1471,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1480,7 +1485,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1495,7 +1500,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{ data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
           if (this.tableData.length) {
@@ -1679,6 +1684,8 @@ export class AllReportsComponentComponent {
 
 
   }
+
+  
   updateCharts() {
     this.pieChartData = {
       labels: ['Filtered Data'],
