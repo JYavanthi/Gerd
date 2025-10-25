@@ -20,35 +20,48 @@ namespace Gred.Controllers
     [HttpPost("SaveOrUpdate")]
     public IActionResult SaveOrUpdate([FromBody] EmailReminderLog log)
     {
-      var existing = _context.EmailReminderLogs
-          .FirstOrDefault(x => x.PatientId == log.PatientId && x.Stage == log.Stage);
-
-      if (existing == null)
-        _context.EmailReminderLogs.Add(log);
-      else
+      try
       {
-        existing.ReminderCount = log.ReminderCount;
-        existing.LastSentDate = log.LastSentDate;
-        existing.DueDays = log.DueDays;
-      }
+        var existing = _context.EmailReminderLogs
+            .FirstOrDefault(x => x.PatientId == log.PatientId && x.Stage == log.Stage);
 
-      _context.SaveChanges();
-      return Ok(log);
+        if (existing == null)
+          _context.EmailReminderLogs.Add(log);
+        else
+        {
+          existing.ReminderCount = log.ReminderCount;
+          existing.LastSentDate = log.LastSentDate;
+          existing.DueDays = log.DueDays;
+        }
+
+        _context.SaveChanges();
+        return Ok(log);
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500, ex.ToString());
+      }
     }
 
 
     [HttpGet("GetByPatient/{patientId}/{stage}")]
     public IActionResult GetByPatient(int patientId, int stage)
     {
-      var log = _context.EmailReminderLogs
-          .FirstOrDefault(x => x.PatientId == patientId && x.Stage == stage);
-
-      if (log == null)
+      try
       {
-        return NotFound();
-      }
+        var log = _context.EmailReminderLogs
+            .FirstOrDefault(x => x.PatientId == patientId && x.Stage == stage);
 
-      return Ok(log);
+        if (log == null)
+          return NotFound();
+
+        return Ok(log);
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500, ex.ToString());
+      }
     }
+
   }
 }
