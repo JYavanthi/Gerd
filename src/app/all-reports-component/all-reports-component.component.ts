@@ -33,6 +33,7 @@ interface City {
 
 export class AllReportsComponentComponent {
   private pushStateCount = 5;
+  selectedValue: 'Yes' | 'No' | null = null;
   age: number = 0;
   caseSub!: Subscription;
   tableData: any[] = [];
@@ -61,15 +62,15 @@ export class AllReportsComponentComponent {
   baseline: any;
   followup1: any;
   followup2: any;
-  allRecords: any[] = []; 
+  allRecords: any[] = [];
 
-  originalData: any[] = []; 
+  originalData: any[] = [];
   filteredData: any[] = [];
   selectedCategory: string | null = null;
   selectedOption: string | null = null;
-  availableOptions: string[] = []; 
+  availableOptions: string[] = [];
 
- 
+
   data: DropdownData = {
     "Age": ["18-30", "31-40", "41-50", "51-60", "61-70", "71-80", ">80"],
     "Education": ["Above Tenth standard", "Below Tenth standard"],
@@ -597,12 +598,84 @@ export class AllReportsComponentComponent {
       "H₂ Blockers": "othersMolecule",
     };
 
-    // const field = this.categoryPropMap[category] || category;
+
+
+    const SleepMap: Record<string, { yes: string; no: string }> = {
+      'Exercise': { yes: 'exerciseIntakeyes', no: 'exerciseIntakeno' },
+      'Jogging': { yes: 'joggingSelectedyes', no: 'joggingSelectedno' },
+      'Gym': { yes: 'gymSelectedyes', no: 'gymSelectedno' },
+      'Yoga': { yes: 'yogaSelectedyes', no: 'yogaSelectedno' },
+      'Walking': { yes: 'walkingSelectedyes', no: 'walkingSelectedno' },
+      'Aerobics': { yes: 'aerobicsyes', no: 'aerobicsno' },
+      'Zumba': { yes: 'zumbayes', no: 'zumbano' },
+      'Others': { yes: 'othersyes', no: 'othersno' }
+    };
 
     this.http.httpGet(apiUrl).subscribe({
       next: (res: any) => {
         const data = res?.data || [];
+        if (category === 'Exercise' && option) {
+          const isYes = (value: any) =>
+            value === true || value === 'true' || value?.toString().toLowerCase() === 'yes';
+          const isNo = (value: any) =>
+            value === false || value === 'false' || value?.toString().toLowerCase() === 'no';
+
+          const yesField = SleepMap[option]?.yes;
+          const noField = SleepMap[option]?.no;
+
+          let filteredData = [...data];
+
+          if (this.selectedZone) {
+            filteredData = filteredData.filter(item => item.zone?.trim() === this.selectedZone.trim());
+          }
+          if (this.selectedState) {
+            filteredData = filteredData.filter(item => item.state?.trim() === this.selectedState?.name.trim());
+          }
+          if (this.selectedCity) {
+            filteredData = filteredData.filter(item => item.city?.trim() === this.selectedCity?.name.trim());
+          }
+          if (this.selectedGender) {
+            filteredData = filteredData.filter(item => item.gender?.trim() === this.selectedGender.trim());
+          }
+          if (this.selectedStage) {
+            const stageNumbers = this.stageMapping[this.selectedStage] || [];
+            filteredData = filteredData.filter(item => stageNumbers.includes(Number(item.stage)));
+          }
+
+          // Step 2: Count yes/no for charts using the same filteredData
+          const yesRows = yesField ? filteredData.filter(item => isYes(item[yesField])) : [];
+          const noRows = noField ? filteredData.filter(item => isNo(item[noField])) : [];
+
+          const counts = { yes: yesRows.length, no: noRows.length };
+
+          // Step 3: Use the combined rows for table
+          const tableData = [...yesRows, ...noRows];
+
+          // Step 4: Update charts
+          this.pieChartData = {
+            labels: [`${option} Yes`, `${option} No`],
+            datasets: [{ data: [counts.yes, counts.no], backgroundColor: ['#36A2EB', '#FF6384'] }]
+          };
+
+          this.barChartData = {
+            labels: ['Yes', 'No'],
+            datasets: [{ label: option, data: [counts.yes, counts.no], backgroundColor: ['#36A2EB', '#FF6384'] }]
+          };
+
+          // Step 5: Update table
+          this.tableData = tableData;
+          if (!this.tableData.length) alert('No data found for selected option');
+
+          // Step 6: Update pagination
+          this.updatePagination();
+          return;
+        }
+
+
+
         const normalizeValue = (category: string, val: any) => {
+
+
 
           const key = `${category} (${val})`;
           if (category === 'Education') {
@@ -622,7 +695,7 @@ export class AllReportsComponentComponent {
 
           const comorbiditiesMap: Record<string, string> = {
             'Hypertension': 'htPresent',
-            "Hyperthyroidism":'hPresent',
+            "Hyperthyroidism": 'hPresent',
             'Diabetes': 'dbPresent',
             'Dyslipidemia': 'ddPresent',
             'Chronic liver disease': 'cldPresent',
@@ -653,17 +726,19 @@ export class AllReportsComponentComponent {
             'Tobacco (other forms/day)': 'tobaccoIntake'
           };
 
-          const SleepMap: Record<string, string> = {
-            'Exercise (Yes)': 'exerciseIntakeyes',
-            'Exercise (No)': 'exerciseIntakeno',
-            'Jogging': 'joggingSelectedyes',
-            'Gym': 'gymSelectedyes',
-            'Yoga': 'yogaSelectedyes',
-            'Walking': 'walkingSelectedyes',
-            'Aerobics': 'aerobicsyes',
-            'Zumba': 'zumbayes',
-            'Others': 'othersyes'
-          };
+          // const SleepMap: Record<string, string> = {
+          //   'Exercise (Yes)': 'exerciseIntakeyes',
+          //   'Exercise (No)': 'exerciseIntakeno',
+          //   'Jogging': 'joggingSelectedyes',
+          //   'Gym': 'gymSelectedyes',
+          //   'Yoga': 'yogaSelectedyes',
+          //   'Walking': 'walkingSelectedyes',
+          //   'Aerobics': 'aerobicsyes',
+          //   'Zumba': 'zumbayes',
+          //   'Others': 'othersyes'
+          // };
+
+
 
 
           const GadgetMap: Record<string, string> = {
@@ -711,7 +786,7 @@ export class AllReportsComponentComponent {
           };
 
 
-          
+
           if (category === 'COMORBIDITIES') return comorbiditiesMap[val] || val;
           if (category === 'Diet') return dietMap[val] || val;
           if (category === 'Patient Personal History') return personalHistoryMap[val] || val;
@@ -740,11 +815,11 @@ export class AllReportsComponentComponent {
         const optionCounts: Record<string, number> = {};
         normalizedOptions.forEach(opt => optionCounts[opt] = 0);
 
-        
+
         const booleanCategoriesNormalized = [
           'htPresent', 'dbPresent', 'hlPresent', 'oPresent', 'aPresent', 'cPresent', 'hPresent',
           'ckdPresent', 'cldPresent', 'htdPresent', 'raPresent', 'ssPresent', 'cmoPresent', 'bdPresent',
-          'dietVegetarian', 'dietNonVegetarian','hPresent',
+          'dietVegetarian', 'dietNonVegetarian', 'hPresent',
           'aeratedIntake', 'coffeeIntake', 'teaIntake', 'spicyIntake', 'alcoholIntake', 'sweetsIntake', 'smokingIntake', 'tobaccoIntake',
           'sleepApneayes', 'sleepApneano', 'exerciseIntakeyes', 'exerciseIntakeno', 'joggingSelectedyes', 'gymSelectedyes', 'yogaSelectedyes', 'walkingSelectedyes', 'aerobicsyes', 'zumbano', 'othersyes',
           'computerUsed', 'computerNotUsed', 'smartphoneUsed', 'smartphoneNotUsed',
@@ -754,7 +829,7 @@ export class AllReportsComponentComponent {
           'dbPresent', 'dbPresent', 'gerdMale', 'gerdFemale',
           'ddPresent', 'ddPresent',
           'cldPresent', 'cldPresent',
-          'ndPresent', 'ndPresent'
+          'ndPresent', 'ndPresent', 'walkingSelectedno'
         ];
 
 
@@ -913,6 +988,8 @@ export class AllReportsComponentComponent {
           }
 
 
+
+
           else if (category === 'Place Type') {
             const normalizedOption = option.trim().toLowerCase();
 
@@ -966,7 +1043,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+              datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#FF6384'] }]
             };
           }
 
@@ -992,7 +1069,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+              datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#FF6384'] }]
             };
           }
 
@@ -1022,7 +1099,7 @@ export class AllReportsComponentComponent {
 
                   this.barChartData = {
                     labels: [option],
-                    datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+                    datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
                   };
 
                 } else {
@@ -1061,7 +1138,7 @@ export class AllReportsComponentComponent {
 
                   this.barChartData = {
                     labels: [option],
-                    datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+                    datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
                   };
 
                 } else {
@@ -1075,43 +1152,39 @@ export class AllReportsComponentComponent {
             }
           }
 
-          else if (category === 'Computer Usage Duration (years)') {
-            if (option && option.includes('-')) {
-              const computerDurationgrp = option.split('-').map(x => x.trim()); // remove spaces
+         else if (category === 'Computer Usage Duration (years)') {
+  if (option && option.includes('-')) {
+    const [minStr, maxStr] = option.split('-').map(x => x.trim());
 
-              if (computerDurationgrp.length === 2) {
-                const mincomputerDuration = parseInt(computerDurationgrp[0], 10);
-                const maxcomputerDuration = parseInt(computerDurationgrp[1], 10);
-                if (!isNaN(mincomputerDuration) && !isNaN(maxcomputerDuration)) {
+    const minDuration = parseInt(minStr, 10);
+    const maxDuration = parseInt(maxStr, 10);
 
-                  const filteredData = data.filter(
-                    (r: any) =>
-                      r.computerFrequency >= mincomputerDuration &&
-                      r.computerFrequency <= maxcomputerDuration
-                  );
+    if (!isNaN(minDuration) && !isNaN(maxDuration)) {
+      const filteredData = data.filter((r: any) => {
+        // convert computerDurationYears to number
+        const duration = parseInt(r.computerDurationYears, 10);
+        return !isNaN(duration) && duration >= minDuration && duration <= maxDuration;
+      });
 
-                  this.tableData = filteredData;
+      this.tableData = filteredData;
 
-                  this.pieChartData = {
-                    labels: [option],
-                    datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
-                  };
+      this.pieChartData = {
+        labels: [option],
+        datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+      };
 
-                  this.barChartData = {
-                    labels: [option],
-                    datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
-                  };
+      this.barChartData = {
+        labels: [option],
+        datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+      };
+    } else {
+      console.error('Invalid numbers in range:', option);
+    }
+  } else {
+    console.error('Option is empty or invalid:', option);
+  }
+}
 
-                } else {
-                  console.error('Invalid numbers in range:', computerDurationgrp);
-                }
-              } else {
-                console.error('Range does not have two numbers:', computerDurationgrp);
-              }
-            } else {
-              console.error('Option is empty or invalid:', option);
-            }
-          }
 
           else if (category === 'Working Hours (Occupation)') {
             const filteredData = data.filter((r: any) =>
@@ -1127,7 +1200,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1153,7 +1226,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1183,12 +1256,12 @@ export class AllReportsComponentComponent {
             this.barChartData = {
               labels: [option],
               datasets: [
-                {label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+                { label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
               ]
             };
           }
 
-           else if (category === 'Smartphone Use') {
+          else if (category === 'Smartphone Use') {
             const normalizedOption = option.trim().toLowerCase(); // "yes" or "no"
 
             let field = 'smartphoneUsed';
@@ -1214,13 +1287,13 @@ export class AllReportsComponentComponent {
             this.barChartData = {
               labels: [option],
               datasets: [
-                {label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+                { label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
               ]
             };
           }
 
 
-          else if (  category === 'Drug Therapy Advised') {
+          else if (category === 'Drug Therapy Advised') {
             const field = normalizeValue(category, option);
             this.tableData = data.filter((item: any) => item[field] && item[field].toString().trim() !== '' && item[field] !== 0);
             this.pieChartData = {
@@ -1229,7 +1302,7 @@ export class AllReportsComponentComponent {
             };
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1244,7 +1317,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1258,7 +1331,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1276,7 +1349,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1314,7 +1387,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1333,7 +1406,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1352,7 +1425,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
           else if (category === 'Duration (No. of years in the above working hours)') {
@@ -1369,7 +1442,7 @@ export class AllReportsComponentComponent {
 
                 this.barChartData = {
                   labels: [option],
-                  datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+                  datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
                 };
               } else {
                 console.error('Invalid working years range:', option);
@@ -1380,46 +1453,40 @@ export class AllReportsComponentComponent {
           }
 
           else if (category === 'Smartphone Usage Duration (years)') {
-            if (option && option.includes('-')) {
-              const smartphoneDurationGrp = option.split('-').map(x => x.trim()); // remove spaces
+  if (option && option.includes('-')) {
+    const [minStr, maxStr] = option.split('-').map(x => x.trim());
 
-              if (smartphoneDurationGrp.length === 2) {
-                const minSmartphoneDuration = parseInt(smartphoneDurationGrp[0], 10);
-                const maxSmartphoneDuration = parseInt(smartphoneDurationGrp[1], 10);
+    const minDuration = parseInt(minStr, 10);
+    const maxDuration = parseInt(maxStr, 10);
 
-                if (!isNaN(minSmartphoneDuration) && !isNaN(maxSmartphoneDuration)) {
+    if (!isNaN(minDuration) && !isNaN(maxDuration)) {
+      // Filter the data using smartphoneDurationYears
+      const filteredData = data.filter((r: any) => {
+        const duration = parseInt(r.smartphoneDurationYears, 10); // convert to number
+        return !isNaN(duration) && duration >= minDuration && duration <= maxDuration;
+      });
 
-                  // Filter the data
-                  const filteredData = data.filter(
-                    (r: any) =>
-                      r.smartphoneDuration >= minSmartphoneDuration &&
-                      r.smartphoneDuration <= maxSmartphoneDuration
-                  );
+      this.tableData = filteredData; // update table
 
-                  this.tableData = filteredData; // update table
+      // Update charts
+      this.pieChartData = {
+        labels: [option],
+        datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+      };
 
-                  // Update charts
-                  this.pieChartData = {
-                    labels: [option],
-                    datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
-                  };
+      this.barChartData = {
+        labels: [option],
+        datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+      };
+    } else {
+      console.error('Invalid numbers in range:', option);
+    }
+  } else {
+    console.error('Option is empty or invalid:', option);
+  }
+}
 
-                  this.barChartData = {
-                    labels: [option],
-                    datasets: [{label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
-                  };
 
-                } else {
-                  console.error('Invalid numbers in range:', smartphoneDurationGrp);
-                }
-              } else {
-                console.error('Range does not have two numbers:', smartphoneDurationGrp);
-              }
-            } else {
-              console.error('Option is empty or invalid:', option);
-            }
-          }
-          
 
           else {
             const normalizedOption = normalizeValue(category, option);
@@ -1431,7 +1498,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1445,7 +1512,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1458,7 +1525,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1471,7 +1538,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1485,7 +1552,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
 
@@ -1500,7 +1567,7 @@ export class AllReportsComponentComponent {
 
             this.barChartData = {
               labels: [option],
-              datasets: [{label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+              datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
           if (this.tableData.length) {
@@ -1521,6 +1588,9 @@ export class AllReportsComponentComponent {
       },
       error: err => console.error('Error fetching data', err)
     });
+
+
+
   }
 
   normalize(str: string | undefined) {
@@ -1685,7 +1755,7 @@ export class AllReportsComponentComponent {
 
   }
 
-  
+
   updateCharts() {
     this.pieChartData = {
       labels: ['Filtered Data'],
