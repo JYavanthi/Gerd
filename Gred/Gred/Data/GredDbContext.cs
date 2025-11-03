@@ -38,6 +38,8 @@ public partial class GredDbContext : DbContext
 
     public virtual DbSet<DoctorLog> DoctorLogs { get; set; }
 
+    public virtual DbSet<EmailReminderLog> EmailReminderLogs { get; set; }
+
     public virtual DbSet<Exercise> Exercises { get; set; }
 
     public virtual DbSet<FamilyHistory> FamilyHistories { get; set; }
@@ -138,10 +140,9 @@ public partial class GredDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-RA0KPRS\\SQLEXPRESS;Database=GERD;Trusted_Connection=True;TrustServerCertificate=True");
- //  => optionsBuilder.UseSqlServer("Server=EC2AMAZ-4MMGIBF\\SQLEXPRESS;Database=GERD;user Id=sa1; Password=Micro@123#; Trusted_Connection=True;TrustServerCertificate=True");
-
-  protected override void OnModelCreating(ModelBuilder modelBuilder)
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-SVHEEK2\\SQLEXPRESS;Database=GERD;Trusted_Connection=True;TrustServerCertificate=True");
+  // =>optionsBuilder.UseSqlServer("Server=EC2AMAZ-4MMGIBF\\SQLEXPRESS;Database=GERD;user Id=sa1; Password=Micro@123#; Trusted_Connection=True;TrustServerCertificate=True");
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Abbre>(entity =>
         {
@@ -682,6 +683,10 @@ public partial class GredDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("PhoneNO");
             entity.Property(e => e.PlaceOfPractice).HasMaxLength(250);
+            entity.Property(e => e.ResetToken)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.ResetTokenExpires).HasColumnType("datetime");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -689,7 +694,7 @@ public partial class GredDbContext : DbContext
 
         modelBuilder.Entity<DoctorLog>(entity =>
         {
-            entity.HasKey(e => e.DoctorlogId).HasName("PK__DoctorLo__2E8573BAC96E8946");
+            entity.HasKey(e => e.DoctorlogId).HasName("PK__DoctorLo__2E8573BA845311A2");
 
             entity.Property(e => e.DoctorlogId).HasColumnName("DoctorlogID");
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
@@ -698,6 +703,18 @@ public partial class GredDbContext : DbContext
             entity.Property(e => e.LogoutTime).HasColumnType("datetime");
             entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
             entity.Property(e => e.Token).HasMaxLength(2000);
+        });
+
+        modelBuilder.Entity<EmailReminderLog>(entity =>
+        {
+            entity.HasKey(e => e.EmailReminderId);
+
+            entity.Property(e => e.InitationOrSubmittedDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.LastSentDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Exercise>(entity =>
@@ -835,7 +852,7 @@ public partial class GredDbContext : DbContext
 
         modelBuilder.Entity<Gadget>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Gadget__3214EC07BE3CA265");
+            entity.HasKey(e => e.Id).HasName("PK__Gadget__3214EC0744730DDA");
 
             entity.ToTable("Gadget");
 
@@ -928,7 +945,7 @@ public partial class GredDbContext : DbContext
 
         modelBuilder.Entity<History>(entity =>
         {
-            entity.HasKey(e => e.HistoryId).HasName("PK__History__4D7B4ADD65746B54");
+            entity.HasKey(e => e.HistoryId).HasName("PK__History__4D7B4ADDDBFAB980");
 
             entity.ToTable("History");
 
@@ -1059,7 +1076,7 @@ public partial class GredDbContext : DbContext
 
         modelBuilder.Entity<MedicalExamination>(entity =>
         {
-            entity.HasKey(e => e.Meid).HasName("PK__MedicalE__1A36DA7A20FF0C57");
+            entity.HasKey(e => e.Meid).HasName("PK__MedicalE__1A36DA7A67B7D294");
 
             entity.ToTable("MedicalExamination");
 
@@ -1168,6 +1185,9 @@ public partial class GredDbContext : DbContext
             entity.ToTable("Patient");
 
             entity.Property(e => e.PatientId).HasColumnName("PatientID");
+            entity.Property(e => e.Blsubmitted)
+                .HasColumnType("datetime")
+                .HasColumnName("BLSubmitted");
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
             entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.Diet)
@@ -1180,6 +1200,12 @@ public partial class GredDbContext : DbContext
             entity.Property(e => e.FamilyIncome)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Fu1submitted)
+                .HasColumnType("datetime")
+                .HasColumnName("FU1Submitted");
+            entity.Property(e => e.Fu2submitted)
+                .HasColumnType("datetime")
+                .HasColumnName("FU2Submitted");
             entity.Property(e => e.Gender)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -1614,7 +1640,7 @@ public partial class GredDbContext : DbContext
 
         modelBuilder.Entity<PersonalHistory>(entity =>
         {
-            entity.HasKey(e => e.PersonalHistoryId).HasName("PK__Personal__1ED0A1ADA6AC77E4");
+            entity.HasKey(e => e.PersonalHistoryId).HasName("PK__Personal__1ED0A1AD7AD311F9");
 
             entity.ToTable("PersonalHistory");
 
@@ -1775,7 +1801,7 @@ public partial class GredDbContext : DbContext
 
         modelBuilder.Entity<Sleep>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Sleep__3214EC07AA1A65AD");
+            entity.HasKey(e => e.Id).HasName("PK__Sleep__3214EC0765FB4591");
 
             entity.ToTable("Sleep");
 
@@ -1976,9 +2002,8 @@ public partial class GredDbContext : DbContext
             entity.Property(e => e.AcidRefluxSymptom)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.AssessmentId)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("AssessmentID");
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.AssessmentId).HasColumnName("AssessmentID");
             entity.Property(e => e.BiopsyAttached).HasColumnName("Biopsy_Attached");
             entity.Property(e => e.BiopsyAttachement)
                 .HasMaxLength(500)
@@ -1991,9 +2016,14 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(1000)
                 .IsUnicode(false)
                 .HasColumnName("Biopsy_Remark");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
+            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.Dysmotity)
                 .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
                 .IsUnicode(false);
             entity.Property(e => e.EeAgremarks)
                 .HasMaxLength(1000)
@@ -2016,6 +2046,15 @@ public partial class GredDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("EE_HillRemarks");
             entity.Property(e => e.EeLaxlesClassification).HasColumnName("EE_LAXLesClassification");
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
             entity.Property(e => e.MtAttached).HasColumnName("MT_Attached");
             entity.Property(e => e.MtAttachement)
@@ -2029,6 +2068,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(1000)
                 .IsUnicode(false)
                 .HasColumnName("MT_Remark");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.PHimAttached).HasColumnName("pHIM_Attached");
             entity.Property(e => e.PHimAttachement)
                 .HasMaxLength(500)
@@ -2043,8 +2085,16 @@ public partial class GredDbContext : DbContext
                 .HasColumnName("pHIM_Remark");
             entity.Property(e => e.PHimpedanceMonitoring).HasColumnName("pHImpedanceMonitoring");
             entity.Property(e => e.Pid).HasColumnName("PID");
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.TotalPoints)
                 .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
                 .IsUnicode(false);
         });
 
@@ -2060,7 +2110,10 @@ public partial class GredDbContext : DbContext
                 .HasColumnName("Acid Reflux related Symptom");
             entity.Property(e => e.AcidTasteDurationYrs).HasColumnName("Acid Taste Duration (Yrs)");
             entity.Property(e => e.AcidTasteFrequencyWk).HasColumnName("Acid Taste Frequency (/Wk)");
-            entity.Property(e => e.AcidTasteInMouth).HasColumnName("Acid taste in mouth");
+            entity.Property(e => e.AcidTasteInMouth)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("Acid taste in mouth");
             entity.Property(e => e.AcidTasteNocturnal)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -2069,6 +2122,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Acid Taste Postural");
+            entity.Property(e => e.AdherenceToTherapy)
+                .HasMaxLength(3)
+                .IsUnicode(false);
             entity.Property(e => e.AeratedDrinks)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -2416,6 +2472,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("H2Blockers_Medication_Name");
+            entity.Property(e => e.Heartburn)
+                .HasMaxLength(10)
+                .IsUnicode(false);
             entity.Property(e => e.HeartburnDurationYrs).HasColumnName("Heartburn Duration[Yrs)");
             entity.Property(e => e.HeartburnFrequencyWk).HasColumnName("Heartburn Frequency(/Wk)");
             entity.Property(e => e.HeartburnNocturnal)
@@ -2489,7 +2548,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Jogging Frequency (hrs/week)");
-            entity.Property(e => e.KnownCaseOfGerd).HasColumnName("KnownCaseOfGERD");
+            entity.Property(e => e.KnownCaseOfGerd)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("KnownCaseOfGERD");
             entity.Property(e => e.LaxLesClassification)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -2528,6 +2590,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("Neurological Disorder Remarks");
+            entity.Property(e => e.NewlyDiagnosed)
+                .HasMaxLength(3)
+                .IsUnicode(false);
             entity.Property(e => e.NsaidsDose)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -2678,11 +2743,17 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Prokinetics_Medication_Name");
-            entity.Property(e => e.RefractoryToPpi).HasColumnName("RefractoryToPPI");
+            entity.Property(e => e.RefractoryToPpi)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("RefractoryToPPI");
             entity.Property(e => e.RegularExercise)
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("Regular exercise");
+            entity.Property(e => e.Regurgitation)
+                .HasMaxLength(10)
+                .IsUnicode(false);
             entity.Property(e => e.RegurgitationDurationYrs).HasColumnName("Regurgitation Duration (Yrs)");
             entity.Property(e => e.RegurgitationFrequencyWk).HasColumnName("Regurgitation Frequency(/Wk)");
             entity.Property(e => e.RegurgitationNocturnal)
@@ -2709,7 +2780,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Retrosternal Nocturnal");
-            entity.Property(e => e.RetrosternalPain).HasColumnName("Retrosternal pain");
+            entity.Property(e => e.RetrosternalPain)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("Retrosternal pain");
             entity.Property(e => e.RetrosternalPainDurationYrs).HasColumnName("Retrosternal Pain Duration (Yrs)");
             entity.Property(e => e.RetrosternalPainFrequencyWk).HasColumnName("Retrosternal Pain Frequency(/Wk)");
             entity.Property(e => e.RetrosternalPostural)
@@ -2911,6 +2985,7 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_CheifComplaint");
 
+            entity.Property(e => e.Age).HasColumnName("age");
             entity.Property(e => e.AtDuration).HasColumnName("AT_Duration");
             entity.Property(e => e.AtFrequency).HasColumnName("AT_Frequency");
             entity.Property(e => e.AtNocturnal)
@@ -2922,11 +2997,22 @@ public partial class GredDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("AT_Postural");
             entity.Property(e => e.CheifCompliantId).HasColumnName("CheifCompliantID");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedByName)
                 .HasMaxLength(250)
                 .IsUnicode(false);
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
+            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.DoctorId).HasColumnName("DoctorID");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.HbDuration).HasColumnName("HB_Duration");
             entity.Property(e => e.HbFrequency).HasColumnName("HB_Frequency");
             entity.Property(e => e.HbNocturnal)
@@ -2937,10 +3023,15 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("HB_Postural");
-            entity.Property(e => e.ModifiedByName)
+            entity.Property(e => e.Initial)
                 .HasMaxLength(250)
                 .IsUnicode(false);
-            entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
+            entity.Property(e => e.Name)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.PatientId).HasColumnName("PatientID");
             entity.Property(e => e.RDuration).HasColumnName("R_Duration");
             entity.Property(e => e.RFrequency).HasColumnName("R_Frequency");
@@ -2962,6 +3053,14 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("RP_Postural");
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwCity>(entity =>
@@ -2999,6 +3098,7 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("A_Remark");
+            entity.Property(e => e.Age).HasColumnName("age");
             entity.Property(e => e.BdPresent)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -3023,6 +3123,7 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("CD_Remark");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CkdPresent)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -3052,6 +3153,7 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false);
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
+            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.DbPresent)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -3069,6 +3171,15 @@ public partial class GredDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("DD_Remark");
             entity.Property(e => e.DoctorId).HasColumnName("DoctorID");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.HPresent)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -3093,6 +3204,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("HTD_Remark");
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.ModifiedByName)
                 .HasMaxLength(250)
                 .IsUnicode(false);
@@ -3113,6 +3227,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("O_Remark");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.PatientId).HasColumnName("PatientID");
             entity.Property(e => e.RaPresent)
                 .HasMaxLength(50)
@@ -3130,6 +3247,14 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("SS_Remark");
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwComorbitiesRpt>(entity =>
@@ -3138,6 +3263,7 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_ComorbitiesRPT");
 
+            entity.Property(e => e.Age).HasColumnName("age");
             entity.Property(e => e.BdPresent)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -3154,7 +3280,7 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("CD_Remark");
-            entity.Property(e => e.City).HasColumnName("city");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CldPresent)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -3163,6 +3289,7 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("CLD_Remark");
+            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.DbPresent)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -3179,6 +3306,12 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("DD_Remark");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.Gender)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -3209,7 +3342,10 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("ND_Remark");
-            entity.Property(e => e.State).HasColumnName("state");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.State).HasMaxLength(50);
             entity.Property(e => e.SubjectNo)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -4876,6 +5012,7 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_CurrentMedication");
 
+            entity.Property(e => e.Age).HasColumnName("age");
             entity.Property(e => e.AntiplateletDose)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -4900,8 +5037,21 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("Bisphosphonates_Molecule");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
             entity.Property(e => e.NsaidsDose)
                 .HasMaxLength(100)
@@ -4915,6 +5065,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("NSAIDs_Molecule");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.OthersDose)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -4927,6 +5080,8 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("Others_Molecule");
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
             entity.Property(e => e.SteroidsDose)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -4939,6 +5094,12 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("Steroids_Molecule");
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwDiagnosis>(entity =>
@@ -4947,24 +5108,44 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_Diagnosis");
 
-            entity.Property(e => e.CreatedByName)
-                .HasMaxLength(250)
-                .IsUnicode(false);
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
+            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.DiagnosisId).HasColumnName("DiagnosisID");
             entity.Property(e => e.DoctorId).HasColumnName("DoctorID");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.Gerdtype)
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("GERDType");
             entity.Property(e => e.GredNoOfYear).HasColumnName("GRED_NoOfYear");
-            entity.Property(e => e.KnownCaseOfGerd).HasColumnName("KnownCaseOfGERD");
-            entity.Property(e => e.ModifiedByName)
+            entity.Property(e => e.Initial)
                 .HasMaxLength(250)
                 .IsUnicode(false);
+            entity.Property(e => e.KnownCaseOfGerd).HasColumnName("KnownCaseOfGERD");
             entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.PatientId).HasColumnName("PatientID");
             entity.Property(e => e.RefractoryToPpi).HasColumnName("RefractoryToPPI");
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwDoctor>(entity =>
@@ -5169,11 +5350,18 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_FamilyHistory");
 
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
+            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.DoctorId).HasColumnName("DoctorID");
-            entity.Property(e => e.FamilyHistoryId)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("FamilyHistoryID");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyHistoryId).HasColumnName("FamilyHistoryID");
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.FhEgc)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -5194,8 +5382,25 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false)
                 .HasColumnName("gH_PPI");
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.PatientId).HasColumnName("PatientID");
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwFollowup1Rpt>(entity =>
@@ -6054,20 +6259,43 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_Gadget");
 
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.ComputerFrequency)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.JobType)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.SmartphoneFrequency)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
+            entity.Property(e => e.SubjectNo)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.WorkingHours)
                 .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
                 .IsUnicode(false);
         });
 
@@ -6099,8 +6327,14 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_GERDHistory");
 
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
+            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.DoctorId).HasColumnName("DoctorID");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.EndoscopyAttement)
                 .HasMaxLength(250)
                 .IsUnicode(false);
@@ -6108,9 +6342,13 @@ public partial class GredDbContext : DbContext
             entity.Property(e => e.EndoscopyRemark)
                 .HasMaxLength(1000)
                 .IsUnicode(false);
-            entity.Property(e => e.Ghid)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("GHID");
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Ghid).HasColumnName("GHID");
             entity.Property(e => e.GsBariatricSurgery).HasColumnName("GS_BariatricSurgery");
             entity.Property(e => e.GsBsremark)
                 .HasMaxLength(1000)
@@ -6144,12 +6382,26 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.HistoryofGs).HasColumnName("HistoryofGS");
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.PatientId).HasColumnName("PatientID");
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.UsageOfPpi)
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("UsageOfPPI");
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwHistory>(entity =>
@@ -6158,13 +6410,38 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_History");
 
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.DietNonVegetarian).HasColumnName("Diet_NonVegetarian");
             entity.Property(e => e.DietVegetarian).HasColumnName("Diet_Vegetarian");
             entity.Property(e => e.DoctorId).HasColumnName("DoctorID");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.PastHistory).HasColumnName("Past_History");
-            entity.Property(e => e.PatientId).HasColumnName("PatientID");
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwInCompletedRpt>(entity =>
@@ -7825,12 +8102,138 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_Management");
 
-            entity.Property(e => e.CreatedDt).HasColumnType("datetime");
-            entity.Property(e => e.ManagementId)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("ManagementID");
-            entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
-            entity.Property(e => e.PatientId).HasColumnName("PatientID");
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.AlginateDose)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Alginate_Dose");
+            entity.Property(e => e.AlginateFrequency)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Alginate_Frequency");
+            entity.Property(e => e.AlginateMedicationName)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Alginate_Medication_Name");
+            entity.Property(e => e.City).HasMaxLength(100);
+            entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.DietModifications)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("Diet Modifications");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.H2blockersCDose)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("H2BlockersC_Dose");
+            entity.Property(e => e.H2blockersCFrequency)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("H2BlockersC_Frequency");
+            entity.Property(e => e.H2blockersCMedicationName)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("H2BlockersC_Medication_Name");
+            entity.Property(e => e.H2blockersDose)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("H2Blockers_Dose");
+            entity.Property(e => e.H2blockersFrequency)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("H2Blockers_Frequency");
+            entity.Property(e => e.H2blockersMedicationName)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("H2Blockers_Medication_Name");
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.ModerationOfAlcohol)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("Moderation of alcohol");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.OthersDose)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("others_Dose");
+            entity.Property(e => e.OthersFrequency)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("others_Frequency");
+            entity.Property(e => e.OthersMedicationName)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("others_Medication_Name");
+            entity.Property(e => e.PpiDose)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("PPI_Dose");
+            entity.Property(e => e.PpiFrequency)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("PPI_Frequency");
+            entity.Property(e => e.PpiMedicationName)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("PPI_Medication_Name");
+            entity.Property(e => e.ProkineticsDose)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Prokinetics_Dose");
+            entity.Property(e => e.ProkineticsFrequency)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Prokinetics_Frequency");
+            entity.Property(e => e.ProkineticsMedicationName)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Prokinetics_Medication_Name");
+            entity.Property(e => e.RegularExercise)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("Regular exercise");
+            entity.Property(e => e.StateId).HasColumnName("stateId");
+            entity.Property(e => e.StateName)
+                .HasMaxLength(50)
+                .HasColumnName("state_name");
+            entity.Property(e => e.StopTobaccoUse)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("Stop Tobacco use");
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.SucralfateDose)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Sucralfate_Dose");
+            entity.Property(e => e.SucralfateFrequency)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Sucralfate_Frequency");
+            entity.Property(e => e.SucralfateMedicationName)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Sucralfate_Medication_Name");
+            entity.Property(e => e.WeightLoss)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasColumnName("Weight loss");
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwMedicalExamination>(entity =>
@@ -7839,12 +8242,28 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_MedicalExamination");
 
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
+            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.DoctorId).HasColumnName("DoctorID");
-            entity.Property(e => e.Meid)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("MEID");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.Meid).HasColumnName("MEID");
             entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.OthersAbNormalCs)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -7908,6 +8327,14 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("SE_RSNormal");
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwMedication>(entity =>
@@ -7967,6 +8394,8 @@ public partial class GredDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_Patient");
 
+            entity.Property(e => e.Blsubmitted).HasColumnType("datetime");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
             entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.Diet)
@@ -7979,6 +8408,8 @@ public partial class GredDbContext : DbContext
             entity.Property(e => e.FamilyIncome)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Fu1submitted).HasColumnType("datetime");
+            entity.Property(e => e.Fu2submitted).HasColumnType("datetime");
             entity.Property(e => e.Gender)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -7992,17 +8423,20 @@ public partial class GredDbContext : DbContext
             entity.Property(e => e.PastHistory)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.PatientId)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("PatientID");
+            entity.Property(e => e.PatientId).HasColumnName("PatientID");
             entity.Property(e => e.PlaceType)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.SocioeconomicStatus)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.StateId).HasColumnName("stateId");
             entity.Property(e => e.SubjectNo)
                 .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
                 .IsUnicode(false);
         });
 
@@ -8800,6 +9234,7 @@ public partial class GredDbContext : DbContext
             entity.Property(e => e.AeratedQuantity)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            entity.Property(e => e.Age).HasColumnName("age");
             entity.Property(e => e.AlcoholDuration)
                 .HasMaxLength(20)
                 .IsUnicode(false);
@@ -8809,6 +9244,7 @@ public partial class GredDbContext : DbContext
             entity.Property(e => e.AlcoholQuantity)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CoffeeDuration)
                 .HasMaxLength(20)
                 .IsUnicode(false);
@@ -8819,8 +9255,23 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false);
             entity.Property(e => e.CreatedDt).HasColumnType("datetime");
+            entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
-            entity.Property(e => e.PersonalHistoryId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.SmokingDuration)
                 .HasMaxLength(20)
                 .IsUnicode(false);
@@ -8838,6 +9289,10 @@ public partial class GredDbContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.SpicyQuantity)
                 .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.SweetsDuration)
                 .HasMaxLength(20)
@@ -8865,6 +9320,9 @@ public partial class GredDbContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.TobaccoQuantity)
                 .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
                 .IsUnicode(false);
         });
 
@@ -8903,7 +9361,13 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("aerobicsyes");
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.Education)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.ExerciseIntakeno)
                 .HasMaxLength(3)
                 .IsUnicode(false)
@@ -8912,6 +9376,12 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("exerciseIntakeyes");
+            entity.Property(e => e.FamilyIncome)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.GymDuration)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -8928,7 +9398,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("gymSelectedyes");
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.Initial)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             entity.Property(e => e.JoggingDuration)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -8946,6 +9418,9 @@ public partial class GredDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("joggingSelectedyes");
             entity.Property(e => e.ModifiedDt).HasColumnType("datetime");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.OthersDuration)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -8983,6 +9458,10 @@ public partial class GredDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("sleepApneayes");
             entity.Property(e => e.Stage).HasColumnName("stage");
+            entity.Property(e => e.State).HasMaxLength(50);
+            entity.Property(e => e.SubjectNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.WalkingDuration)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -9015,6 +9494,9 @@ public partial class GredDbContext : DbContext
                 .HasMaxLength(3)
                 .IsUnicode(false)
                 .HasColumnName("yogaSelectedyes");
+            entity.Property(e => e.Zone)
+                .HasMaxLength(6)
+                .IsUnicode(false);
             entity.Property(e => e.ZumbaDuration)
                 .HasMaxLength(50)
                 .IsUnicode(false)

@@ -1152,38 +1152,38 @@ export class AllReportsComponentComponent {
             }
           }
 
-         else if (category === 'Computer Usage Duration (years)') {
-  if (option && option.includes('-')) {
-    const [minStr, maxStr] = option.split('-').map(x => x.trim());
+          else if (category === 'Computer Usage Duration (years)') {
+            if (option && option.includes('-')) {
+              const [minStr, maxStr] = option.split('-').map(x => x.trim());
 
-    const minDuration = parseInt(minStr, 10);
-    const maxDuration = parseInt(maxStr, 10);
+              const minDuration = parseInt(minStr, 10);
+              const maxDuration = parseInt(maxStr, 10);
 
-    if (!isNaN(minDuration) && !isNaN(maxDuration)) {
-      const filteredData = data.filter((r: any) => {
-        // convert computerDurationYears to number
-        const duration = parseInt(r.computerDurationYears, 10);
-        return !isNaN(duration) && duration >= minDuration && duration <= maxDuration;
-      });
+              if (!isNaN(minDuration) && !isNaN(maxDuration)) {
+                const filteredData = data.filter((r: any) => {
+                  // convert computerDurationYears to number
+                  const duration = parseInt(r.computerDurationYears, 10);
+                  return !isNaN(duration) && duration >= minDuration && duration <= maxDuration;
+                });
 
-      this.tableData = filteredData;
+                this.tableData = filteredData;
 
-      this.pieChartData = {
-        labels: [option],
-        datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
-      };
+                this.pieChartData = {
+                  labels: [option],
+                  datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+                };
 
-      this.barChartData = {
-        labels: [option],
-        datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
-      };
-    } else {
-      console.error('Invalid numbers in range:', option);
-    }
-  } else {
-    console.error('Option is empty or invalid:', option);
-  }
-}
+                this.barChartData = {
+                  labels: [option],
+                  datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+                };
+              } else {
+                console.error('Invalid numbers in range:', option);
+              }
+            } else {
+              console.error('Option is empty or invalid:', option);
+            }
+          }
 
 
           else if (category === 'Working Hours (Occupation)') {
@@ -1203,7 +1203,6 @@ export class AllReportsComponentComponent {
               datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
             };
           }
-
 
           else if (category === 'Sleep Apnea') {
             const normalizedOption = option.trim().toLowerCase();
@@ -1227,6 +1226,141 @@ export class AllReportsComponentComponent {
             this.barChartData = {
               labels: [option],
               datasets: [{ label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }]
+            };
+          }
+
+
+          else if (category === 'Family History of GERD') {
+            const normalizedOption = option.trim().toLowerCase();
+            const field = 'fhGred'; 
+
+            this.tableData = data.filter(
+              (item: any) =>
+                item[field] &&
+                item[field].trim().toLowerCase() === normalizedOption
+            );
+
+            // Update charts
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [this.tableData.length], backgroundColor: ['#36A2EB'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+              ]
+            };
+          }
+
+
+           else if (category === 'Family History of Esophago-gastric Cancer') {
+            const normalizedOption = option.trim().toLowerCase();
+            const field = 'fhEgc'; 
+
+            this.tableData = data.filter(
+              (item: any) =>
+                item[field] &&
+                item[field].trim().toLowerCase() === normalizedOption
+            );
+
+            // Update charts
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [this.tableData.length], backgroundColor: ['#36A2EB'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+              ]
+            };
+          }
+
+           else if (category === 'PPI Usage') {
+            const normalizedOption = option.trim().toLowerCase();
+            const field = 'ghPpi'; 
+
+            this.tableData = data.filter(
+              (item: any) =>
+                item[field] &&
+                item[field].trim().toLowerCase() === normalizedOption
+            );
+
+            // Update charts
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [this.tableData.length], backgroundColor: ['#36A2EB'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+              ]
+            };
+          }
+
+
+
+          
+           else if (category === 'History of Endoscopy') {
+            const normalizedOption = option.trim().toLowerCase();
+            const field = 'historyofEndoscopy'; 
+
+            this.tableData = data.filter(
+              (item: any) =>
+                item[field] &&
+                item[field].trim().toLowerCase() === normalizedOption
+            );
+
+            // Update charts
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [this.tableData.length], backgroundColor: ['#36A2EB'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+              ]
+            };
+          }
+
+           else if (category === 'History of Gastro-surgery') {
+            const normalizedOption = option.trim().toLowerCase();
+            const field = 'historyofGs'; 
+
+            this.tableData = data.filter(
+              (item: any) =>
+                item[field] &&
+                item[field].trim().toLowerCase() === normalizedOption
+            );
+
+            // Update charts
+            this.pieChartData = {
+              labels: [option],
+              datasets: [
+                { data: [this.tableData.length], backgroundColor: ['#36A2EB'] }
+              ]
+            };
+
+            this.barChartData = {
+              labels: [option],
+              datasets: [
+                { label: category, data: [this.tableData.length], backgroundColor: ['#4BC0C0'] }
+              ]
             };
           }
 
@@ -1453,38 +1587,38 @@ export class AllReportsComponentComponent {
           }
 
           else if (category === 'Smartphone Usage Duration (years)') {
-  if (option && option.includes('-')) {
-    const [minStr, maxStr] = option.split('-').map(x => x.trim());
+            if (option && option.includes('-')) {
+              const [minStr, maxStr] = option.split('-').map(x => x.trim());
 
-    const minDuration = parseInt(minStr, 10);
-    const maxDuration = parseInt(maxStr, 10);
+              const minDuration = parseInt(minStr, 10);
+              const maxDuration = parseInt(maxStr, 10);
 
-    if (!isNaN(minDuration) && !isNaN(maxDuration)) {
-      // Filter the data using smartphoneDurationYears
-      const filteredData = data.filter((r: any) => {
-        const duration = parseInt(r.smartphoneDurationYears, 10); // convert to number
-        return !isNaN(duration) && duration >= minDuration && duration <= maxDuration;
-      });
+              if (!isNaN(minDuration) && !isNaN(maxDuration)) {
+                // Filter the data using smartphoneDurationYears
+                const filteredData = data.filter((r: any) => {
+                  const duration = parseInt(r.smartphoneDurationYears, 10); // convert to number
+                  return !isNaN(duration) && duration >= minDuration && duration <= maxDuration;
+                });
 
-      this.tableData = filteredData; // update table
+                this.tableData = filteredData; // update table
 
-      // Update charts
-      this.pieChartData = {
-        labels: [option],
-        datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
-      };
+                // Update charts
+                this.pieChartData = {
+                  labels: [option],
+                  datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
+                };
 
-      this.barChartData = {
-        labels: [option],
-        datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
-      };
-    } else {
-      console.error('Invalid numbers in range:', option);
-    }
-  } else {
-    console.error('Option is empty or invalid:', option);
-  }
-}
+                this.barChartData = {
+                  labels: [option],
+                  datasets: [{ label: category, data: [filteredData.length], backgroundColor: ['#36A2EB'] }]
+                };
+              } else {
+                console.error('Invalid numbers in range:', option);
+              }
+            } else {
+              console.error('Option is empty or invalid:', option);
+            }
+          }
 
 
 
