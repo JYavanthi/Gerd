@@ -60,7 +60,7 @@ namespace AutoEmailNotification
       Console.WriteLine("---- Daily Reminder Job Started ----");
       Console.WriteLine("smtpPort: " + smtpPort);
       Console.WriteLine("smtpUser: " + smtpUser);
-      Console.WriteLine("smtpPass: " + smtpPass);
+      //Console.WriteLine("smtpPass: " + smtpPass);
       Console.WriteLine("enableSsl: " + enableSsl);
 
       var today = DateTime.Now;
@@ -156,6 +156,7 @@ namespace AutoEmailNotification
 
               Console.WriteLine($"Added {p.Initial} ({stageText}) for Dr. {doctor.Name} - Reminder #{reminderLog.ReminderCount}");
             }
+
           }
 
           // --- Send One Combined Email per Doctor ---
@@ -170,6 +171,10 @@ namespace AutoEmailNotification
 
             Console.WriteLine($" Sent one combined email to Dr. {doctor.Name} ({duePatients.Count} patients)");
             await Task.Delay(2000); // optional delay for Gmail throttling
+          }
+          else
+          {
+            Console.WriteLine("No patients are due to get reminders");
           }
         }
 
@@ -186,7 +191,7 @@ namespace AutoEmailNotification
     static string BuildEmailBody(Doctor doctor, List<(Patient patient, string stage, DateTime CreatedDate, DateTime dueDate, int dueDays, string subjectNo)> list)
     {
       var body = $@"<p>Dear Dr. {doctor.Name},</p>
-        <p>This is an automatic reminder for the following due patients:</p>
+        <p>This is an automatic reminder for the following due patient(s):</p>
         <table border='1' cellpadding='6' cellspacing='0'>
             <tr><th>Patient Initial</th><th>SubjectNo</th><th>Stage</th><th>Created/SubmittedDate</th><th>Due Date</th><th>Overdue (Days)</th></tr>";
 
@@ -194,6 +199,8 @@ namespace AutoEmailNotification
       {
         body += $"<tr><td>{patient.Initial}</td><td>{subjectNo}</td><td>{stage}</td><td>{createdDate:yyyy-MM-dd}</td><td>{dueDate:yyyy-MM-dd}</td><td>{dueDays}</td></tr>";
       }
+
+      body += "</table><br/><p>Could you please take action accordingly.<br/></p>";
 
       body += "</table><br/><p>Best regards,<br/>Admin</p>";
       return body;
@@ -242,7 +249,9 @@ namespace AutoEmailNotification
 
     static async Task<EmailReminderLog?> GetReminderLog(HttpClient http, int patientId, int stage)
     {
+      Console.WriteLine($"{baseApiUrl}/EmailReminder/GetByPatient/{patientId}/{stage}");
       var response = await http.GetAsync($"{baseApiUrl}/EmailReminder/GetByPatient/{patientId}/{stage}");
+
 
       if (response.IsSuccessStatusCode)
       {
