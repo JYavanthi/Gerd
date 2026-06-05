@@ -65,6 +65,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
       };
     });
 
+
 // Enable Swagger and JWT Authorization
 builder.Services.AddSwaggerGen(c =>
 {

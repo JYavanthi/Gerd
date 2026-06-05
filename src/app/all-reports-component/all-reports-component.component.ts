@@ -261,14 +261,20 @@ export class AllReportsComponentComponent {
     return 0;
   }
 
+  // onCategorySelect(category: string) {
+  //   this.selectedCategory = category;
+  //   this.availableOptions = this.data[category];
+  //   this.selectedOption = null;
+  //   this.showOptionDropdown = true;
+
+  // }
+
   onCategorySelect(category: string) {
-    this.selectedCategory = category;
-    this.availableOptions = this.data[category];
-    this.selectedOption = null;
-    this.showOptionDropdown = true;
-
-  }
-
+  this.selectedCategory = category;
+  this.availableOptions = this.data[category] || [];
+  this.selectedOption = ''; // not mandatory
+  this.showOptionDropdown = true;
+}
   filterTableData() {
     this.paginatedData = this.tableData.filter(row => {
       let matches = true;
@@ -431,17 +437,6 @@ export class AllReportsComponentComponent {
     for (let i = start; i <= end; i++) this.pageNumbers.push(i);
   }
 
-  // goToPage(page: number) {
-  //   if (page >= 1 && page <= this.totalPages) {
-  //     this.currentPage = page;
-  //     this.updatePaginatedData();
-  //     this.generatePageNumbers();
-  //   }
-  // }
-
-  // goToPrevious() { if (this.currentPage > 1) this.goToPage(this.currentPage - 1); }
-  // goToNext() { if (this.currentPage < this.totalPages) this.goToPage(this.currentPage + 1); }
-  // onItemsPerPageChange(event: any) { this.itemsPerPage = +event.target.value; this.currentPage = 1; this.updatePagination(); }
 
 
   navigateToAddCase() { this.router.navigate([`/demographic/0/0`]); }
@@ -453,20 +448,6 @@ export class AllReportsComponentComponent {
     this.router.navigate([`/case-stage-view/${patientID}`]);
   }
 
-  // categoryPropMap: Record<string, string> = {
-  //   "Age": "age",
-  //   "Education": "education",
-  //   "Occupation": "occupation",
-  //   "Place Type": "placeType",
-  //   "Socioeconomic Status": "socioeconomicStatus",
-  //   "Annual Family Income (Rupees)": "familyIncome",
-  //   "Chief complaints": "chiefComplaint",
-  //   "Heartburn": "rNocturnal",
-  //   "Regurgitation": "rNocturnalq",
-  //   "Retrosternal Pain": "retrosternalPain",
-  //   "Acid Taste in mouth": "acidTasteInMouth",
-  //   "Diet": "Diet",
-  // };
 
 
   urlStr: string = '';
@@ -614,6 +595,591 @@ export class AllReportsComponentComponent {
     this.http.httpGet(apiUrl).subscribe({
       next: (res: any) => {
         const data = res?.data || [];
+
+        // Category selected and SubCategory not selected
+if (category && !option) {
+
+  let filteredData = [...data];
+
+  // Apply common filters
+  if (this.selectedZone) {
+    filteredData = filteredData.filter(
+      x => x.zone?.trim().toLowerCase() ===
+      this.selectedZone.trim().toLowerCase()
+    );
+  }
+
+  if (this.selectedState) {
+    filteredData = filteredData.filter(
+      x => x.state?.trim().toLowerCase() ===
+      this.selectedState?.name.trim().toLowerCase()
+    );
+  }
+
+  if (this.selectedCity) {
+    filteredData = filteredData.filter(
+      x => x.city?.trim().toLowerCase() ===
+      this.selectedCity?.name.trim().toLowerCase()
+    );
+  }
+
+  if (this.selectedGender) {
+    filteredData = filteredData.filter(
+      x => x.gender?.trim().toLowerCase() ===
+      this.selectedGender.trim().toLowerCase()
+    );
+  }
+
+  if (this.selectedStage) {
+
+    const stageNumbers =
+      this.stageMapping[this.selectedStage] || [];
+
+    filteredData = filteredData.filter(
+      x => stageNumbers.includes(Number(x.stage))
+    );
+  }
+
+  const counts: any = {};
+
+  this.availableOptions.forEach((opt:string)=>{
+    counts[opt]=0;
+  });
+
+  // Age special handling
+  if(category==="Age"){
+
+    filteredData.forEach((item:any)=>{
+
+      const age=Number(item.age);
+
+      if(age>=18 && age<=30) counts["18-30"]++;
+      else if(age>=31 && age<=40) counts["31-40"]++;
+      else if(age>=41 && age<=50) counts["41-50"]++;
+      else if(age>=51 && age<=60) counts["51-60"]++;
+      else if(age>=61 && age<=70) counts["61-70"]++;
+      else if(age>=71 && age<=80) counts["71-80"]++;
+      else if(age>80) counts[">80"]++;
+
+    });
+
+  }
+  // else{
+
+  //   // Generic handling for all remaining categories
+  //   this.availableOptions.forEach((opt:string)=>{
+
+  //     const count=filteredData.filter((x:any)=>
+  //       JSON.stringify(x)
+  //       .toLowerCase()
+  //       .includes(opt.toLowerCase())
+  //     ).length;
+
+  //     counts[opt]=count;
+
+  //   });
+
+  // }
+
+  else {
+
+const fieldMap: any = {
+
+  // Normal fields
+  "Education":"education",
+  "Occupation":"occupation",
+  "Place Type":"placeType",
+  "Socioeconomic Status":"socioeconomicStatus",
+  "Annual Family Income (Rupees)":"familyIncome",
+  "Sleep Apnea":"sleepApneayes",
+  "Computer Use":"computerUsed",
+  "Smartphone Use":"smartphoneUsed",
+  "Working Hours (Occupation)":"workingHours",
+  "Job/ Occupation type":"jobType",
+  "Los Angeles Grade":"eeAngelesGrade",
+  "Hill’s classification Grade":"eeHillClassificationGrade",
+
+  // Heartburn type fields
+  "Heartburn":"hbPostural",
+  "Regurgitation":"rPostural",
+  "Retrosternal Pain":"rpPostural",
+  "Acid Taste in mouth":"atPostural",
+"Newly Diagnosed":"newlyDiagnosed",
+"Known case of GERD":"knownCaseOfGerd",
+"GERDType":"gerdType",
+"RefractorytoPPI":"refractoryToPpi",
+"AdherencetoTherapy":"adherenceToTherapy",
+};
+
+const field=fieldMap[category];
+
+if(
+field || 
+category==="COMORBIDITIES" || 
+category==="Diet" ||
+category==="Patient Personal History" ||
+category==="Exercise" ||
+
+category==="Computer Usage (hrs/day)" ||
+category==="Computer Usage Duration (years)" ||
+category==="Smartphone Usage (hrs/day)" ||
+category==="Smartphone Usage Duration (years)" ||
+category==="Duration (No. of years in the above working hours)"  ||
+ category==="Family History of GERD" ||
+ category==="Family History of Esophago-gastric Cancer" ||
+ category==="PPI Usage" ||
+ category==="History of Endoscopy" ||
+ category==="History of Gastro-surgery" ||
+ category==="Bariatric Surgery" ||
+ category==="Fundoplication Surgery" ||
+ category==="Gastric POEM Surgery" ||
+ category==="Gastrojejunostomy" ||
+ category==="Other Gastro Surgery" ||
+category==="Newly Diagnosed"
+||
+category==="Known case of GERD"
+||
+category==="GERDType"
+||
+category==="RefractorytoPPI"
+||
+category==="AdherencetoTherapy" ||
+category==="Lifestyle Recommendations" ||
+category==="Drug Therapy Advised"
+
+){
+
+this.availableOptions.forEach((opt:string)=>{
+
+counts[opt]=filteredData.filter((item:any)=>{
+
+const isYes=(v:any)=>{
+ return v===true ||
+        v==="true" ||
+        v==="True" ||
+        v==="Yes" ||
+        v==="yes" ||
+        v===1 ||
+        v==="1";
+}
+
+
+/* DIET */
+
+if(category==="Diet"){
+
+const dietMap:any={
+
+'Vegetarian':'dietVegetarian',
+'Non-Vegetarian':'dietNonVegetarian'
+
+};
+
+const fieldName=dietMap[opt];
+
+if(!fieldName) return false;
+
+return isYes(item[fieldName]);
+
+}
+
+/* Drug Therapy Advised */
+
+if(category==="Drug Therapy Advised"){
+
+const drugMap:any={
+
+'PPI':'ppiMedicationName',
+'Combination of PPI + Prokinetics':'prokineticsMedicationName',
+'Sucralfate':'sucralfateMedicationName',
+'Alginate':'alginateMedicationName',
+'H₂ Blockers':'h2blockersMedicationName',
+'H₂ Blockers combinations':'h2blockersCMedicationName',
+'PCAB':'pcabMedicationName',
+'Any others':'othersMedicationName'
+
+};
+
+const fieldName=drugMap[opt];
+
+if(!fieldName) return false;
+
+/* check value exists */
+return item[fieldName] &&
+       item[fieldName]
+       .toString()
+       .trim()!=="";
+
+}
+
+/* USAGE / YEARS COMMON HANDLING */
+
+if(
+ category==="Computer Usage (hrs/day)" ||
+ category==="Computer Usage Duration (years)" ||
+ category==="Smartphone Usage (hrs/day)" ||
+ category==="Smartphone Usage Duration (years)" ||
+ category==="Duration (No. of years in the above working hours)"
+)
+{
+const fieldMap:any={
+
+"Computer Usage (hrs/day)":"computerFrequency",
+"Computer Usage Duration (years)":"computerDurationYears",
+"Smartphone Usage (hrs/day)":"smartphoneFrequency",
+"Smartphone Usage Duration (years)":"smartphoneDurationYears",
+"Duration (No. of years in the above working hours)":"totalWorkingYears"
+
+};
+
+const fieldName=fieldMap[category];
+
+const value=parseFloat(item[fieldName] || 0);
+
+if(opt==="0-1"){
+ return value>=0 && value<=1;
+}
+
+if(opt==="1-5"){
+ return value>1 && value<=5;
+}
+
+if(opt==="5-10"){
+ return value>5 && value<=10;
+}
+
+if(opt==="10-15"){
+ return value>10 && value<=15;
+}
+
+if(opt==="15-20"){
+ return value>15 && value<=20;
+}
+
+if(opt==="20-120"){
+ return value>20 && value<=120;
+}
+
+return false;
+}
+/* Heartburn */
+
+/* PATIENT PERSONAL HISTORY */
+
+/* PATIENT PERSONAL HISTORY */
+if(category==="Lifestyle Recommendations"){
+
+const lifestyleMap:any={
+
+'Diet modification':'dietModifications',
+'Moderation of alcohol':'moderationOfAlcohol',
+'Weight loss':'weightLoss',
+'Regular exercise':'regularExercise',
+'Stop Tobacco use':'stopTobaccoUse'
+
+};
+
+const fieldName=lifestyleMap[opt];
+
+if(!fieldName) return false;
+
+return isYes(item[fieldName]);
+}
+
+if(category==="Patient Personal History"){
+
+const personalHistoryMap:any={
+
+'Aerated Drinks':'aeratedIntake',
+'Coffee':'coffeeIntake',
+'Tea':'teaIntake',
+'Spicy food':'spicyIntake',
+'Alcohol':'alcoholIntake',
+'Chocolates/ sweets':'sweetsIntake',
+'Smoking (cigarettes/day)':'smokingIntake',
+'Tobacco (other forms/day)':'tobaccoIntake'
+
+};
+
+const fieldName = personalHistoryMap[opt];
+
+if(!fieldName) return false;
+
+return isYes(item[fieldName]);
+
+}
+
+else if(
+ category==="Family History of GERD" ||
+ category==="Family History of Esophago-gastric Cancer" ||
+ category==="PPI Usage" ||
+ category==="History of Endoscopy" ||
+ category==="History of Gastro-surgery" ||
+ category==="Bariatric Surgery" ||
+ category==="Fundoplication Surgery" ||
+ category==="Gastric POEM Surgery" ||
+ category==="Gastrojejunostomy" ||
+ category==="Other Gastro Surgery"
+){
+
+const yesNoMap:any={
+
+"Family History of GERD":"fhGred",
+"Family History of Esophago-gastric Cancer":"fhEgc",
+"PPI Usage":"ghPpi",
+"History of Endoscopy":"historyofEndoscopy",
+"History of Gastro-surgery":"historyofGs",
+"Bariatric Surgery":"gsBariatricSurgery",
+"Fundoplication Surgery":"gsFundoplicationSurgery",
+"Gastric POEM Surgery":"gsGastricPoemsurgery",
+"Gastrojejunostomy":"gsGastrojejunostomy",
+"Other Gastro Surgery":"gsOther"
+
+};
+
+const fieldName=yesNoMap[category];
+
+if(!fieldName) return false;
+
+if(opt==="Yes"){
+   return isYes(item[fieldName]);
+}
+
+if(opt==="No"){
+   return !isYes(item[fieldName]);
+}
+
+return false;
+
+}/* SLEEP APNEA */
+
+/* CURRENT MEDICATIONS */
+
+if(category==="Current Medications"){
+
+const medicationMap:any={
+
+"PPI":"ppi",
+"Combination of PPI + Prokinetics":"ppiProkinetics",
+"Sucralfate":"sucralfate",
+"Alginate":"alginate",
+"H₂ Blockers":"h2Blockers",
+"H₂ Blockers combinations":"h2BlockersCombinations",
+"PCAB":"pcab",
+"Any others":"otherMedications"
+
+};
+
+const fieldName=medicationMap[opt];
+
+return isYes(item[fieldName]);
+
+}
+if(category==="Sleep Apnea"){
+
+if(opt==="Yes"){
+   return isYes(item.sleepApneayes);
+}
+
+if(opt==="No"){
+   return !isYes(item.sleepApneayes);
+}
+
+return false;
+
+}
+if(category==="Heartburn"){
+ return opt==="Postural"
+ ? isYes(item.hbPostural)
+ : isYes(item.hbNocturnal);
+}
+
+if(category==="Regurgitation"){
+ return opt==="Postural"
+ ? isYes(item.rPostural)
+ : isYes(item.rNocturnal);
+}
+
+if(category==="Retrosternal Pain"){
+ return opt==="Postural"
+ ? isYes(item.rpPostural)
+ : isYes(item.rpNocturnal);
+}
+
+if(category==="Acid Taste in mouth"){
+ return opt==="Postural"
+ ? isYes(item.atPostural)
+ : isYes(item.atNocturnal);
+}
+
+/* EXERCISE */
+
+if(category==="Exercise"){
+
+const exerciseMap:any={
+
+'Walking':'walkingSelectedyes',
+'Jogging':'joggingSelectedyes',
+'Gym':'gymSelectedyes',
+'Yoga':'yogaSelectedyes',
+'Aerobics':'aerobicsyes',
+'Zumba':'zumbayes',
+'Others':'othersyes'
+
+};
+
+const fieldName=exerciseMap[opt];
+
+if(!fieldName) return false;
+
+return isYes(item[fieldName]);
+
+}
+
+/* COMORBIDITIES */
+
+if(category==="COMORBIDITIES"){
+
+const comorbidityMap:any={
+
+'Hypertension':'htPresent',
+'Diabetes':'dbPresent',
+'Dyslipidemia':'ddPresent',
+'Chronic liver disease':'cldPresent',
+'Neurological Disorder':'ndPresent',
+'Cardiovascular disorders':'cdPresent',
+'Hypothyroidism':'hPresent',
+'Hyperthyroidism':'htdPresent',
+'Behavioural disorders':'bdPresent',
+'Chronic kidney disease':'ckdPresent',
+'Asthma':'aPresent',
+'Osteoarthritis':'oPresent',
+'Rheumatoid arthritis':'raPresent',
+'Systemic Sclerosis':'ssPresent',
+'Cancer':'cPresent',
+'Others':'cmoPresent'
+
+};
+
+const fieldName=comorbidityMap[opt];
+
+if(!fieldName) return false;
+
+return isYes(item[fieldName]);
+
+}
+
+
+/* Normal Categories */
+
+let value=item[field];
+
+if(value===true) value="Yes";
+if(value===false) value="No";
+
+const normalize=(str:any)=>{
+
+let value=str?.toString()?.trim();
+
+if(!value) return '';
+
+/* Education */
+
+if(value==="10th Std & Above")
+ value="Above Tenth standard";
+
+if(value==="Below 10th Std")
+ value="Below Tenth standard";
+
+/* Occupation */
+
+if(value==="Non-sedentary")
+ value="Non sedentary";
+
+/* Income */
+
+if(
+value.toLowerCase().includes("less than")
+||
+value.includes("<")
+){
+ value="< 1 lakh";
+}
+
+if(
+value.toLowerCase().includes("1 to 5")
+||
+value.toLowerCase().includes("1-5")
+){
+ value="1-5 lakhs";
+}
+
+if(
+value.toLowerCase().includes("greater than")
+||
+value.includes(">")
+){
+ value="> 5 lakhs";
+}
+
+return value
+.toLowerCase()
+.replace(/[\u2010-\u2015\u2212]/g,'-')
+.replace(/[-\s]+/g,'');
+
+}
+
+return normalize(value)===normalize(opt);
+
+}).length;
+
+});
+}
+
+}
+  this.pieChartData={
+    labels:Object.keys(counts),
+    datasets:[
+      {
+        data:Object.values(counts),
+        backgroundColor:[
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#4BC0C0',
+          '#9966FF',
+          '#FF9F40',
+          '#8BC34A'
+        ]
+      }
+    ]
+  };
+
+  this.barChartData={
+    labels:Object.keys(counts),
+    datasets:[
+      {
+        label:category,
+        data:Object.values(counts),
+        backgroundColor:[
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#4BC0C0',
+          '#9966FF',
+          '#FF9F40',
+          '#8BC34A'
+        ]
+      }
+    ]
+  };
+
+  this.tableData = filteredData;
+
+  this.updatePagination();
+
+  return;
+}
         if (category === 'Exercise' && option) {
           const isYes = (value: any) =>
             value === true || value === 'true' || value?.toString().toLowerCase() === 'yes';
@@ -725,20 +1291,6 @@ export class AllReportsComponentComponent {
             'Smoking (cigarettes/day)': 'smokingIntake',
             'Tobacco (other forms/day)': 'tobaccoIntake'
           };
-
-          // const SleepMap: Record<string, string> = {
-          //   'Exercise (Yes)': 'exerciseIntakeyes',
-          //   'Exercise (No)': 'exerciseIntakeno',
-          //   'Jogging': 'joggingSelectedyes',
-          //   'Gym': 'gymSelectedyes',
-          //   'Yoga': 'yogaSelectedyes',
-          //   'Walking': 'walkingSelectedyes',
-          //   'Aerobics': 'aerobicsyes',
-          //   'Zumba': 'zumbayes',
-          //   'Others': 'othersyes'
-          // };
-
-
 
 
           const GadgetMap: Record<string, string> = {
@@ -1487,24 +2039,52 @@ export class AllReportsComponentComponent {
             };
           }
 
-          else if (category === 'Newly Diagnosed') {
-            const filteredData = data.filter((r: any) =>
-              (option === 'Yes' && r.newlyDiagnosed === true) ||
-              (option === 'No' && r.newlyDiagnosed === false)
-            );
+else if (category === 'Newly Diagnosed') {
 
-            this.tableData = filteredData;
+const isYes=(v:any)=>{
+ return v===true ||
+        v==="true" ||
+        v==="True" ||
+        v==="Yes" ||
+        v==="yes" ||
+        v===1 ||
+        v==="1";
+};
 
-            this.pieChartData = {
-              labels: [option],
-              datasets: [{ data: [filteredData.length], backgroundColor: ['#FF6384'] }]
-            };
+const filteredData=data.filter((r:any)=>
+(
+ option==="Yes" && isYes(r.newlyDiagnosed)
+)
+||
+(
+ option==="No" && !isYes(r.newlyDiagnosed)
+)
+);
 
-            this.barChartData = {
-              labels: [option],
-              datasets: [{ data: [filteredData.length], backgroundColor: ['#4BC0C0'] }]
-            };
-          }
+this.tableData=filteredData;
+
+this.pieChartData={
+ labels:[option],
+ datasets:[
+ {
+   data:[filteredData.length],
+   backgroundColor:['#FF6384']
+ }
+ ]
+};
+
+this.barChartData={
+ labels:[option],
+ datasets:[
+ {
+   label:category,
+   data:[filteredData.length],
+   backgroundColor:['#4BC0C0']
+ }
+ ]
+};
+
+}
 
           else if (category === 'Known case of GERD') {
             const filteredData = data.filter((r: any) =>
@@ -1848,48 +2428,145 @@ export class AllReportsComponentComponent {
 
   }
 
-  applyFilter(): void {
+  // applyFilter(): void {
 
-    if (this.selectedCategory && !this.selectedOption) {
-      alert('Please select an sub_category for the selected category.');
-      return;
-    }
-    this.filteredData = [...this.allRecords];
+  //   if (this.selectedCategory && !this.selectedOption) {
+  //     alert('Please select an sub_category for the selected category.');
+  //     return;
+  //   }
+  //   this.filteredData = [...this.allRecords];
 
-    if (this.selectedCategory && this.selectedOption) {
-      this.filteredData = this.filteredData.filter(
-        d => d[this.selectedCategory!] === this.selectedOption
-      );
-    }
+  //   if (this.selectedCategory && this.selectedOption) {
+  //     this.filteredData = this.filteredData.filter(
+  //       d => d[this.selectedCategory!] === this.selectedOption
+  //     );
+  //   }
 
-    if (this.selectedZone) {
-      this.filteredData = this.filteredData.filter(d => d.zone === this.selectedZone);
-    }
+  //   if (this.selectedZone) {
+  //     this.filteredData = this.filteredData.filter(d => d.zone === this.selectedZone);
+  //   }
 
-    if (this.selectedState?.name) {
-      this.filteredData = this.filteredData.filter(d => d.state === this.selectedState!.name);
-    }
+  //   if (this.selectedState?.name) {
+  //     this.filteredData = this.filteredData.filter(d => d.state === this.selectedState!.name);
+  //   }
 
-    if (this.selectedCity?.name) {
-      this.filteredData = this.filteredData.filter(d => d.city === this.selectedCity!.name);
-    }
+  //   if (this.selectedCity?.name) {
+  //     this.filteredData = this.filteredData.filter(d => d.city === this.selectedCity!.name);
+  //   }
 
-    if (this.selectedGender) {
-      this.filteredData = this.filteredData.filter(d => d.gender === this.selectedGender);
-    }
+  //   if (this.selectedGender) {
+  //     this.filteredData = this.filteredData.filter(d => d.gender === this.selectedGender);
+  //   }
 
-    if (this.selectedStage) {
-      this.filteredData = this.filteredData.filter(d => d.stage === this.selectedStage);
-    }
+  //   if (this.selectedStage) {
+  //     this.filteredData = this.filteredData.filter(d => d.stage === this.selectedStage);
+  //   }
 
-    if (this.selectedCategory) {
-      this.loadPiechar(this.selectedCategory, this.selectedOption || undefined);
-    }
+  //   if (this.selectedCategory) {
+  //     this.loadPiechar(this.selectedCategory, this.selectedOption || undefined);
+  //   }
 
 
+  // }
+
+
+  applyFilter() {
+  // Category + SubCategory selected
+  if (this.selectedCategory && this.selectedOption) {
+    this.loadPiechar(
+      this.selectedCategory,
+      this.selectedOption
+    );
+    return;
   }
 
+  // Category only selected
+  if (this.selectedCategory && !this.selectedOption) {
+    this.loadPiechar(
+      this.selectedCategory
+    );
+    return;
+  }
 
+  // No category selected → load all patients
+  this.http.httpGet(API_URLS.PATIENT_REG_GET)
+    .subscribe({
+      next:(res:any)=>{
+
+        let data = res?.data || [];
+
+        // Zone filter
+        if(this.selectedZone){
+          data = data.filter((x:any)=>
+            x.zone?.trim().toLowerCase()
+            === this.selectedZone.trim().toLowerCase()
+          );
+        }
+
+        // State filter
+        if(this.selectedState){
+          data = data.filter((x:any)=>
+            x.state?.trim().toLowerCase()
+            === this.selectedState?.name.trim().toLowerCase()
+          );
+        }
+
+        // City filter
+        if(this.selectedCity){
+          data = data.filter((x:any)=>
+            x.city?.trim().toLowerCase()
+            === this.selectedCity?.name.trim().toLowerCase()
+          );
+        }
+
+        // Gender filter
+        if(this.selectedGender){
+          data=data.filter((x:any)=>
+            x.gender?.trim().toLowerCase()
+            === this.selectedGender.trim().toLowerCase()
+          );
+        }
+
+        // Stage filter
+        if(this.selectedStage){
+          const stageNumbers =
+          this.stageMapping[this.selectedStage] || [];
+
+          data = data.filter((x:any)=>
+            stageNumbers.includes(Number(x.stage))
+          );
+        }
+
+        this.tableData=data;
+
+        // update table
+        this.updatePagination();
+
+        // update chart
+        this.pieChartData={
+          labels:['Patients'],
+          datasets:[
+            {
+              data:[data.length],
+              backgroundColor:['#36A2EB']
+            }
+          ]
+        };
+
+        this.barChartData={
+          labels:['Patients'],
+          datasets:[
+            {
+              label:'Count',
+              data:[data.length],
+              backgroundColor:['#36A2EB']
+            }
+          ]
+        };
+
+      }
+    })
+}
   updateCharts() {
     this.pieChartData = {
       labels: ['Filtered Data'],

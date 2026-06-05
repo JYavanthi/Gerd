@@ -193,6 +193,22 @@
   },
   {
     "ContainingType": "Gred.Controllers.AuthController",
+    "Method": "ForgotPassword",
+    "RelativePath": "api/Auth/forgot-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Gred.Models.Data.Entities.EForgotPasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/Auth/login",
     "HttpMethod": "POST",
@@ -202,6 +218,22 @@
       {
         "Name": "login",
         "Type": "Gred.Data.Entities.ELogin",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.AuthController",
+    "Method": "ResetPassword",
+    "RelativePath": "api/Auth/reset-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Gred.Models.Data.Entities.EResetPasswordRequest",
         "IsRequired": true
       }
     ],
@@ -303,6 +335,16 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "CityController",
+    "Method": "GetCities",
+    "RelativePath": "api/City/GetCities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "CityController",
@@ -709,6 +751,43 @@
       {
         "Name": "caseModel",
         "Type": "Case",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.EmailReminderController",
+    "Method": "GetByPatient",
+    "RelativePath": "api/EmailReminder/GetByPatient/{patientId}/{stage}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "stage",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gred.Controllers.EmailReminderController",
+    "Method": "SaveOrUpdate",
+    "RelativePath": "api/EmailReminder/SaveOrUpdate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "log",
+        "Type": "gred.Models.EmailReminderLog",
         "IsRequired": true
       }
     ],

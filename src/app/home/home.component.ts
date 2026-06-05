@@ -17,6 +17,15 @@ import {
 export class HomeComponent {
   showTimings: boolean = false;
   isFullscreen: boolean = false;
-  router: any;
-  constructor() {}
+constructor(private router: Router) {}
+
+  aboutRegistory() {
+  this.router.navigate(['/gerdregistry']);
+}
+guideline() {
+  this.router.navigate(['/guideline']);
+}
+contactUs() {
+  this.router.navigate(['/contact-us']);
+}
 }

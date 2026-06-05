@@ -67,38 +67,101 @@ export class ChiefComplaintComponent implements OnInit {
   doctorId: number = 0;
   ageInMonths: number = 0;
   private routerSub!: Subscription;
+  // ngOnInit(): void {
+
+  //   this.patientId = Number(this.route.snapshot.params['patientId']);
+  //   this.stage = Number(this.route.snapshot.params['stage'] || 0);
+  //   this.doctorId = this.patientService.getDoctorId();
+  //   if (this.stage === 2) { this.cctext = 'Data seen here is as per  information keyed  in baseline. To be edited as per the current complaint' }
+  //   else if (this.stage === 4) { this.cctext = 'Data seen here is as per  information keyed  in follow-up1. To be edited as per the current complaint' }
+  //   else { this.cctext = '' }
+
+  //   const allowedWithoutSave = [1, 3, 5];
+  //   if (allowedWithoutSave.includes(this.stage)) {
+  //     this.isSaved = true;
+  //   }
+
+  //   if (this.patientId !== 0)
+  //     this.fetchChiefComplaintData(this.patientId);
+
+  //   // Age is stored in localStorage from Demographic component
+  //   const storedAge = localStorage.getItem('Age');
+  //   if (storedAge) {
+  //     const age = JSON.parse(storedAge).age; // age in years
+  //     this.ageInMonths = age * 12;            // convert years → months
+  //     console.log('Age in months:', this.ageInMonths);
+  //   }
+
+  //   for (let i = 0; i < this.pushStateCount; i++) {
+  //     history.pushState({ antiBack: true, idx: i }, '', window.location.href);
+  //   }
+  //   history.replaceState({ top: true }, '', window.location.href);
+
+
+  // }
+
   ngOnInit(): void {
 
-    this.patientId = Number(this.route.snapshot.params['patientId']);
-    this.stage = Number(this.route.snapshot.params['stage'] || 0);
-    this.doctorId = this.patientService.getDoctorId();
-    if (this.stage === 2) { this.cctext = 'Data seen here is as per  information keyed  in baseline. To be edited as per the current complaint' }
-    else if (this.stage === 4) { this.cctext = 'Data seen here is as per  information keyed  in follow-up1. To be edited as per the current complaint' }
-    else { this.cctext = '' }
+  this.patientId = Number(this.route.snapshot.params['patientId']);
+  this.stage = Number(this.route.snapshot.params['stage'] || 0);
+  this.doctorId = this.patientService.getDoctorId();
 
-    const allowedWithoutSave = [1, 3, 5];
-    if (allowedWithoutSave.includes(this.stage)) {
-      this.isSaved = true;
-    }
+  if (this.stage === 2) {
+    this.cctext =
+      'Data seen here is as per information keyed in baseline. To be edited as per the current complaint';
+  }
+  else if (this.stage === 4) {
+    this.cctext =
+      'Data seen here is as per information keyed in follow-up1. To be edited as per the current complaint';
+  }
+  else {
+    this.cctext = '';
+  }
 
-    if (this.patientId !== 0)
-      this.fetchChiefComplaintData(this.patientId);
+  const allowedWithoutSave = [1, 3, 5];
 
-    // Age is stored in localStorage from Demographic component
-    const storedAge = localStorage.getItem('Age');
-    if (storedAge) {
-      const age = JSON.parse(storedAge).age; // age in years
-      this.ageInMonths = age * 12;            // convert years → months
-      console.log('Age in months:', this.ageInMonths);
-    }
+  if (allowedWithoutSave.includes(this.stage)) {
+    this.isSaved = true;
+  }
 
-    for (let i = 0; i < this.pushStateCount; i++) {
-      history.pushState({ antiBack: true, idx: i }, '', window.location.href);
-    }
-    history.replaceState({ top: true }, '', window.location.href);
+  // Fetch Chief Complaint Data
+  if (this.patientId !== 0) {
+    this.fetchChiefComplaintData(this.patientId);
+  }
 
+  // Get Age from localStorage
+  const storedAge = localStorage.getItem('Age');
+
+  if (storedAge) {
+
+    const parsedAge = JSON.parse(storedAge);
+
+    this.ageInMonths = Number(parsedAge.age) * 12;
+
+    console.log('Age in months:', this.ageInMonths);
+
+  } else {
+
+    console.warn('Age not found in localStorage');
 
   }
+
+  // Prevent Back Navigation
+  for (let i = 0; i < this.pushStateCount; i++) {
+    history.pushState(
+      { antiBack: true, idx: i },
+      '',
+      window.location.href
+    );
+  }
+
+  history.replaceState(
+    { top: true },
+    '',
+    window.location.href
+  );
+
+}
 @HostListener('window:popstate', ['$event'])
   onPopState(event: PopStateEvent) {
 
@@ -183,9 +246,19 @@ export class ChiefComplaintComponent implements OnInit {
     this.chiefComplaintService.getChiefComplaintByPatientId(patientId, this.stage).subscribe({
       next: (res: any) => {
         if (this.stage === 2 || this.stage === 4) this.stageval = this.stage;
+        // if (res.type === 'S' && res.data) {
+        //   // this.isSaved = false;
+        //   const data = res.data;
+
         if (res.type === 'S' && res.data) {
-          // this.isSaved = false;
-          const data = res.data;
+
+  this.ageInMonths = Number(res.data.age) * 12;
+
+  console.log('Age in months from API:', this.ageInMonths);
+
+  // this.isSaved = false;
+
+  const data = res.data;
           // console.log('✅ Chief Complaint data:', data);
           this.stage = data.stage;
           this.cheifCompliantID = res.data.cheifCompliantID;
@@ -208,7 +281,8 @@ export class ChiefComplaintComponent implements OnInit {
             nocturnal_AT: data.atNocturnal
           });
 
-        } else {
+        }
+         else {
           if (this.stageval === 2) this.stage = 1
           if (this.stageval === 4) this.stage = 3
           // console.log('this.stageval', this.stageval, this.stage)

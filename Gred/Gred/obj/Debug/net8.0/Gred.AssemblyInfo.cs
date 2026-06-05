@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Gred")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6e7c20b937834e0a14b0df564146a039c87a2285")]
 [assembly: System.Reflection.AssemblyProductAttribute("Gred")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Gred")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

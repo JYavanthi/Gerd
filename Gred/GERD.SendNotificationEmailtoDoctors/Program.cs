@@ -83,82 +83,192 @@ namespace AutoEmailNotification
           var patientsForDoctor = cases.Where(p => p.DoctorId == doctor.DoctorId).ToList();
           var duePatients = new List<(Patient, string, DateTime, DateTime, int, string)>();
 
-          foreach (var p in patientsForDoctor)
-          {
-            DateTime dueDate, createdDate;
-            string stageText = "", subjectNo = "";
-            bool isDue = false;
-            bool shouldSend = false;
+          // foreach (var p in patientsForDoctor)
+          // {
+          //   DateTime dueDate, createdDate;
+          //   string stageText = "", subjectNo = "";
+          //   bool isDue = false;
+          //   bool shouldSend = false;
 
-            // --- Determine Stage and Due Date ---
-            if (p.Stage == 0)
-            {
-              dueDate = p.CreatedDt.AddDays(16);
-              createdDate = p.CreatedDt;
-              stageText = "Baseline";
-              isDue = dueDate <= today;
-              subjectNo = p.SubjectNo;
-            }
-            else if (p.Stage == 1 && p.BlSubmitted != null)
-            {
-              dueDate = p.BlSubmitted.Value.AddDays(46);
-              createdDate = p.BlSubmitted.Value;
-              stageText = "Follow-up 1";
-              isDue = dueDate <= today;
-              subjectNo = p.SubjectNo;
-            }
-            else if (p.Stage == 3 && p.Fu1Submitted != null)
-            {
-              dueDate = p.Fu1Submitted.Value.AddDays(76);
-              createdDate = p.Fu1Submitted.Value;
-              stageText = "Follow-up 2";
-              isDue = dueDate <= today;
-              subjectNo = p.SubjectNo;
-            }
-            else continue;
+          //   // --- Determine Stage and Due Date ---
+          //   if (p.Stage == 0)
+          //   {
+          //     dueDate = p.CreatedDt.AddDays(16);
+          //     createdDate = p.CreatedDt;
+          //     stageText = "Baseline";
+          //     isDue = dueDate <= today;
+          //     subjectNo = p.SubjectNo;
+          //   }
+          //   else if (p.Stage == 1 && p.BlSubmitted != null)
+          //   {
+          //     dueDate = p.BlSubmitted.Value.AddDays(46);
+          //     createdDate = p.BlSubmitted.Value;
+          //     stageText = "Follow-up 1";
+          //     isDue = dueDate <= today;
+          //     subjectNo = p.SubjectNo;
+          //   }
+          //   else if (p.Stage == 3 && p.Fu1Submitted != null)
+          //   {
+          //     dueDate = p.Fu1Submitted.Value.AddDays(76);
+          //     createdDate = p.Fu1Submitted.Value;
+          //     stageText = "Follow-up 2";
+          //     isDue = dueDate <= today;
+          //     subjectNo = p.SubjectNo;
+          //   }
+          //   else continue;
 
-            if (!isDue) continue;
+          //   if (!isDue) continue;
 
-            int dueDays = (int)Math.Ceiling((today - dueDate).TotalDays);
+          //   int dueDays = (int)Math.Ceiling((today - dueDate).TotalDays);
 
-            // --- Reminder Logic ---
-            var reminderLog = await GetReminderLog(http, p.PatientId, p.Stage);
+          //   // --- Reminder Logic ---
+          //   var reminderLog = await GetReminderLog(http, p.PatientId, p.Stage);
 
-            if (reminderLog == null)
-            {
-              shouldSend = true;
-              reminderLog = new EmailReminderLog
-              {
-                PatientId = p.PatientId,
-                DoctorId = doctor.DoctorId,
-                Stage = p.Stage,
-                ReminderCount = 1,
-                LastSentDate = today,
-                DueDays = dueDays,
-                InitationOrSubmittedDate = createdDate
-              };
-            }
-            else if (reminderLog.ReminderCount == 1 && reminderLog.LastSentDate <= today.AddDays(-7))
-            {
-              shouldSend = true;
-              reminderLog.ReminderCount = 2;
-              reminderLog.LastSentDate = today;
-              reminderLog.DueDays = dueDays;
-            }
+          //   if (reminderLog == null)
+          //   {
+          //     shouldSend = true;
+          //     reminderLog = new EmailReminderLog
+          //     {
+          //       PatientId = p.PatientId,
+          //       DoctorId = doctor.DoctorId,
+          //       Stage = p.Stage,
+          //       ReminderCount = 1,
+          //       LastSentDate = today,
+          //       DueDays = dueDays,
+          //       InitationOrSubmittedDate = createdDate
+          //     };
+          //   }
+          //   else if (reminderLog.ReminderCount == 1 && reminderLog.LastSentDate <= today.AddDays(-7))
+          //   {
+          //     shouldSend = true;
+          //     reminderLog.ReminderCount = 2;
+          //     reminderLog.LastSentDate = today;
+          //     reminderLog.DueDays = dueDays;
+          //   }
 
-            if (shouldSend)
-            {
-              // Add this patient to list for combined email
-              duePatients.Add((p, stageText, createdDate, dueDate, dueDays, subjectNo));
+          //   if (shouldSend)
+          //   {
+          //     // Add this patient to list for combined email
+          //     duePatients.Add((p, stageText, createdDate, dueDate, dueDays, subjectNo));
 
-              // Save or update reminder log now
-              await SaveOrUpdateReminder(http, reminderLog);
+          //     // Save or update reminder log now
+          //     await SaveOrUpdateReminder(http, reminderLog);
 
-              Console.WriteLine($"Added {p.Initial} ({stageText}) for Dr. {doctor.Name} - Reminder #{reminderLog.ReminderCount}");
-            }
+          //     Console.WriteLine($"Added {p.Initial} ({stageText}) for Dr. {doctor.Name} - Reminder #{reminderLog.ReminderCount}");
+          //   }
 
-          }
+          // }
 
+foreach (var p in patientsForDoctor)
+{
+    DateTime dueDate, createdDate;
+    string stageText = "", subjectNo = "";
+    bool isDue = false;
+    bool shouldSend = false;
+
+    // --- Determine Stage and Due Date ---
+
+    if (p.Stage == 0)
+    {
+        dueDate = p.CreatedDt.AddDays(15);
+        createdDate = p.CreatedDt;
+        stageText = "Baseline";
+        isDue = dueDate <= today;
+        subjectNo = p.SubjectNo;
+    }
+    else if (p.Stage == 1 && p.BlSubmitted != null)
+    {
+        dueDate = p.BlSubmitted.Value.AddDays(45);
+        createdDate = p.BlSubmitted.Value;
+        stageText = "Follow-up 1";
+        isDue = dueDate <= today;
+        subjectNo = p.SubjectNo;
+    }
+    else if (p.Stage == 3 && p.Fu1Submitted != null)
+    {
+        dueDate = p.Fu1Submitted.Value.AddDays(105);
+        createdDate = p.Fu1Submitted.Value;
+        stageText = "Follow-up 2";
+        isDue = dueDate <= today;
+        subjectNo = p.SubjectNo;
+    }
+    else
+    {
+        continue;
+    }
+
+    if (!isDue)
+        continue;
+
+    int dueDays =
+        (int)Math.Ceiling(
+        (today - dueDate).TotalDays);
+
+    // --- Reminder Logic ---
+
+    var reminderLog =
+        await GetReminderLog(
+            http,
+            p.PatientId,
+            p.Stage
+        );
+
+    if (reminderLog == null)
+    {
+        shouldSend = true;
+
+        reminderLog = new EmailReminderLog
+        {
+            PatientId = p.PatientId,
+            DoctorId = doctor.DoctorId,
+            Stage = p.Stage,
+            ReminderCount = 1,
+            LastSentDate = today,
+            DueDays = dueDays,
+            InitationOrSubmittedDate = createdDate
+        };
+    }
+    else
+    {
+        var nextReminderDate =
+            reminderLog.LastSentDate.AddDays(2);
+
+        if (nextReminderDate != null &&
+            nextReminderDate <= today)
+        {
+            shouldSend = true;
+
+            reminderLog.ReminderCount++;
+
+            reminderLog.LastSentDate = today;
+
+            reminderLog.DueDays = dueDays;
+        }
+    }
+
+    if (shouldSend)
+    {
+        duePatients.Add(
+            (
+                p,
+                stageText,
+                createdDate,
+                dueDate,
+                dueDays,
+                subjectNo
+            )
+        );
+
+        await SaveOrUpdateReminder(
+            http,
+            reminderLog
+        );
+
+        Console.WriteLine(
+            $"Added {p.Initial} ({stageText}) for Dr. {doctor.Name} - Reminder #{reminderLog.ReminderCount}"
+        );
+    }
+}
           // --- Send One Combined Email per Doctor ---
           if (duePatients.Any())
           {
@@ -207,47 +317,49 @@ namespace AutoEmailNotification
     }
 
 
-    public static async Task SendEmailAsync(string to, string subject, string htmlBody)
-    {
-      try
-      {
-
-        using var smtpClient = new System.Net.Mail.SmtpClient(smtpServer, smtpPort)
+        public static async Task SendEmailAsync(string to, string subject, string htmlBody)
         {
-          UseDefaultCredentials = false,
-          EnableSsl = enableSsl,
-          Credentials = new NetworkCredential(smtpUser, smtpPass),
-          Timeout = 50000
-        };
+            try
+            {
+                using var smtpClient = new System.Net.Mail.SmtpClient()
+                {
+                    Host = smtpServer,
+                    Port = 587,
+                    EnableSsl = true,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(
+                        smtpUser,
+                        smtpPass
+                    ),
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Timeout = 30000
+                };
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress(smtpUser),
+                    Subject = subject,
+                    Body = htmlBody,
+                    IsBodyHtml = true
+                };
 
-        var mailMessage = new MailMessage
-        {
-          From = new MailAddress(_config["Smtp:User"]),
-          Subject = subject,
-          Body = htmlBody,
-          IsBodyHtml = true
-        };
+                mailMessage.To.Add(
+                    !string.IsNullOrWhiteSpace(to)
+                    ? to
+                    : smtpUser
+                );
 
-        mailMessage.To.Add(!string.IsNullOrWhiteSpace(to) ? to : smtpUser);
+                Console.WriteLine($"Sending mail to : {to}");
 
-        // Wrap Send() in Task.Run() to avoid blocking
-        smtpClient.Send(mailMessage);
+                await smtpClient.SendMailAsync(mailMessage);
 
-        Console.WriteLine($" Email sent successfully to {to}");
-      }
-      catch (SmtpException ex)
-      {
-        Console.WriteLine($" SMTP Error: {ex.Message}");
-        throw;
-      }
-      catch (Exception ex)
-      {
-        Console.WriteLine($" General Error sending email: {ex.Message}");
-        throw;
-      }
-    }
-
-    static async Task<EmailReminderLog?> GetReminderLog(HttpClient http, int patientId, int stage)
+                Console.WriteLine($"Mail sent successfully to {to}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Mail Error: {ex}");
+            }
+        }
+        static async Task<EmailReminderLog?> GetReminderLog(HttpClient http, int patientId, int stage)
     {
       Console.WriteLine($"{baseApiUrl}/EmailReminder/GetByPatient/{patientId}/{stage}");
       var response = await http.GetAsync($"{baseApiUrl}/EmailReminder/GetByPatient/{patientId}/{stage}");

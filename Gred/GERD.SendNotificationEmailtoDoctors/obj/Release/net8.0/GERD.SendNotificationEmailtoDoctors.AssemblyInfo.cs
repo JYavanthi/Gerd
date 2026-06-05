@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GERD.SendNotificationEmailtoDoctors")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+75de4de82fbc0172d532491c37d4be6007dd82da")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6e7c20b937834e0a14b0df564146a039c87a2285")]
 [assembly: System.Reflection.AssemblyProductAttribute("GERD.SendNotificationEmailtoDoctors")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GERD.SendNotificationEmailtoDoctors")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

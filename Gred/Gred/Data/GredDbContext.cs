@@ -140,7 +140,7 @@ public partial class GredDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-SVHEEK2\\SQLEXPRESS;Database=GERD;Trusted_Connection=True;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-S8C4Q6B\\SQLEXPRESS01;Database=GERD;Trusted_Connection=True;TrustServerCertificate=True");
   // =>optionsBuilder.UseSqlServer("Server=EC2AMAZ-4MMGIBF\\SQLEXPRESS;Database=GERD;user Id=sa1; Password=Micro@123#; Trusted_Connection=True;TrustServerCertificate=True");
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

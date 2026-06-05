@@ -23,6 +23,9 @@ html, body {
   min-width: 0;      
   overflow-x: auto;   
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 label{
     color:white !important;
@@ -37,6 +40,58 @@ label{
     color: white;
 }
 
+/* common dropdown */
+
+.dropdown-list{
+position:absolute;
+left:0;
+right:0;
+margin-top:5px;
+background:white;
+border:1px solid #ddd;
+border-radius:8px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+
+max-height:220px; /* roughly 4 rows */
+overflow-y:auto;
+
+z-index:999;
+}
+
+/* scrollbar */
+
+.dropdown-list::-webkit-scrollbar{
+width:6px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb{
+background:#999;
+border-radius:10px;
+}
+
+/* items */
+
+.dropdown-item{
+display:flex;
+align-items:center;
+gap:8px;
+padding:10px;
+cursor:pointer;
+}
+
+.dropdown-item:hover{
+background:#f2f7ff;
+}
+
+/* select all fixed */
+
+.sticky-top{
+position:sticky;
+top:0;
+background:white;
+border-bottom:1px solid #ddd;
+z-index:10;
+}
 .nav-btn {
     padding: 0.8rem;
     background: none;
@@ -136,7 +191,7 @@ tr:hover {
 .send button {
   background-color: green !important;
   color: white !important;
-  width: 255px !important;
+  width: 225px !important;
     height: 44px !important;
     margin-top: 28px;
 }
