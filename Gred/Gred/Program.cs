@@ -16,6 +16,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        policy => policy.WithOrigins(
+            "http://localhost:4200",
+            "https://gerdregistryofindia.com",
+            "https://www.gerdregistryofindia.com"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+    );
+});
+
+
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AllowAllOrigins",builder =>
